@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Country;
 use App\Coupon;
 use App\DeliveryOrPickup;
-use App\ShippingAddress;
 use App\Services\OtherCheckoutService;
+use App\ShippingAddress;
 use App\State;
 use App\Transaction;
 use Illuminate\Contracts\Foundation\Application;
@@ -36,8 +36,8 @@ use \Carbon\Carbon;
 
 class FlowerBySubscriptionController extends Controller
 {
-
     public $otherCheckoutService;
+
     public function __construct()
     {
         $this->otherCheckoutService = new OtherCheckoutService();
@@ -191,6 +191,7 @@ class FlowerBySubscriptionController extends Controller
         $total = $this->getCartTotal();
 
         session()->put('oth_total_quantity', array_sum(array_column($oth_cart, 'quantity')));
+
         session()->forget('oth_checkout_preview');
 
         $htmlCart = view('_header_cart')->render();
@@ -202,11 +203,6 @@ class FlowerBySubscriptionController extends Controller
             'subTotal' => $subTotal,
             'totalQty' => session()->get('oth_total_quantity')
         ]);
-    }
-
-    public function updateAllCartItems()
-    {
-
     }
 
     public function remove(Request $request)
@@ -236,562 +232,266 @@ class FlowerBySubscriptionController extends Controller
      * @param Request $request
      * @return Application|Factory|View
      */
-     public function otherCheckOutPage()
-     {
-         $deliveryOptions = DeliveryOrPickup::all();
-         $oldData         = session('oth_checkout_preview') ?? [];
-
-         $view = view('other-checkout-guest', compact(
-             'deliveryOptions',
-             'oldData'
-         ));
-
-         if (auth()->check()) {
-             $user_data      = auth()->user();
-
-             $pk_customer_id = @$user_data->pk_customers;
-             $kbt_address    = CustomerAddres::where('pk_customers', @$pk_customer_id)->get();
-             $primaryAddress = CustomerAddres::where('pk_customers', @$pk_customer_id)
-                 ->where('pk_address_type', 1)->first();
-             $primaryState   = State::where('pk_states', @$primaryAddress->pk_states)->first();
-             $billingAddress = CustomerAddres::where('pk_customers', @$pk_customer_id)
-                 ->where('pk_address_type', 2)->first();
-             $billingState   = State::where('pk_states', @$billingAddress->pk_states)->first();
-
-             $view = view('other-checkout', compact(
-                 'user_data',
-                 'kbt_address',
-                 'deliveryOptions',
-                 'oldData',
-                 'primaryAddress',
-                 'billingAddress',
-                 'primaryState',
-                 'billingState'
-             ));
-         }
-
-         return $view;
-     }
-
-     public function otherCheckoutPreviewPost(Request $request)
-     {
-         if (empty(session('oth_cart'))) {
-             session()->flash('message', 'Your Cart Is Currently Empty.');
-             session()->flash('level', 'danger');
-             return redirect('shop');
-         }
-
-         // Customer address create
-         if (!auth()->check()) {
-             $validator = Validator::make($request->all(), [
-                 'first_name'           => 'required',
-                 'last_name'            => 'required',
-                 'username'             => 'nullable|unique:users',
-                 'phone'                => 'required',
-                 'email'                => 'nullable|unique:users',
-                 'billing_address'      => 'required',
-                 'billing_city'         => 'required',
-                 'billing_state_name'   => 'required',
-                 'billing_zip'          => 'required',
-                 'billing_country_name' => 'required',
-             ]);
-
-             if ($validator->fails()) {
-                 session()->flash('message', 'Order could not be placed, please correct errors. -> ' . $validator->errors()->first());
-                 session()->flash('level', 'danger');
-                 return redirect('other-checkout')->withErrors($validator)->withInput();
-             }
-
-             if ($request->choise_details == 'billing_address') {
-                 $validator = Validator::make($request->all(), [
-                     'billing_address'      => 'required',
-                     'billing_city'         => 'required',
-                     'billing_state_name'   => 'required',
-                     'billing_country_name' => 'required',
-                     'billing_zip'          => 'required',
-                 ]);
-             }
-
-
-             if ($validator->fails()) {
-                 session()->flash('message', 'Order could not be placed, please correct errors -> ' . $validator->errors()->first());
-                 session()->flash('level', 'danger');
-                 return redirect('other-checkout')->withErrors($validator)->withInput();
-             }
-
-         } else {
-             $user_data                    = auth()->user();
-             $request['billing_full_name'] = $request->first_name ?? $user_data->first_name . ' ' . $user_data->last_name;
-         }
-
-         $data = $request->except(['_token', '_method']);
-         session()->put('oth_checkout_preview', $data);
-
-         return redirect()->route('other-checkout-preview');
-     }
-
-		 public function otherCheckoutPayment()
-		 {
-				 if (!session('oth_checkout_preview') || !session('oth_cart') || !count(session('oth_cart')) || !count(session('oth_checkout_preview'))) {
-						 session()->flash('message', 'Cart or preview data could not be found, please correct errors!');
-						 session()->flash('level', 'danger');
-						 return redirect('other-checkout');
-				 }
-
-				 $data = session('oth_checkout_preview');
-
-				 return view('other-checkout-payment', compact('data'));
-		 }
-
-
-     public function otherCheckoutPreview()
-     {
-         if (!session('oth_checkout_preview') || !session('oth_cart') || !count(session('oth_cart')) || !count(session('oth_checkout_preview'))) {
-             session()->flash('message', 'Order could not be previewed, please correct errors.');
-             session()->flash('level', 'danger');
-             return redirect('other-checkout');
-         }
-
-         $data = session('oth_checkout_preview');
-
-         $coupon           = Coupon::where('code', @$data['coupon'])->first();
-         $discountCharge   = 0;
-         $discountedAmount = 0;
-
-         $couponCharge = explode(" ", @$data['discountCharge']);
-
-
-         if (isset($data['discountCharge'])) {
-             if ($couponCharge[1] === '%') {
-                 $discountCharge               = $couponCharge[0];
-                 $discountedAmount             = $data['amount'] * $discountCharge / 100;
-                 $data['coupon_discount_type'] = 'percent';
-             } elseif ($couponCharge[0] === '$') {
-                 $discountCharge               = $couponCharge[1];
-                 $discountedAmount             = $couponCharge[1];
-                 $data['coupon_discount_type'] = 'fixed';
-             } else {
-                 $discountCharge               = $data['discountCharge'][0];
-                 $discountedAmount             = $data['amount'] - $discountCharge;
-                 $data['coupon_discount_type'] = $data['discountCharge'][1];
-             }
-         }
-
-         // Total amount after discount
-         $amountAfterDiscount = $data['amount'] - $discountedAmount;
-
-         // Delivery option
-         $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$data['choise_details'])->first();
-
-         $cartItems = session('oth_cart');
-
-         $deliveryCharge = 0;
-         $sameAsBilling  = 0;
-         if (isset($data['item_address']) && count($data['item_address'])) {
-             foreach ($data['item_address'] as $item_address) {
-                 $sameAsBilling = $item_address['same_as_billing'];
-                 if ($item_address['same_as_billing'] == 0) {
-                     $deliveryCharge += $item_address['delivery_charge'];
-                 } else {
-                     $deliveryCharge += $data['deleveryCast1'] ?? 0;
-                 }
-             }
-         }
-
-         if ($deliveryCharge <= 0 && isset($data['deleveryCast1'])) {
-             $deliveryCharge += $data['deleveryCast1'];
-         }
-
-         $view = view('other-checkout-guest-preview', compact(
-             'data',
-             'coupon',
-             'discountCharge',
-             'discountedAmount',
-             'amountAfterDiscount',
-             'deliveryOption',
-             'cartItems',
-             'deliveryCharge',
-             'sameAsBilling'
-         ));
-
-         if (auth()->check()) {
-             $view = view('other-checkout-auth-preview', compact(
-                 'data',
-                 'coupon',
-                 'discountCharge',
-                 'discountedAmount',
-                 'amountAfterDiscount',
-                 'deliveryOption',
-                 'cartItems',
-                 'deliveryCharge',
-                 'sameAsBilling'
-             ));
-         }
-
-         return $view;
-     }
-
-
-     public function other_checkout_copy(Request $request)
-     {
-         $user_data = auth()->user();
-
-         if (empty(session('oth_cart'))) {
-             session()->flash('message', 'Your Cart Is Currently Empty.');
-             session()->flash('level', 'danger');
-             return redirect('shop');
-         }
-
-         // Customer address create
-         if (!auth()->check()) {
-             $validator = Validator::make($request->all(), [
-                 'first_name'           => 'required',
-                 'last_name'            => 'required',
-                 'username'             => 'nullable|unique:users',
-                 'phone'                => 'required',
-                 'email'                => 'nullable|unique:users',
-                 'billing_address'      => 'required',
-                 'billing_city'         => 'required',
-                 'billing_state_name'   => 'required',
-                 'billing_zip'          => 'required',
-                 'billing_country_name' => 'required',
-             ]);
-
-             if ($validator->fails()) {
-                 session()->flash('message', 'Order could not be placed, please correct errors. -> ' . $validator->errors()->first());
-                 session()->flash('level', 'danger');
-                 return redirect('other-checkout')->withErrors($validator)->withInput();
-             }
-             if ($request->choise_details == 'billing_address') {
-                 $validator = Validator::make($request->all(), [
-                     'billing_address'      => 'required',
-                     'billing_city'         => 'required',
-                     'billing_state_name'   => 'required',
-                     'billing_country_name' => 'required',
-                     'billing_zip'          => 'required',
-                 ]);
-             }
-
-
-             if ($validator->fails()) {
-                 session()->flash('message', 'Order could not be placed, please correct errors.');
-                 session()->flash('level', 'danger');
-                 return redirect('other-checkout')->withErrors($validator)->withInput();
-             }
-
-
-             // Create Customer
-             $customer = Customer::create([
-                 'pk_account'       => 2,
-                 'customer_name'    => $request->first_name . ' ' . $request->last_name,
-                 'pk_customer_type' => 1,
-                 'email'            => $request->email,
-                 'office_phone'     => $request->phone,
-                 'login_enable'     => 1,
-             ]);
-
-             // Create User for customer
-             $customer_user = User::create([
-                 'first_name'   => $request->first_name,
-                 'last_name'    => $request->last_name,
-                 'email'        => $request->email,
-                 'phone'        => $request->phone,
-                 'username'     => $request->username,
-                 'password'     => Hash::make(12345678),
-                 'pk_roles'     => 4,
-                 'pk_account'   => 2,
-                 'pk_customers' => $customer->pk_customers,
-             ]);
-
-             // Get customer and user id
-             $pk_user_id     = $customer_user->pk_users;
-             $pk_customer_id = $customer->pk_customers;
-
-             // Create Customer Address
-             if ($request->primary_address) {
-                 $primaryState    = State::where('state_code', $request->primary_state_name)->first();
-                 $primary_address = [
-                     'pk_customers'    => $pk_customer_id,
-                     'pk_address_type' => 1,
-                     'address'         => $request->primary_address,
-                     'address_1'       => $request->primary_address_1,
-                     'city'            => $request->primary_city,
-                     'pk_states'       => $primaryState->pk_states ?? 1,
-                     'pk_country'      => $primaryState->pk_country ?? 1,
-                     'zip'             => $request->primary_zip,
-                 ];
-
-                 CustomerAddres::create($primary_address);
-             }
-
-
-             if ($request->billing_address) {
-                 $billingState = State::where('state_code', $request->billing_state_name)->first();
-                 $billing_data = [
-                     'pk_customers'    => $pk_customer_id,
-                     'pk_address_type' => 2,
-                     'address'         => $request->billing_address,
-                     'address_1'       => $request->billing_address_1,
-                     'city'            => $request->billing_city,
-                     'pk_states'       => $billingState->pk_states ?? 1,
-                     'pk_country'      => $billingState->pk_country ?? 1,
-                     'zip'             => $request->billing_zip,
-                 ];
-                 CustomerAddres::create($billing_data);
-             }
-
-             // Login User
-             Auth::loginUsingId($pk_user_id);
-         } else {
-             $request['billing_full_name'] = $request->first_name ?? $user_data->first_name . ' ' . $user_data->last_name;
-             $validator                    = Order::validate_payment_card($request->all());
-
-             if ($validator->fails()) {
-                 session()->flash('message', 'Order could not be placed, please correct errors.');
-                 session()->flash('level', 'danger');
-                 return redirect('other-checkout')->withErrors($validator)->withInput();
-             }
-
-             $pk_user_id     = $user_data->pk_users;
-             $customer_data1 = Customer::where('email', $user_data->email)->first();
-
-             // Check if customer already exists and create if not
-             if ($customer_data1) {
-                 $pk_customer_id = $customer_data1->pk_customers;
-                 $user_data->update(['pk_customers' => $pk_customer_id]);
-             } else {
-                 $customer = Customer::create([
-                     'pk_account'       => 2,
-                     'customer_name'    => $user_data->first_name . ' ' . $user_data->last_name,
-                     'pk_customer_type' => 1,
-                     'email'            => $user_data->email,
-                     'office_phone'     => $user_data->phone,
-                     'login_enable'     => 1,
-                 ]);
-
-                 // Get customer id
-                 $pk_customer_id = $customer->pk_customers;
-                 $user_data->update(['pk_customers' => $pk_customer_id]);
-
-                 // Create customer primary address
-                 if ($request->primary_address) {
-                     $primaryState    = State::where('state_code', $request->primary_state_name)->first();
-                     $primary_address = [
-                         'pk_customers'    => $pk_customer_id,
-                         'pk_address_type' => 1,
-                         'address'         => $request->primary_address,
-                         'address_1'       => $request->primary_address_1,
-                         'city'            => $request->primary_city,
-                         'pk_states'       => $primaryState->pk_states ?? 1,
-                         'pk_country'      => $primaryState->pk_country ?? 1,
-                         'zip'             => $request->primary_zip,
-                     ];
-
-                     CustomerAddres::create($primary_address);
-                 }
-
-
-                 if ($request->billing_address) {
-                     $billingState = State::where('state_code', $request->billing_state_name)->first();
-                     $billing_data = [
-                         'pk_customers'    => $pk_customer_id,
-                         'pk_address_type' => 2,
-                         'address'         => $request->billing_address,
-                         'address_1'       => $request->billing_address_1,
-                         'city'            => $request->billing_city,
-                         'pk_states'       => $billingState->pk_states ?? 1,
-                         'pk_country'      => $billingState->pk_country ?? 1,
-                         'zip'             => $request->billing_zip,
-                     ];
-                     CustomerAddres::create($billing_data);
-                 }
-
-             }
-         }
-
-         $customer_data = Customer::find($pk_customer_id);
-         // Check customer exists or not
-         if (!$customer_data) {
-             session()->flash('message', 'Customer could not be found, please correct errors.');
-             session()->flash('level', 'danger');
-             return redirect('other-checkout')->withErrors($validator)->withInput();
-         }
-
-         // Payment
-         $pk_transactions = null;
-         $payment_total   = 0;
-         $payem_total_qty = 0;
-         if (session('oth_cart')) {
-             foreach ((array)session('oth_cart') as $orderitempay) {
-                 $quantity_payment = !empty($orderitempay['quantity']) ? $orderitempay['quantity'] : 0;
-                 if ($quantity_payment > 0) {
-                     $payment_total   += $orderitempay['price'] * $quantity_payment;
-                     $payem_total_qty += $quantity_payment;
-                 }
-             }
-
-             if (!empty($user_data->email)) {
-                 $user_email = $user_data->email;
-
-                 $request->request->add(['billing_email' => $user_email]);
-             }
-
-             $order_no = 'ORD' . str_pad(Order::max('pk_orders') + 1, 8, "0", STR_PAD_LEFT);
-             $res      = $this->handleonlinepay($request, $pk_user_id, $payment_total, $payem_total_qty, $order_no);
-
-             if ($res['msg_type'] == 'error_msg') {
-                 session()->flash('message', $res['message_text'] . ', please correct errors.');
-                 session()->flash('level', 'danger');
-                 return redirect('other-checkout')->withErrors($validator)->withInput();
-             }
-
-             $pk_transactions = $res['trans_id'];
-         }
-
-         // Save order
-         $save_order = [
-             'pk_users'              => $pk_user_id,
-             'pk_transactions'       => $pk_transactions,
-             'pk_customers'          => $pk_customer_id,
-             'pk_delivery_or_pickup' => $request->choise_details ?? 1,
-             'total'                 => $request->amount,
-         ];
-
-         if ($request->pk_locations) {
-             $save_order['pk_locations'] = $request->pk_locations;
-         }
-
-         if ($request->store_id) {
-             $store_time                      = explode("/", $request->store_id);
-             $save_order['pk_locations']      = $store_time[1];
-             $save_order['pk_location_times'] = $store_time[0];
-         }
-
-         if (isset($request->deleveryCast1)) {
-             $save_order['delivery_charge'] = $request->deleveryCast1;
-         }
-
-         if (isset($request->shippingCharge)) {
-             $save_order['tax_charge'] = $request->shippingCharge;
-         }
-
-         if (isset($request->discountCharge)) {
-             $coupon = explode(" ", $request->discountCharge);
-
-             if ($coupon[1] === '%') {
-                 $save_order['discount_charge']      = $coupon[0];
-                 $save_order['coupon_discount_type'] = 'percent';
-             } elseif ($coupon[0] === '$') {
-                 $save_order['discount_charge']      = $coupon[1];
-                 $save_order['coupon_discount_type'] = 'fixed';
-             } else {
-                 $save_order['discount_charge']      = $request->discountCharge[0];
-                 $save_order['coupon_discount_type'] = $request->discountCharge[1];
-             }
-         }
-
-         if (isset($request->estimated_del)) {
-             $save_order['estimated_del'] = Carbon::parse($request->estimated_del)->format('Y-m-d');
-         }
-
-         $save_order['pk_order_status'] = 1;
-
-         // Create order
-         $get_order                    = Order::create($save_order);
-         $save_order['discountCharge'] = $request->discountCharge ? $save_order['discount_charge'] : 0;
-
-         if (session('oth_cart')) {
-             $total           = 0;
-             $deliveryCharges = 0;
-
-             foreach ((array)session('oth_cart') as $key => $orderitem) {
-                 $quantity = $orderitem['quantity'] ?? 0;
-
-                 if ($quantity > 0) {
-
-                     $total += $orderitem['price'] * $quantity;
-
-                     $save_order_item = [
-                         'pk_orders'           => $get_order->pk_orders,
-                         'pk_shipping_address' => 1,
-                         'pk_arrangement_type' => $orderitem['pk_arrangement_type'] ?? '',
-                         'name'                => $orderitem['name'] ?? '',
-                         'description'         => $orderitem['description'] ?? '',
-                         'quantity'            => $quantity,
-                         'price'               => $orderitem['price'] ?? 0,
-                         'card_message'        => $orderitem['card_message'] ?? '',
-                     ];
-
-                     $orderItem = OrderItem::create($save_order_item);
-
-                     // Create item address
-                     $user_name  = $user_data ? $user_data->first_name . ' ' . $user_data->last_name :
-                         $request->first_name . ' ' . $request->last_name;
-                     $user_email = !$user_data ? $request->email : $user_data->email;
-                     $user_phone = !$user_data ? $request->phone : $user_data->phone;
-
-                     if (isset($request->item_address) && count($request->item_address)) {
-                         $itemAddress = $request->item_address;
-                         if ($itemAddress[$key]['same_as_billing'] == 0) {
-                             $deliveryCharges += $itemAddress[$key]['delivery_charge'];
-                         }
-                         $cusAddr            = @$user_data->customer->address[0];
-                         $shipping_address   = $itemAddress[$key]['shipping_address'] ?? $request->billing_address ??
-                             $cusAddr->address ?? '';
-                         $shipping_address_1 = $itemAddress[$key]['shipping_address_1'] ?? $request->billing_address_1 ??
-                             $cusAddr->address_1 ?? '';
-                         $shipping_city      = $itemAddress[$key]['shipping_city'] ?? $request->billing_city
-                             ?? $cusAddr->city ?? '';
-                         $shipping_zip       = $itemAddress[$key]['shipping_zip'] ?? $request->billing_zip
-                             ?? $cusAddr->zip ?? '';
-                         $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
-                             ?? $request->billing_state_name ?? '')->first();
-                         $shipping_data      = [
-                             'pk_customers'       => $pk_customer_id,
-                             'pk_order_items'     => $orderItem->pk_order_items ?? 1,
-                             'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
-                             'shipping_email'     => $itemAddress[$key]['shipping_email'] ?? $user_email,
-                             'shipping_phone'     => $itemAddress[$key]['shipping_phone'] ?? $user_phone,
-                             'shipping_address'   => $shipping_address,
-                             'shipping_address_1' => $shipping_address_1,
-                             'shipping_city'      => $shipping_city,
-                             'pk_states'          => $state->pk_states ?? $cusAddr->pk_states ?? 1,
-                             'pk_country'         => $state->pk_country ?? $cusAddr->pk_country ?? 1,
-                             'shipping_zip'       => $shipping_zip,
-                             'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
-                             'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
-                         ];
-
-                         Addres::create($shipping_data);
-                     }
-                 }
-             }
-
-             if ($request->choise_details != 'store') {
-                 $deliveryCharges = $deliveryCharges > 0 ? $deliveryCharges : $request->deleveryCast1;
-                 $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
-                 Order::where('pk_orders', $get_order->pk_orders)->update([
-                     'total'           => $total,
-                     'delivery_charge' => $deliveryCharges
-                 ]);
-             }
-         }
-
-
-         // Forget session data
-         session()->forget('oth_cart');
-         session()->forget('oth_total_quantity');
-         session()->forget('oth_total_hit');
-
-         // Set success message
-         session()->flash('message', 'Order has been placed successfully!');
-         session()->flash('level', 'success');
-
-         return redirect('thank-you/' . $get_order->pk_orders);
-     }
+    public function otherCheckOutPage()
+    {
+        $deliveryOptions = DeliveryOrPickup::all();
+        $oldData         = session('oth_checkout_preview') ?? [];
+
+        $view = view('other-checkout-guest', compact(
+            'deliveryOptions',
+            'oldData'
+        ));
+
+        if (auth()->check()) {
+            $user_data      = auth()->user();
+
+            $pk_customer_id = @$user_data->pk_customers;
+            $kbt_address    = CustomerAddres::where('pk_customers', @$pk_customer_id)->get();
+            $primaryAddress = CustomerAddres::where('pk_customers', @$pk_customer_id)
+                ->where('pk_address_type', 1)->first();
+            $primaryState   = State::where('pk_states', @$primaryAddress->pk_states)->first();
+            $billingAddress = CustomerAddres::where('pk_customers', @$pk_customer_id)
+                ->where('pk_address_type', 2)->first();
+            $billingState   = State::where('pk_states', @$billingAddress->pk_states)->first();
+
+            $view = view('other-checkout', compact(
+                'user_data',
+                'kbt_address',
+                'deliveryOptions',
+                'oldData',
+                'primaryAddress',
+                'billingAddress',
+                'primaryState',
+                'billingState'
+            ));
+        }
+
+        return $view;
+    }
+
+    public function otherCheckoutPreviewPost(Request $request)
+    {
+        if (empty(session('oth_cart'))) {
+            session()->flash('message', 'Your Cart Is Currently Empty.');
+            session()->flash('level', 'danger');
+            return redirect('shop');
+        }
+
+        // Customer address create
+        if (!auth()->check()) {
+            $validator = Validator::make($request->all(), [
+                'first_name'           => 'required',
+                'last_name'            => 'required',
+                'username'             => 'nullable|unique:users',
+                'phone'                => 'required',
+                'email'                => 'nullable|unique:users',
+                'billing_address'      => 'required',
+                'billing_city'         => 'required',
+                'billing_state_name'   => 'required',
+                'billing_zip'          => 'required',
+                'billing_country_name' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                session()->flash('message', 'Order could not be placed, please correct errors. -> ' . $validator->errors()->first());
+                session()->flash('level', 'danger');
+                return redirect('other-checkout')->withErrors($validator)->withInput();
+            }
+
+            if ($request->choise_details == 'billing_address') {
+                $validator = Validator::make($request->all(), [
+                    'billing_address'      => 'required',
+                    'billing_city'         => 'required',
+                    'billing_state_name'   => 'required',
+                    'billing_country_name' => 'required',
+                    'billing_zip'          => 'required',
+                ]);
+            }
+
+
+            if ($validator->fails()) {
+                session()->flash('message', 'Order could not be placed, please correct errors -> ' . $validator->errors()->first());
+                session()->flash('level', 'danger');
+                return redirect('other-checkout')->withErrors($validator)->withInput();
+            }
+
+        } else {
+            $user_data                    = auth()->user();
+            $request['billing_full_name'] = $request->first_name ?? $user_data->first_name . ' ' . $user_data->last_name;
+        }
+
+        $data = $request->except(['_token', '_method']);
+        session()->put('oth_checkout_preview', $data);
+
+        return redirect()->route('other-checkout-preview');
+    }
+
+    public function otherCheckoutPreview()
+    {
+        if (!session('oth_checkout_preview') || !session('oth_cart') || !count(session('oth_cart')) || !count(session('oth_checkout_preview'))) {
+            session()->flash('message', 'Order could not be previewed, please correct errors.');
+            session()->flash('level', 'danger');
+            return redirect('other-checkout');
+        }
+
+        $data = session('oth_checkout_preview');
+
+        $coupon           = Coupon::where('code', @$data['coupon'])->first();
+        $discountCharge   = 0;
+        $discountedAmount = 0;
+
+        $couponCharge = explode(" ", @$data['discountCharge']);
+
+
+        if (isset($data['discountCharge'])) {
+            if ($couponCharge[1] === '%') {
+                $discountCharge               = $couponCharge[0];
+                $discountedAmount             = $data['amount'] * $discountCharge / 100;
+                $data['coupon_discount_type'] = 'percent';
+            } elseif ($couponCharge[0] === '$') {
+                $discountCharge               = $couponCharge[1];
+                $discountedAmount             = $couponCharge[1];
+                $data['coupon_discount_type'] = 'fixed';
+            } else {
+                $discountCharge               = $data['discountCharge'][0];
+                $discountedAmount             = $data['amount'] - $discountCharge;
+                $data['coupon_discount_type'] = $data['discountCharge'][1];
+            }
+        }
+
+        // Total amount after discount
+        $amountAfterDiscount = $data['amount'] - $discountedAmount;
+
+        // Delivery option
+        $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$data['choise_details'])->first();
+
+        $cartItems = session('oth_cart');
+
+        $deliveryCharge = 0;
+        $sameAsBilling  = 0;
+        if (isset($data['item_address']) && count($data['item_address'])) {
+            foreach ($data['item_address'] as $item_address) {
+                $sameAsBilling = $item_address['same_as_billing'] ?? 1;
+                if ($item_address['same_as_billing'] == 0) {
+                    $deliveryCharge += $item_address['delivery_charge'];
+                } else {
+                    $deliveryCharge += $data['deleveryCast1'] ?? 0;
+                }
+            }
+        }
+
+        if ($deliveryCharge <= 0 && isset($data['deleveryCast1'])) {
+            $deliveryCharge += $data['deleveryCast1'];
+        }
+
+        $view = view('other-checkout-guest-preview', compact(
+            'data',
+            'coupon',
+            'discountCharge',
+            'discountedAmount',
+            'amountAfterDiscount',
+            'deliveryOption',
+            'cartItems',
+            'deliveryCharge',
+            'sameAsBilling'
+        ));
+
+        if (auth()->check()) {
+            $view = view('other-checkout-auth-preview', compact(
+                'data',
+                'coupon',
+                'discountCharge',
+                'discountedAmount',
+                'amountAfterDiscount',
+                'deliveryOption',
+                'cartItems',
+                'deliveryCharge',
+                'sameAsBilling'
+            ));
+        }
+
+        return $view;
+    }
+
+    public function otherCheckoutPayment()
+    {
+        if (!session('oth_checkout_preview') || !session('oth_cart') || !count(session('oth_cart')) || !count(session('oth_checkout_preview'))) {
+            session()->flash('message', 'Cart or preview data could not be found, please correct errors!');
+            session()->flash('level', 'danger');
+            return redirect('other-checkout');
+        }
+
+        $data = session('oth_checkout_preview');
+
+        return view('other-checkout-payment', compact('data'));
+    }
 
     public function other_checkout(Request $request)
     {
+        try {
+            DB::beginTransaction();
+
+            if (empty(session('oth_cart'))) {
+                session()->flash('message', 'Your Cart Is Currently Empty.');
+                session()->flash('level', 'danger');
+                return redirect('shop');
+            }
+
+            // Customer address create
+            if (!auth()->check()) {
+                [
+                    $customer,
+                    $customer_user,
+                    $pk_user_id,
+                    $pk_customer_id,
+                    $primaryAddress,
+                    $billingAddress,
+                    $validator
+                ] = $this->otherCheckoutService->otherCheckoutForGuest($request);
+            } else {
+                [
+                    $customer_data1,
+                    $pk_user_id,
+                    $pk_customer_id,
+                    $primaryAddress,
+                    $billingAddress,
+                    $validator
+                ] = $this->otherCheckoutService->otherCheckoutForAuth($request);
+            }
+
+
+            [
+                $get_order,
+                $save_order
+            ] = $this->otherCheckoutService->otherCheckoutStore($request, $pk_user_id, $pk_customer_id);
+
+            // Forget session data
+            $this->otherCheckoutService->removeOtherCheckoutSession();
+
+            DB::commit();
+
+            // Set success message
+            session()->flash('message', 'Order has been placed successfully!');
+            session()->flash('level', 'success');
+
+            return redirect('thank-you/' . $get_order->pk_orders);
+        } catch (ValidationException $exception) {
+            DB::rollBack();
+//            session()->flash('message', 'Order could not be placed, please correct errors.');
+            session()->flash('message', $exception->getMessage() . ', please correct errors.');
+            session()->flash('level', 'danger');
+            return redirect('other-checkout')->withErrors($validator)->withInput();
+        } catch (\Exception $exception) {
+//            dd($exception->getMessage(), $exception->getTraceAsString(), $exception->getLine());
+            session()->flash('message', 'Order could not be placed, please correct errors -> ' . $exception->getMessage());
+            session()->flash('level', 'danger');
+            return redirect('other-checkout')->withErrors($validator)->withInput();
+        }
+    }
+
+    public function other_checkout_copy(Request $request)
+    {
+        dd($request->all());
         $user_data = auth()->user();
 
         if (empty(session('oth_cart'))) {
@@ -836,7 +536,6 @@ class FlowerBySubscriptionController extends Controller
                 session()->flash('level', 'danger');
                 return redirect('other-checkout')->withErrors($validator)->withInput();
             }
-
 
 
             // Create Customer
@@ -1090,7 +789,7 @@ class FlowerBySubscriptionController extends Controller
                     $user_phone = !$user_data ? $request->phone : $user_data->phone;
 
                     if (isset($request->item_address) && count($request->item_address)) {
-                        $itemAddress        = $request->item_address;
+                        $itemAddress = $request->item_address;
                         if ($itemAddress[$key]['same_as_billing'] == 0) {
                             $deliveryCharges += $itemAddress[$key]['delivery_charge'];
                         }
@@ -1574,6 +1273,7 @@ class FlowerBySubscriptionController extends Controller
         //print_r($message_text);exit;
         // test by lemon
     }
+
 
     public function thank_you(Request $request, $pk_orders = null)
     {
