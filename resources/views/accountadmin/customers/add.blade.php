@@ -332,16 +332,16 @@
                                                         @if(!empty($families))
                                                             @foreach($families as $family)
                                                                 <tr>
-                                                                    <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $family->pk_customer_family]) }}'">
+                                                                    <td onclick="window.location='{{ route('accountadmin.customers.family.edit', ['id' => $family->pk_customer_family]) }}'">
                                                                         {{ $family->customer_family }}
                                                                     </td>
-                                                                    <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $family->pk_customer_family]) }}'">
+                                                                    <td onclick="window.location='{{ route('accountadmin.customers.family.edit', ['id' => $family->pk_customer_family]) }}'">
                                                                         {{ $family->customer_family_relation }}
                                                                     </td>
-                                                                    <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $family->pk_customer_family]) }}'">
+                                                                    <td onclick="window.location='{{ route('accountadmin.customers.family.edit', ['id' => $family->pk_customer_family]) }}'">
                                                                         {{ $family->important_day }}
                                                                     </td>
-                                                                    <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $family->pk_customer_family]) }}'">
+                                                                    <td onclick="window.location='{{ route('accountadmin.customers.family.edit', ['id' => $family->pk_customer_family]) }}'">
                                                                         {{ $family->date }}
                                                                     </td>
                                                                     <td style="text-align:center;">

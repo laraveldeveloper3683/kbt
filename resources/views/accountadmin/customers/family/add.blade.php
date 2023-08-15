@@ -112,7 +112,7 @@
                                                       <div class="form-group">
                                                           <label for="expire_at">Date</label>
                                                           <input type="text" name="date"
-                                                                 class="form-control @error('date') is-invalid @enderror" placeholder="MM/YY"
+                                                                 class="form-control @error('date') is-invalid @enderror" placeholder="MM/DD"
                                                                  value="{{isset($family) && ($family->date)?$family->date:old('date')}}">
                                                           @error('date')
                                                           <span class="invalid-feedback" role="alert">

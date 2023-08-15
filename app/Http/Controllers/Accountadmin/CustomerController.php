@@ -556,12 +556,15 @@ class CustomerController extends Controller
     }
 
     public function family_store(Request $request){
+      $messages = [
+          'max'      => 'The date should have in valid format',
+        ];
       $request->validate([
           'name' => 'required|max:200',
           'relationship'=> 'required|max:200',
           'day'=>'required',
-          'date'=>'required',
-      ]);
+          'date'=>'required|max:5',
+      ],$messages);
     // echo "<pre>"; print_r($request->all()); die;
       if(isset($request->pk_customer_family)){
         $impDay =  CustomerFamily::find($request->pk_customer_family);
