@@ -70,12 +70,18 @@
                                         <th>Coupon Code</th>
                                         <td>
                                             {{ @strtoupper(@$data['couponCode']) }}
-                                    </td>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Estimated Delivery</th>
                                         <td>
                                             {{ @$data['estimated_del'] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Pickup Date</th>
+                                        <td>
+                                            {{ @$data['pickup_date'] }}
                                         </td>
                                     </tr>
                                 </table>
@@ -260,6 +266,12 @@
                                             <th>Delivery Charge</th>
                                             <td>
                                                 ${{ @$item['same_as_billing'] ? '0.00' : @number_format(@$item['delivery_charge'], 2) }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Pickup Date</th>
+                                            <td>
+                                                {{ @$item['same_as_billing'] ? '' : @$item['pickup_date'] }}
                                             </td>
                                         </tr>
                                     </table>

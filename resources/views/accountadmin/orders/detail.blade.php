@@ -221,7 +221,18 @@
                                         <tr>
                                             <th>Delivery Charge</th>
                                             <td>
-                                                ${{ $item->shippingAddress->same_as_billing ? '0.00' : number_format($item->shippingAddress->delivery_charge, 2) }}
+                                                ${{ $item->shippingAddress->same_as_billing ? number_format($orders->delivery_charge, 2)
+                                                                    : number_format($item->shippingAddress->delivery_charge, 2) }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Delivery Charge</th>
+                                            <td>
+                                                @if($item->shippingAddress->pickup_date && !$item->shippingAddress->same_as_billing)
+                                                    {{ @date('m/d/Y', strtotime(@$item->shippingAddress->pickup_date)) }}
+                                                @else
+                                                    {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
+                                                @endif
                                             </td>
                                         </tr>
                                     </table>

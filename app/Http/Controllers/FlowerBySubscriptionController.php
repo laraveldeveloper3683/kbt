@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
 use App\Coupon;
 use App\DeliveryOrPickup;
 use App\Services\OtherCheckoutService;
-use App\ShippingAddress;
 use App\State;
 use App\Transaction;
 use Illuminate\Contracts\Foundation\Application;
@@ -24,12 +22,10 @@ use App\Location;
 use App\LocationTime;
 use Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use net\authorize\api\contract\v1 as AnetAPI;
 use net\authorize\api\controller as AnetController;
-use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Validator;
 use \Carbon\Carbon;

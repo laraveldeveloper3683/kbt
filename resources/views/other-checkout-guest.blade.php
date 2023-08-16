@@ -488,6 +488,21 @@
                                 </span>
                             @endforeach
                         </div>
+
+                        <div class="form-group mt-4" id="pickup-date-div">
+                            <label for="pickup-date" class="form-label">
+                                Select Pickup Date
+                            </label>
+                            <input type="text" name="pickup_date" id="pickup-date"
+                                   class="form-control pickup-date @error('pickup_date') is-invalid @enderror"
+                                   placeholder="Enter pickup date" required
+                                   value="{{ old('pickup_date', @$oldData['pickup_date']) }}">
+                            @error('pickup_date')
+                            <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                     @endif
                     <br>
 
@@ -677,6 +692,26 @@
                                                 <span class="invalid-feedback d-block" role="alert">
                                                               <strong>{{ $message }}</strong>
                                                           </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group mt-4">
+                                                <label for="pickup-date{{ $id }}" class="form-label">
+                                                    Select Pickup Date
+                                                </label>
+                                                <input type="text" name="item_address[{{ $id }}][pickup_date]"
+                                                       id="pickup-date{{ $id }}"
+                                                       class="form-control pickup-date"
+                                                       placeholder="Enter pickup date"
+                                                       value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.pickup_date')) ?
+                                                        old('item_address.'.$id.'.pickup_date') : @$addressItems[$id]['pickup_date'] }}">
+                                                @error('item_address.'.$id.'.pickup_date')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                                 @enderror
                                             </div>
                                         </div>
@@ -1513,13 +1548,17 @@
                 let allChecked = true;
                 itemAddresses.each(function () {
                     allChecked = $(this).is(':checked');
-                    let id = $(this).data('id');
                 });
                 console.log('cartItemAddrIsSame allChecked -> ', allChecked)
                 if (allChecked) {
                     $('.DeliveryChargeDiv').show();
+                    $('#pickup-date').attr('required', 'required');
+                    $('#pickup-date-div').show();
                 } else {
                     $('.DeliveryChargeDiv').hide();
+                    $('#pickup-date').removeAttr('required');
+                    $('#pickup-date').val('');
+                    $('#pickup-date-div').hide();
                 }
                 return allChecked;
             }
@@ -1637,4 +1676,9 @@
         });
     </script>
 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.pickup-date').datepicker();
+        });
+    </script>
 @endsection

@@ -178,6 +178,8 @@
                                value="{{ old('estimated_del', @$data['estimated_del']) }}">
                         <input type="hidden" name="couponCode"
                                value="{{ old('couponCode', @$data['couponCode']) }}">
+                        <input type="hidden" name="pickup_date"
+                               value="{{ old('pickup_date', @$data['pickup_date']) }}">
 
                         @if(isset($data['item_address']) && count($data['item_address']))
                             @foreach($data['item_address'] as $id => $item_address)
@@ -231,6 +233,11 @@
                                        value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.delivery_charge')) ?
                                                         old('item_address.'.$id.'.delivery_charge') : @$item_address['delivery_charge'] }}">
+                                <input type="hidden"
+                                       name="item_address[{{ $id }}][pickup_date]"
+                                       value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.pickup_date')) ?
+                                                        old('item_address.'.$id.'.pickup_date') : @$item_address['pickup_date'] }}">
                             @endforeach
                         @else
                             <input type="hidden" name="item_address">

@@ -19,7 +19,7 @@
                 <div class="col-md-6 offset-md-3 mb-4 text-left">
                     @if($order->deliveryOption->delivery_or_pickup == 'Store Pickup')
                         <div
-                                style="background-color: #FFF;text-align: center;    margin: 0 0 20px 40px;padding-top: 10px;">
+                            style="background-color: #FFF;text-align: center;    margin: 0 0 20px 40px;padding-top: 10px;">
                             <!-- <h6><strong>Pickup Location</strong></h6> -->
                             <p class="lead">{{$store->address}} , {{$store->city}}, {{$store->zip}}</p>
                             <ul>
@@ -34,7 +34,7 @@
                     @else
                         @foreach($order_items as $order_item)
                             <div
-                                    style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
+                                style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
                                 @php
                                     $itemAddr = $order_item->shippingAddress;
                                 @endphp
@@ -47,6 +47,10 @@
                                     <p class="text-center font-weight-bold">
                                         Delivery Charge:
                                         ${{ $itemAddr->same_as_billing ? '0.00' : number_format($itemAddr->delivery_charge, 2) }}
+                                    </p>
+                                    <p class="text-center font-weight-bold">
+                                        Pickup Date:
+                                        {{ $itemAddr->same_as_billing ? '' : date('m/d/Y', strtotime($itemAddr->pickup_date))  }}
                                     </p>
                                 @endif
                             </div>
@@ -67,7 +71,7 @@
                                         <small class="text-muted">{{ $item_val->description }}</small>
                                     </div>
                                     <span
-                                            class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
+                                        class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
                                 </li>
 
                             @endforeach
@@ -86,6 +90,11 @@
                                         <small class="text-muted">
                                             Estimated Delivery - {{ @$order->estimated_del }}
                                         </small>
+                                        @if($order->pickup_date)
+                                            <small class="text-muted">
+                                                Pickup Date - {{ @date('m/d/Y', strtotime(@$order->pickup_date)) }}
+                                            </small>
+                                        @endif
                                     </div>
                                     <span class="text-muted">${{ number_format($order->delivery_charge, 2) }}</span>
                                 </li>

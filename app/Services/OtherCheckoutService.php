@@ -157,7 +157,7 @@ class OtherCheckoutService
             $last_name  = $user_data->last_name ?? $request->last_name;
             $username   = $user_data->username ?? $request->username;
             $email      = $user_data->email ?? $customer_data1->email ?? $request->email;
-            $phone      = !$user_data->phone || $user_data->phone == '1' ? $request->phone : $user_data->phone ?? $customer_data1->office_phone;
+            $phone      = $customer_data1->office_phone ?? $user_data->phone;
             if ($customer_data1) {
                 $pk_customer_id = $customer_data1->pk_customers;
                 $customer_data1->update([
@@ -377,12 +377,12 @@ class OtherCheckoutService
             if (session('oth_cart')) {
                 $total           = 0;
                 $deliveryCharges = 0;
+                $sameAsBilling   = 1;
 
                 foreach ((array)session('oth_cart') as $key => $orderitem) {
                     $quantity = $orderitem['quantity'] ?? 0;
 
                     if ($quantity > 0) {
-
                         $total += $orderitem['price'] * $quantity;
 
                         $save_order_item = [
@@ -420,6 +420,7 @@ class OtherCheckoutService
                                 ?? $cusAddr->zip ?? '';
                             $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
                                 ?? $request->billing_state_name ?? '')->first();
+                            $pickup_date        = $itemAddress[$key]['pickup_date'] ?? $request->pickup_date ?? null;
                             $shipping_data      = [
                                 'pk_customers'       => $pk_customer_id,
                                 'pk_order_items'     => $orderItem->pk_order_items ?? 1,
@@ -434,7 +435,10 @@ class OtherCheckoutService
                                 'shipping_zip'       => $shipping_zip,
                                 'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
                                 'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
+                                'pickup_date'        => Carbon::parse($pickup_date)->format('Y-m-d'),
                             ];
+
+                            $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
 
                             Addres::create($shipping_data);
                         }
@@ -456,7 +460,9 @@ class OtherCheckoutService
                     $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
                     Order::where('pk_orders', $get_order->pk_orders)->update([
                         'total'           => $total,
-                        'delivery_charge' => $deliveryCharges
+                        'delivery_charge' => $deliveryCharges,
+                        'pickup_date'     => $sameAsBilling == 1 && $request->pickup_date ?
+                            Carbon::parse($request->pickup_date)->format('Y-m-d') : null,
                     ]);
                 }
             }
