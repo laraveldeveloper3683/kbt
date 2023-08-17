@@ -268,12 +268,12 @@
                                                 ${{ @$item['same_as_billing'] ? '0.00' : @number_format(@$item['delivery_charge'], 2) }}
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {{--<tr>
                                             <th>Pickup Date</th>
                                             <td>
                                                 {{ @$item['same_as_billing'] ? '' : @$item['pickup_date'] }}
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     </table>
                                 @empty
                                     <table class="table table-hover table-bordered">

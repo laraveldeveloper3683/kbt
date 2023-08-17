@@ -213,7 +213,7 @@ class FlowerBySubscriptionController extends Controller
                 session()->put('oth_total_quantity', array_sum(array_column($oth_cart, 'quantity')));
             }
 
-            $total    = $this->getCartTotal();
+            $total = $this->getCartTotal();
             session()->forget('oth_checkout_preview');
             $htmlCart = view('_header_cart')->render();
             return response()->json(['msg' => 'Product removed successfully', 'data' => $htmlCart, 'total' => $total, 'totalQty' => session()->get('oth_total_quantity')]);
@@ -239,7 +239,7 @@ class FlowerBySubscriptionController extends Controller
         ));
 
         if (auth()->check()) {
-            $user_data      = auth()->user();
+            $user_data = auth()->user();
 
             $pk_customer_id = @$user_data->pk_customers;
             $kbt_address    = CustomerAddres::where('pk_customers', @$pk_customer_id)->get();
@@ -294,7 +294,9 @@ class FlowerBySubscriptionController extends Controller
                 return redirect('other-checkout')->withErrors($validator)->withInput();
             }
 
-            if ($request->choise_details == 'billing_address') {
+
+            $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$request->choise_details)->first();
+            if ($deliveryOption->delivery_or_pickup == 'Delivery') {
                 $validator = Validator::make($request->all(), [
                     'billing_address'      => 'required',
                     'billing_city'         => 'required',
@@ -936,7 +938,7 @@ class FlowerBySubscriptionController extends Controller
                     Day - ' . $data1->day . ' , ' . date('h:i A', strtotime($data1->open_time)) . ' - ' . date('h:i A', strtotime($data1->close_time)) . '
                 </div>
                 <div class="col-md-2">
-                    <input type="radio" name="store_id" value="' . $data1->pk_location_times . '/' . $store->pk_locations . '" value="store"> Select
+                    <input type="radio" required name="store_id" value="' . $data1->pk_location_times . '/' . $store->pk_locations . '" value="store"> Select
                 </div>';
                 }
                 $output['html'] .= '</div></div></div>';

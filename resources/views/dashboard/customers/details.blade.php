@@ -43,7 +43,7 @@
                                         <span class="me-3">{!! Helper::formatDate($orders->created_at) !!}</span>
                                         <span class="me-3">#{!! $orders->pk_orders !!}</span>
                                         <span
-                                                class="badge rounded-pill bg-info">{!! ucfirst($orders->orderStatus->order_status) !!}</span>
+                                            class="badge rounded-pill bg-info">{!! ucfirst($orders->orderStatus->order_status) !!}</span>
                                     </div>
                                 </div>
                                 <table class="table table-borderless">
@@ -130,7 +130,7 @@
                                         <h3 class="h6">Payment Method</h3>
                                         <p>Visa -1234 <br>
                                             Total: ${!! number_format($orders->total,2) !!} <span
-                                                    class="badge bg-success rounded-pill">PAID</span></p>
+                                                class="badge bg-success rounded-pill">PAID</span></p>
                                     </div>
                                     <div class="col-lg-6">
                                         <h3 class="h6">Billing address</h3>
@@ -161,7 +161,7 @@
                                     <strong>Order Id</strong>
                                     <span><a href="javascript:void(0)"
                                              class="text-decoration-underline">#{!! $orders->pk_orders !!}</a> <i
-                                                class="bi bi-box-arrow-up-right"></i> </span>
+                                            class="bi bi-box-arrow-up-right"></i> </span>
                                     <hr>
                                     <h3 class="h6">Address</h3>
                                     @foreach($order_items as $order_item)
@@ -176,8 +176,8 @@
                                             {{ $itemAddr->state->state_name .', '. $itemAddr->country->country_name .' '. $itemAddr->zip }}
                                             <br>
                                             <abbr title="Phone">P:</abbr> {!! $itemAddr->shipping_phone !!}
-                                            <br>
-                                            @if($itemAddr->pickup_date && !$itemAddr->same_as_billing)
+                                            {{--<br>--}}
+                                            {{--@if($itemAddr->pickup_date && !$itemAddr->same_as_billing)
                                                 <small class="text-muted">
                                                     Pickup Date
                                                     - {{ @date('m/d/Y', strtotime(@$itemAddr->pickup_date)) }}
@@ -187,7 +187,7 @@
                                                     Pickup Date
                                                     - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
                                                 </small>
-                                            @endif
+                                            @endif--}}
                                         </address>
                                         <p class="text-wrap font-weight-bold">
                                             Delivery Charge:
@@ -198,7 +198,7 @@
                                 </div>
                             </div>
                         @endif
-                        @if($orders->deliveryOption->delivery_or_pickup == 'Store Pickup')
+                        @if($orders->deliveryOption->delivery_or_pickup == 'Store Pickup' && $account)
                             <div class="card mb-4">
                                 <!-- Pickup Information -->
                                 <div class="card-body">
@@ -211,6 +211,13 @@
                                         {{($account->state) ? $account->country->country_name.',' : '' }}{{$account->zip}}
                                         <br/>
                                         <abbr title="Phone">P:</abbr> {!! $account->business_phone !!}
+                                        <br>
+                                        @if(@$orders->pickup_date)
+                                            <small class="text-muted">
+                                                Pickup Date
+                                                - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
+                                            </small>
+                                        @endif
                                     </address>
                                 </div>
                             </div>

@@ -66,21 +66,28 @@
                                             </td>
                                         @endif
                                     </tr>
-                                    {{--@if($orders->address == $orders->billaddress)
-                                    <tr>
-                                        <th style="width:230px;">Shipping Address Same</th>
-                                        <td>
-                                            <input type="checkbox" value="Shipping Address same as Billing Address" checked>
-                                        </td>
-                                    </tr>
-                                    @else--}}
-                                    <!--                                    <tr>
-                                        <th>Shipping Address</th>
-                                        <td style="width: 365px;">
-                                            {{ $orders->billaddress }} {{ isset($orders->billaddress_1) ?  '#'.$orders->billaddress_1 : ''}} </br> {{ $orders->billcity }} {{ $orders->billstate_name }} {{ $orders->billzip }}
-                                    </td>
-                                </tr>-->
-                                    {{-- @endif--}}
+                                    @if($orders->deliveryOption->delivery_or_pickup == 'Store Pickup' && $account)
+                                        <tr>
+                                            <th>Pickup Address</th>
+                                            <td>
+                                                <address>
+                                                    <strong>{{ $account->location_name }}</strong><br>
+                                                    {{$account->address}} , {{$account->city}}
+                                                    , {{($account->state) ? $account->state->state_name.',' : ''}} <br/>
+                                                    {{($account->state) ? $account->country->country_name.',' : '' }}{{$account->zip}}
+                                                    <br/>
+                                                    <abbr title="Phone">P:</abbr> {!! $account->business_phone !!}
+                                                    <br>
+                                                    @if(@$orders->pickup_date)
+                                                        <small class="text-muted">
+                                                            Pickup Date
+                                                            - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
+                                                        </small>
+                                                    @endif
+                                                </address>
+                                            </td>
+                                        </tr>
+                                    @endif
 
                                 </table>
                             </div>
@@ -225,8 +232,8 @@
                                                                     : number_format($item->shippingAddress->delivery_charge, 2) }}
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <th>Delivery Charge</th>
+                                        {{--<tr>
+                                            <th>Pickup Date</th>
                                             <td>
                                                 @if($item->shippingAddress->pickup_date && !$item->shippingAddress->same_as_billing)
                                                     {{ @date('m/d/Y', strtotime(@$item->shippingAddress->pickup_date)) }}
@@ -234,7 +241,7 @@
                                                     {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
                                                 @endif
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     </table>
                                 @empty
                                     <table class="table table-hover table-bordered">

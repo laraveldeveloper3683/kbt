@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Accountadmin;
 use App\CustomerAddres;
 use App\Helper\Helper;
 use App\Http\Middleware\Customer;
+use App\Location;
+use App\LocationTime;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -19,7 +21,7 @@ class OrderController extends Controller
     public function index()
     {
         $order_status = OrderStatus::all();
-        $orders = Order::latest()->with([
+        $orders       = Order::latest()->with([
             'orderStatus',
             'customer',
             'location',
@@ -36,11 +38,23 @@ class OrderController extends Controller
         $orderStatus     = OrderStatus::all();
         $customerAddress = CustomerAddres::where('pk_customers', $orders->pk_customers)->latest()
             ->with(['state', 'country'])->first();
+
+        $account = null;
+        if ($orders->deliveryOption->delivery_or_pickup == 'Store Pickup') {
+            $locationTime = LocationTime::where('pk_location_times', $orders->pk_location_times)->first();
+            if ($locationTime) {
+                $account = Location::where('pk_locations', $locationTime->pk_locations)->with('locationTime')->first();
+            }
+            //echo "<pre>"; print_r($account); die;
+            // $account = Account::where('pk_account',$orders->pk_account)->with(['locationType','locationType.locationTime','country','state'])->first();
+        }
+
         return view('accountadmin.orders.detail', compact(
             'orders',
             'items',
             'orderStatus',
-            'customerAddress'
+            'customerAddress',
+            'account'
         ));
     }
 

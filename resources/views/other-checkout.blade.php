@@ -556,22 +556,38 @@
                     @endphp
 
                     @if($deliveryOptions->count())
+                        @php
+                            $isOldChoiseDetails = 0;
+                            if (isset($oldData['choise_details'])) {
+                                $isOldChoiseDetails = 1;
+                            }
+                        @endphp
                         <div class="">
                             @foreach($deliveryOptions as $deliveryOption)
-                                <input type="radio" name="choise_details" onClick="myFun(this);"
+                                @php
+                                    $choiseDetailsChecked = '';
+                                    if (isset($oldData['choise_details']) && $oldData['choise_details'] == $deliveryOption->pk_delivery_or_pickup) {
+                                        $choiseDetailsChecked = 'checked';
+                                    }
+
+                                    if ((!isset($oldData['choise_details']) || @$oldData['choise_details'] != $deliveryOption->pk_delivery_or_pickup) && $loop->first) {
+                                        $choiseDetailsChecked = 'checked';
+                                    }
+                                @endphp
+                                <input type="radio" name="choise_details" onClick="myFun();"
                                        value="{{ $deliveryOption->pk_delivery_or_pickup }}"
                                        data-text="{{ $deliveryOption->delivery_or_pickup }}"
-                                    {{ $loop->first ? 'checked' : '' }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
+                                    {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
                             @endforeach
                         </div>
 
-                        <div class="form-group mt-4" id="pickup-date-div">
+                        <div class="form-group mt-4" id="pickup-date-div" style="display: none;">
                             <label for="pickup-date" class="form-label">
                                 Select Pickup Date
                             </label>
                             <input type="text" name="pickup_date" id="pickup-date"
                                    class="form-control pickup-date @error('pickup_date') is-invalid @enderror"
-                                   placeholder="Enter pickup date" required
+                                   placeholder="Enter pickup date"
                                    value="{{ old('pickup_date', @$oldData['pickup_date']) }}">
                             @error('pickup_date')
                             <span class="invalid-feedback d-block" role="alert">
@@ -592,7 +608,7 @@
                     <div class="radio">
                         <label>
                             <input type="radio" checked name="address_type"
-                                   onclick="setExisting(this.checked);"
+                                   onclick="setExisting();"
                                    value="existing" id="existing_address">
                             &nbsp;I want to use an existing address
                         </label>
@@ -826,7 +842,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12">
+                                        {{--<div class="col-md-12">
                                             <div class="form-group mt-4">
                                                 <label for="pickup-date{{ $id }}" class="form-label">
                                                     Select Pickup Date
@@ -844,7 +860,7 @@
                                                 </span>
                                                 @enderror
                                             </div>
-                                        </div>
+                                        </div>--}}
                                     </div>
                                     <input type="hidden" id="is_same_as_billing{{ $id }}"
                                            name="item_address[{{ $id }}][same_as_billing]" value="{{ old('item_address') &&
@@ -1083,7 +1099,7 @@
                     var de = data.cost;
                     $('.deleveryCast').text('$' + de);
 
-                    if ($('input[name="choise_details"]:checked').val() == 'store') {
+                    if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                         var to = totalcast + parseFloat(data.taxRate);
                     } else {
                         var to = totalcast + parseFloat(data.cost) + parseFloat(data.taxRate);
@@ -1102,7 +1118,7 @@
                     $('.shippingCharge').val(data.taxRate);
                     $('.pk_locations').val(data.pk_location)
 
-                    if ($('input[name="choise_details"]:checked').val() == 'store') {
+                    if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                         console.log(6);
                         $('.DeliveryChargeDiv').hide();
                     }
@@ -1148,7 +1164,7 @@
                         var totalcast = parseFloat($('.totalCast').val());
                         var de = data.cost;
                         $('.deleveryCast').text('$' + de);
-                        if ($('input[name="choise_details"]:checked').val() == 'store') {
+                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                             de = 0;
                             var to = totalcast + parseFloat(data.taxRate);
                         } else {
@@ -1169,7 +1185,7 @@
                         $('.shippingCharge').val(data.taxRate);
                         $('.pk_locations').val(data.pk_location)
 
-                        if ($('input[name="choise_details"]:checked').val() == 'store') {
+                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                             console.log(1);
                             $('.DeliveryChargeDiv').hide();
                         }
@@ -1201,7 +1217,7 @@
                         var de = data.cost;
                         $('.deleveryCast').text('$' + de);
 
-                        if ($('input[name="choise_details"]:checked').val() == 'store') {
+                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                             de = 0;
                             var to = totalcast + parseFloat(data.taxRate);
                         } else {
@@ -1220,7 +1236,7 @@
                         $('.shippingCharge').val(data.taxRate);
                         $('.pk_locations').val(data.pk_location)
 
-                        if ($('input[name="choise_details"]:checked').val() == 'store') {
+                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                             console.log(2);
                             $('.DeliveryChargeDiv').hide();
                         }
@@ -1250,7 +1266,7 @@
             }
         }
 
-        function setExisting(value) {
+        function setExisting() {
             var aadd = $('#existing_address_id').val();
             if (aadd) {
                 getAddreessById(aadd);
@@ -1261,14 +1277,18 @@
             $('.store').hide();
         }
 
-        function myFun(item) {
-            let value = $(item).data('text');
+        function myFun() {
+            let checkedItem = $('input[name="choise_details"]:checked');
+
+            let value = checkedItem.data('text');
 
             console.log('myFun -> ', value);
 
             if (value == 'Delivery') {
                 // $('.billing').show();
                 $('.store').hide();
+                $('.store').find('input[name="store_id"]').removeAttr('checked');
+                $('.store').find('input[name="store_id"]').removeAttr('required');
 
                 var order_add = $('.abcde:selected').data('city');
                 if (order_add) {
@@ -1281,6 +1301,9 @@
                     }
                 }
                 $('.DeliveryChargeDiv').show();
+                $('#pickup-date-div').hide();
+                $('#pickup-date').removeAttr('required');
+                $('#pickup-date').val('');
             }
 
             if (value == 'Store Pickup') {
@@ -1294,6 +1317,10 @@
                 var storecity = $('.storecity').val();
                 $('.billing').hide();
                 $('.store').show();
+
+                $('#pickup-date-div').show();
+                $('#pickup-date').attr('required', 'required');
+
                 if (order_add) {
                     var city = order_add;
                     var address = adds;
@@ -1336,6 +1363,7 @@
                         $('.DeliveryChargeDiv').hide();
                         $('.estimate_del').html('');
                         $('.deleveryCast').html('$' + 0);
+                        $('.deleveryCast1').val('');
                         $('.store_select').attr('value', 'existing');
                     },
                     complete  : function () {
@@ -1346,6 +1374,11 @@
 
 
             }
+        }
+
+        var isOldChoiseDetails = {{ $isOldChoiseDetails ?? 0 }};
+        if (isOldChoiseDetails) {
+            myFun();
         }
     </script>
 
@@ -1629,7 +1662,7 @@
                         $(`#store_name${id}`).val(response.storeName);
                         $(`#estimated_del${id}`).val(response.estimated_delivery_time);
 
-                        if ($('input[name="choise_details"]:checked').val() == 'store') {
+                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                             var to = totalcast + parseFloat(taxRate);
                         } else {
                             var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxRate);
@@ -1678,13 +1711,13 @@
                 console.log('cartItemAddrIsSame allChecked -> ', allChecked)
                 if (allChecked) {
                     $('.DeliveryChargeDiv').show();
-                    $('#pickup-date').attr('required', 'required');
-                    $('#pickup-date-div').show();
+                    /*$('#pickup-date').attr('required', 'required');
+                    $('#pickup-date-div').show();*/
                 } else {
                     $('.DeliveryChargeDiv').hide();
-                    $('#pickup-date').removeAttr('required');
+                    /*$('#pickup-date').removeAttr('required');
                     $('#pickup-date').val('');
-                    $('#pickup-date-div').hide();
+                    $('#pickup-date-div').hide();*/
                 }
                 return allChecked;
             }

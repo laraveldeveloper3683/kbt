@@ -172,6 +172,7 @@
                         <input type="hidden" name="discountCharge"
                                value="{{ old('discountCharge', @$data['discountCharge']) }}">
                         <input type="hidden" name="coupon" value="{{ old('coupon', @$data['coupon']) }}">
+                        <input type="hidden" name="store_id" value="{{ old('store_id', @$data['store_id']) }}">
                         <input type="hidden" name="pk_locations"
                                value="{{ old('pk_locations', @$data['pk_locations']) }}">
                         <input type="hidden" name="estimated_del"
@@ -233,11 +234,11 @@
                                        value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.delivery_charge')) ?
                                                         old('item_address.'.$id.'.delivery_charge') : @$item_address['delivery_charge'] }}">
-                                <input type="hidden"
+                                {{--<input type="hidden"
                                        name="item_address[{{ $id }}][pickup_date]"
                                        value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.pickup_date')) ?
-                                                        old('item_address.'.$id.'.pickup_date') : @$item_address['pickup_date'] }}">
+                                                        old('item_address.'.$id.'.pickup_date') : @$item_address['pickup_date'] }}">--}}
                             @endforeach
                         @else
                             <input type="hidden" name="item_address">

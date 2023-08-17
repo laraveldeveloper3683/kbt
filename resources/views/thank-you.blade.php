@@ -30,6 +30,11 @@
                                         To {{$store->locationTime->close_time}}</li>
                                 @endif
                             </ul>
+                            @if($order->pickup_date)
+                                <small class="text-muted">
+                                    Pickup Date - {{ @date('m/d/Y', strtotime(@$order->pickup_date)) }}
+                                </small>
+                            @endif
                         </div>
                     @else
                         @foreach($order_items as $order_item)
@@ -48,10 +53,10 @@
                                         Delivery Charge:
                                         ${{ $itemAddr->same_as_billing ? '0.00' : number_format($itemAddr->delivery_charge, 2) }}
                                     </p>
-                                    <p class="text-center font-weight-bold">
+                                    {{--<p class="text-center font-weight-bold">
                                         Pickup Date:
                                         {{ $itemAddr->same_as_billing ? '' : date('m/d/Y', strtotime($itemAddr->pickup_date))  }}
-                                    </p>
+                                    </p>--}}
                                 @endif
                             </div>
                         @endforeach
@@ -90,11 +95,6 @@
                                         <small class="text-muted">
                                             Estimated Delivery - {{ @$order->estimated_del }}
                                         </small>
-                                        @if($order->pickup_date)
-                                            <small class="text-muted">
-                                                Pickup Date - {{ @date('m/d/Y', strtotime(@$order->pickup_date)) }}
-                                            </small>
-                                        @endif
                                     </div>
                                     <span class="text-muted">${{ number_format($order->delivery_charge, 2) }}</span>
                                 </li>

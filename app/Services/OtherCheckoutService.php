@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Addres;
 use App\Customer;
 use App\CustomerAddres;
+use App\DeliveryOrPickup;
 use App\Order;
 use App\OrderItem;
 use App\State;
@@ -45,7 +46,8 @@ class OtherCheckoutService
                 throw ValidationException::withMessages($validator->errors()->toArray());
             }
 
-            if ($request->choise_details == 'billing_address') {
+            $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$request->choise_details)->first();
+            if ($deliveryOption->delivery_or_pickup == 'Delivery') {
                 $validator = Validator::make($request->all(), [
                     'billing_address'      => 'required',
                     'billing_city'         => 'required',
@@ -323,6 +325,9 @@ class OtherCheckoutService
                 $pk_transactions = $res['trans_id'];
             }
 
+            // Delivery option
+            $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$request->choise_details)->first();
+
             // Save order
             $save_order = [
                 'pk_users'              => $pk_user_id,
@@ -371,13 +376,18 @@ class OtherCheckoutService
 
             $save_order['pk_order_status'] = 1;
 
+            if ($deliveryOption->delivery_or_pickup == 'Store Pickup') {
+                $save_order['pickup_date']     = Carbon::parse($request->pickup_date)->format('Y-m-d');
+                $save_order['delivery_charge'] = null;
+                $save_order['estimated_del']   = null;
+            }
+
             // Create order
             $get_order = Order::create($save_order);
 
             if (session('oth_cart')) {
                 $total           = 0;
                 $deliveryCharges = 0;
-                $sameAsBilling   = 1;
 
                 foreach ((array)session('oth_cart') as $key => $orderitem) {
                     $quantity = $orderitem['quantity'] ?? 0;
@@ -420,8 +430,8 @@ class OtherCheckoutService
                                 ?? $cusAddr->zip ?? '';
                             $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
                                 ?? $request->billing_state_name ?? '')->first();
-                            $pickup_date        = $itemAddress[$key]['pickup_date'] ?? $request->pickup_date ?? null;
-                            $shipping_data      = [
+                            // $pickup_date        = $itemAddress[$key]['pickup_date'] ?? $request->pickup_date ?? null;
+                            $shipping_data = [
                                 'pk_customers'       => $pk_customer_id,
                                 'pk_order_items'     => $orderItem->pk_order_items ?? 1,
                                 'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
@@ -435,10 +445,8 @@ class OtherCheckoutService
                                 'shipping_zip'       => $shipping_zip,
                                 'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
                                 'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
-                                'pickup_date'        => Carbon::parse($pickup_date)->format('Y-m-d'),
+                                // 'pickup_date'        => Carbon::parse($pickup_date)->format('Y-m-d'),
                             ];
-
-                            $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
 
                             Addres::create($shipping_data);
                         }
@@ -455,14 +463,12 @@ class OtherCheckoutService
                     }
                 }
 
-                if ($request->choise_details != 'store') {
+                if ($deliveryOption == 'Delivery') {
                     $deliveryCharges = $deliveryCharges > 0 ? $deliveryCharges : $request->deleveryCast1;
                     $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
                     Order::where('pk_orders', $get_order->pk_orders)->update([
                         'total'           => $total,
-                        'delivery_charge' => $deliveryCharges,
-                        'pickup_date'     => $sameAsBilling == 1 && $request->pickup_date ?
-                            Carbon::parse($request->pickup_date)->format('Y-m-d') : null,
+                        'delivery_charge' => $deliveryCharges
                     ]);
                 }
             }
