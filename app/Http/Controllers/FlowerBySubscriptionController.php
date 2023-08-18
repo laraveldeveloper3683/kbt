@@ -478,18 +478,17 @@ class FlowerBySubscriptionController extends Controller
 //            session()->flash('message', 'Order could not be placed, please correct errors.');
             session()->flash('message', $exception->getMessage() . ', please correct errors.');
             session()->flash('level', 'danger');
-            return redirect('other-checkout')->withErrors($validator)->withInput();
+            return redirect('other-checkout')->withInput();
         } catch (\Exception $exception) {
 //            dd($exception->getMessage(), $exception->getTraceAsString(), $exception->getLine());
             session()->flash('message', 'Order could not be placed, please correct errors -> ' . $exception->getMessage());
             session()->flash('level', 'danger');
-            return redirect('other-checkout')->withErrors($validator)->withInput();
+            return redirect('other-checkout')->withInput();
         }
     }
 
     public function other_checkout_copy(Request $request)
     {
-        dd($request->all());
         $user_data = auth()->user();
 
         if (empty(session('oth_cart'))) {

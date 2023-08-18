@@ -176,19 +176,17 @@
                                             {{ $itemAddr->state->state_name .', '. $itemAddr->country->country_name .' '. $itemAddr->zip }}
                                             <br>
                                             <abbr title="Phone">P:</abbr> {!! $itemAddr->shipping_phone !!}
-                                            {{--<br>--}}
-                                            {{--@if($itemAddr->pickup_date && !$itemAddr->same_as_billing)
-                                                <small class="text-muted">
-                                                    Pickup Date
-                                                    - {{ @date('m/d/Y', strtotime(@$itemAddr->pickup_date)) }}
-                                                </small>
-                                            @else
-                                                <small class="text-muted">
-                                                    Pickup Date
-                                                    - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
-                                                </small>
-                                            @endif--}}
+                                            <br>
                                         </address>
+                                        @if($itemAddr->delivery_date && !$itemAddr->same_as_billing)
+                                            <p class="text-wrap font-weight-bold">
+                                                Selected Delivery Date: {{ @date('m/d/Y', strtotime(@$itemAddr->delivery_date)) }}
+                                            </p>
+                                        @else
+                                            <p class="text-wrap font-weight-bold">
+                                                Selected Delivery Date: {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
+                                            </p>
+                                        @endif
                                         <p class="text-wrap font-weight-bold">
                                             Delivery Charge:
                                             ${{ $itemAddr->same_as_billing ? number_format($orders->delivery_charge, 2) : number_format($itemAddr->delivery_charge, 2) }}
@@ -214,7 +212,7 @@
                                         <br>
                                         @if(@$orders->pickup_date)
                                             <small class="text-muted">
-                                                Pickup Date
+                                                Selected Pickup Date
                                                 - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
                                             </small>
                                         @endif

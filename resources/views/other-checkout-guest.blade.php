@@ -505,6 +505,21 @@
                             @endforeach
                         </div>
 
+                        <div class="form-group mt-4" id="delivery-date-div">
+                            <label for="delivery-date" class="form-label">
+                                Select Delivery Date
+                            </label>
+                            <input type="text" name="delivery_date" id="delivery-date"
+                                   class="form-control delivery-date @error('delivery_date') is-invalid @enderror"
+                                   placeholder="Enter delivery date"
+                                   value="{{ old('delivery_date', @$oldData['delivery_date']) }}">
+                            @error('delivery_date')
+                            <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
                         <div class="form-group mt-4" id="pickup-date-div" style="display: none;">
                             <label for="pickup-date" class="form-label">
                                 Select Pickup Date
@@ -712,25 +727,25 @@
                                             </div>
                                         </div>
 
-                                        {{--<div class="col-md-12">
+                                        <div class="col-md-12">
                                             <div class="form-group mt-4">
-                                                <label for="pickup-date{{ $id }}" class="form-label">
-                                                    Select Pickup Date
+                                                <label for="delivery-date{{ $id }}" class="form-label">
+                                                    Select Delivery Date
                                                 </label>
-                                                <input type="text" name="item_address[{{ $id }}][pickup_date]"
-                                                       id="pickup-date{{ $id }}"
-                                                       class="form-control pickup-date"
-                                                       placeholder="Enter pickup date"
+                                                <input type="text" name="item_address[{{ $id }}][delivery_date]"
+                                                       id="delivery-date{{ $id }}"
+                                                       class="form-control delivery-date"
+                                                       placeholder="Enter delivery date"
                                                        value="{{ old('item_address') &&
-                                                        !empty(old('item_address.'.$id.'.pickup_date')) ?
-                                                        old('item_address.'.$id.'.pickup_date') : @$addressItems[$id]['pickup_date'] }}">
-                                                @error('item_address.'.$id.'.pickup_date')
+                                                        !empty(old('item_address.'.$id.'.delivery_date')) ?
+                                                        old('item_address.'.$id.'.delivery_date') : @$addressItems[$id]['delivery_date'] }}">
+                                                @error('item_address.'.$id.'.delivery_date')
                                                 <span class="invalid-feedback d-block" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                                 @enderror
                                             </div>
-                                        </div>--}}
+                                        </div>
                                     </div>
                                     <input type="hidden" id="is_same_as_billing{{ $id }}"
                                            name="item_address[{{ $id }}][same_as_billing]" value="{{ old('item_address') &&
@@ -1163,6 +1178,9 @@
                 $('#pickup-date-div').hide();
                 $('#pickup-date').removeAttr('required');
                 $('#pickup-date').val('');
+
+                $('#delivery-date-div').show();
+                $('#delivery-date').attr('required', 'required');
             }
 
             if (value == 'Store Pickup') {
@@ -1176,6 +1194,10 @@
                 var storecity = $('.storecity').val();
                 $('.billing').hide();
                 $('.store').show();
+
+                $('#delivery-date-div').hide();
+                $('#delivery-date').removeAttr('required');
+                $('#delivery-date').val('');
 
                 $('#pickup-date-div').show();
                 $('#pickup-date').attr('required', 'required');
@@ -1571,10 +1593,18 @@
                 console.log('cartItemAddrIsSame allChecked -> ', allChecked)
                 if (allChecked) {
                     $('.DeliveryChargeDiv').show();
-                    $('#pickup-date').attr('required', 'required');
-                    $('#pickup-date-div').show();
+                    $('#delivery-date').attr('required', 'required');
+                    $('#delivery-date-div').show();
+
+                    $('#pickup-date').removeAttr('required');
+                    $('#pickup-date').val('');
+                    $('#pickup-date-div').hide();
                 } else {
                     $('.DeliveryChargeDiv').hide();
+                    $('#delivery-date').removeAttr('required');
+                    $('#delivery-date').val('');
+                    $('#delivery-date-div').hide();
+
                     $('#pickup-date').removeAttr('required');
                     $('#pickup-date').val('');
                     $('#pickup-date-div').hide();
@@ -1698,6 +1728,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.pickup-date').datepicker();
+            $('.delivery-date').datepicker();
         });
     </script>
 @endsection

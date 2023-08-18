@@ -35,11 +35,11 @@ class OtherCheckoutService
                 'username'             => 'nullable|unique:users',
                 'phone'                => 'required',
                 'email'                => 'nullable|unique:users',
-                'billing_address'      => 'required',
-                'billing_city'         => 'required',
-                'billing_state_name'   => 'required',
-                'billing_zip'          => 'required',
-                'billing_country_name' => 'required',
+                'primary_address'      => 'required',
+                'primary_city'         => 'required',
+                'primary_state_name'   => 'required',
+                'primary_zip'          => 'required',
+                'primary_country_name' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -380,6 +380,7 @@ class OtherCheckoutService
                 $save_order['pickup_date']     = Carbon::parse($request->pickup_date)->format('Y-m-d');
                 $save_order['delivery_charge'] = null;
                 $save_order['estimated_del']   = null;
+                $save_order['delivery_date']   = null;
             }
 
             // Create order
@@ -388,6 +389,7 @@ class OtherCheckoutService
             if (session('oth_cart')) {
                 $total           = 0;
                 $deliveryCharges = 0;
+                $sameAsBilling   = 1;
 
                 foreach ((array)session('oth_cart') as $key => $orderitem) {
                     $quantity = $orderitem['quantity'] ?? 0;
@@ -430,8 +432,8 @@ class OtherCheckoutService
                                 ?? $cusAddr->zip ?? '';
                             $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
                                 ?? $request->billing_state_name ?? '')->first();
-                            // $pickup_date        = $itemAddress[$key]['pickup_date'] ?? $request->pickup_date ?? null;
-                            $shipping_data = [
+                            $delivery_date      = $itemAddress[$key]['delivery_date'] ?? $request->delivery_date ?? null;
+                            $shipping_data      = [
                                 'pk_customers'       => $pk_customer_id,
                                 'pk_order_items'     => $orderItem->pk_order_items ?? 1,
                                 'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
@@ -445,8 +447,10 @@ class OtherCheckoutService
                                 'shipping_zip'       => $shipping_zip,
                                 'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
                                 'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
-                                // 'pickup_date'        => Carbon::parse($pickup_date)->format('Y-m-d'),
+                                'delivery_date'      => Carbon::parse($delivery_date)->format('Y-m-d'),
                             ];
+
+                            $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
 
                             Addres::create($shipping_data);
                         }
@@ -463,12 +467,14 @@ class OtherCheckoutService
                     }
                 }
 
-                if ($deliveryOption == 'Delivery') {
+                if ($deliveryOption->delivery_or_pickup == 'Delivery') {
                     $deliveryCharges = $deliveryCharges > 0 ? $deliveryCharges : $request->deleveryCast1;
                     $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
-                    Order::where('pk_orders', $get_order->pk_orders)->update([
+                    $get_order->update([
                         'total'           => $total,
-                        'delivery_charge' => $deliveryCharges
+                        'delivery_charge' => $deliveryCharges,
+                        'delivery_date'   => $sameAsBilling == 1 && $request->delivery_date ?
+                            Carbon::parse($request->delivery_date)->format('Y-m-d') : null,
                     ]);
                 }
             }

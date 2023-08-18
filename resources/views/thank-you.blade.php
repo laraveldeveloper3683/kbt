@@ -32,7 +32,7 @@
                             </ul>
                             @if($order->pickup_date)
                                 <small class="text-muted">
-                                    Pickup Date - {{ @date('m/d/Y', strtotime(@$order->pickup_date)) }}
+                                    Selected Pickup Date - {{ @date('m/d/Y', strtotime(@$order->pickup_date)) }}
                                 </small>
                             @endif
                         </div>
@@ -53,10 +53,12 @@
                                         Delivery Charge:
                                         ${{ $itemAddr->same_as_billing ? '0.00' : number_format($itemAddr->delivery_charge, 2) }}
                                     </p>
-                                    {{--<p class="text-center font-weight-bold">
-                                        Pickup Date:
-                                        {{ $itemAddr->same_as_billing ? '' : date('m/d/Y', strtotime($itemAddr->pickup_date))  }}
-                                    </p>--}}
+                                    @if($itemAddr->delivery_date)
+                                        <p class="text-center font-weight-bold">
+                                            Selected Delivery Date:
+                                            {{ $itemAddr->same_as_billing ? '' : date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
+                                        </p>
+                                    @endif
                                 @endif
                             </div>
                         @endforeach
@@ -95,6 +97,15 @@
                                         <small class="text-muted">
                                             Estimated Delivery - {{ @$order->estimated_del }}
                                         </small>
+                                        <br>
+                                        @if($order->delivery_date)
+                                            <small class="text-muted">
+                                                <strong>
+                                                    Selected Delivery Date
+                                                </strong>
+                                                - {{ @date('m/d/Y', strtotime(@$order->delivery_date)) }}
+                                            </small>
+                                        @endif
                                     </div>
                                     <span class="text-muted">${{ number_format($order->delivery_charge, 2) }}</span>
                                 </li>

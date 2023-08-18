@@ -80,7 +80,7 @@
                                                     <br>
                                                     @if(@$orders->pickup_date)
                                                         <small class="text-muted">
-                                                            Pickup Date
+                                                            Selected Pickup Date
                                                             - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
                                                         </small>
                                                     @endif
@@ -162,12 +162,6 @@
                                                 {{ $transaction->account_type }}
                                             </td>
                                         </tr>
-                                        <!--                                        <tr>
-                                            <th>Currency Type</th>
-                                            <td>
-                                                {{ $transaction->currency }}
-                                        </td>
-                                    </tr>-->
                                     @endforeach
                                     <tr>
                                         <th>Order Status</th>
@@ -232,16 +226,16 @@
                                                                     : number_format($item->shippingAddress->delivery_charge, 2) }}
                                             </td>
                                         </tr>
-                                        {{--<tr>
-                                            <th>Pickup Date</th>
+                                        <tr>
+                                            <th>Selected Delivery Date</th>
                                             <td>
-                                                @if($item->shippingAddress->pickup_date && !$item->shippingAddress->same_as_billing)
-                                                    {{ @date('m/d/Y', strtotime(@$item->shippingAddress->pickup_date)) }}
+                                                @if($item->shippingAddress->delivery_date && !$item->shippingAddress->same_as_billing)
+                                                    {{ @date('m/d/Y', strtotime(@$item->shippingAddress->delivery_date)) }}
                                                 @else
-                                                    {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
+                                                    {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
                                                 @endif
                                             </td>
-                                        </tr>--}}
+                                        </tr>
                                     </table>
                                 @empty
                                     <table class="table table-hover table-bordered">

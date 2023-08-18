@@ -78,12 +78,23 @@
                                             {{ @$data['estimated_del'] }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Pickup Date</th>
-                                        <td>
-                                            {{ @$data['pickup_date'] }}
-                                        </td>
-                                    </tr>
+                                    @if($deliveryOption->delivery_or_pickup == 'Delivery' && $sameAsBilling)
+                                        <tr>
+                                            <th>Selected Delivery Date</th>
+                                            <td>
+                                                {{ @$data['delivery_date'] }}
+                                            </td>
+                                        </tr>
+                                    @endif
+
+                                    @if($deliveryOption->delivery_or_pickup == 'Store Pickup')
+                                        <tr>
+                                            <th>Selected Pickup Date</th>
+                                            <td>
+                                                {{ @$data['pickup_date'] }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </table>
 
                                 <div class="row">
@@ -268,12 +279,12 @@
                                                 ${{ @$item['same_as_billing'] ? '0.00' : @number_format(@$item['delivery_charge'], 2) }}
                                             </td>
                                         </tr>
-                                        {{--<tr>
-                                            <th>Pickup Date</th>
+                                        <tr>
+                                            <th>Selected Delivery Date</th>
                                             <td>
-                                                {{ @$item['same_as_billing'] ? '' : @$item['pickup_date'] }}
+                                                {{ @$item['same_as_billing'] ? '' : @$item['delivery_date'] }}
                                             </td>
-                                        </tr>--}}
+                                        </tr>
                                     </table>
                                 @empty
                                     <table class="table table-hover table-bordered">
