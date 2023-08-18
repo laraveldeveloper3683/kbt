@@ -72,19 +72,20 @@
                                             {{ @strtoupper(@$data['couponCode']) }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Estimated Delivery</th>
-                                        <td>
-                                            {{ @$data['estimated_del'] }}
-                                        </td>
-                                    </tr>
+
                                     @if($deliveryOption->delivery_or_pickup == 'Delivery' && $sameAsBilling)
                                         <tr>
-                                            <th>Selected Delivery Date</th>
+                                            <th>Estimated Delivery</th>
                                             <td>
                                                 {{ @$data['delivery_date'] }}
                                             </td>
                                         </tr>
+                                        {{--<tr>
+                                            <th>Selected Delivery Date</th>
+                                            <td>
+                                                {{ @$data['delivery_date'] }}
+                                            </td>
+                                        </tr>--}}
                                     @endif
 
                                     @if($deliveryOption->delivery_or_pickup == 'Store Pickup')

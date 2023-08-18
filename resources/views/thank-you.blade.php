@@ -94,17 +94,17 @@
                                             delivering from - {{ @$store->location_name }}
                                             , {{ @$store->city }}
                                         </small><br>
-                                        <small class="text-muted">
-                                            Estimated Delivery - {{ @$order->estimated_del }}
-                                        </small>
-                                        <br>
                                         @if($order->delivery_date)
+                                            <small class="text-muted">
+                                                <strong>Estimated Delivery</strong> - {{ @date('m/d/Y', strtotime(@$order->delivery_date)) }}
+                                            </small>
+                                            {{--<br>
                                             <small class="text-muted">
                                                 <strong>
                                                     Selected Delivery Date
                                                 </strong>
                                                 - {{ @date('m/d/Y', strtotime(@$order->delivery_date)) }}
-                                            </small>
+                                            </small>--}}
                                         @endif
                                     </div>
                                     <span class="text-muted">${{ number_format($order->delivery_charge, 2) }}</span>
