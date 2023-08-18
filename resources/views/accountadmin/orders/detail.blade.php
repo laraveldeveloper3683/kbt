@@ -227,7 +227,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Selected Delivery Date</th>
+                                            <th>Estimated Delivery</th>
                                             <td>
                                                 @if($item->shippingAddress->delivery_date && !$item->shippingAddress->same_as_billing)
                                                     {{ @date('m/d/Y', strtotime(@$item->shippingAddress->delivery_date)) }}

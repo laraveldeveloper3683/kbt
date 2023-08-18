@@ -55,7 +55,7 @@
                                     </p>
                                     @if($itemAddr->delivery_date)
                                         <p class="text-center font-weight-bold">
-                                            Selected Delivery Date:
+                                            Estimated Delivery:
                                             {{ $itemAddr->same_as_billing ? '' : date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
                                         </p>
                                     @endif

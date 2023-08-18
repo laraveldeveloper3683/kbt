@@ -281,7 +281,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Selected Delivery Date</th>
+                                            <th>Estimated Delivery</th>
                                             <td>
                                                 {{ @$item['same_as_billing'] ? '' : @$item['delivery_date'] }}
                                             </td>

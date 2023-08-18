@@ -180,11 +180,11 @@
                                         </address>
                                         @if($itemAddr->delivery_date && !$itemAddr->same_as_billing)
                                             <p class="text-wrap font-weight-bold">
-                                                Selected Delivery Date: {{ @date('m/d/Y', strtotime(@$itemAddr->delivery_date)) }}
+                                                Estimated Delivery: {{ @date('m/d/Y', strtotime(@$itemAddr->delivery_date)) }}
                                             </p>
                                         @else
                                             <p class="text-wrap font-weight-bold">
-                                                Selected Delivery Date: {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
+                                                Estimated Delivery: {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
                                             </p>
                                         @endif
                                         <p class="text-wrap font-weight-bold">
