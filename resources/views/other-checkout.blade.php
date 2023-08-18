@@ -720,7 +720,7 @@
                                      style="{{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'display:none;' : '' }}">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="manage_shipping_full_name{{ $id }}">Name Hello</label>
+                                            <label for="manage_shipping_full_name{{ $id }}">Name</label>
                                             <input type="text" class="form-control" id="shipping_full_name{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_full_name]"
                                                    value="{{ old('item_address') &&
