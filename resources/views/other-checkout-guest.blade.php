@@ -734,6 +734,7 @@
                                                 </label>
                                                 <input type="text" name="item_address[{{ $id }}][delivery_date]"
                                                        id="delivery-date{{ $id }}"
+                                                       data-id="{{ $id }}"
                                                        class="form-control delivery-date"
                                                        placeholder="Enter delivery date"
                                                        value="{{ old('item_address') &&
@@ -992,7 +993,7 @@
                     }
                     $('.totalCast1').text('$' + to);
                     $('.stncity').html('<small> delivering from ' + data.storeCity + ',' + data.storeName + '</small>')
-                    $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
+                    // $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
                     $('.estimated_del').val(data.Estimated_Delivery_Time);
 
                     $('.dlCast').css("display", "block!important");
@@ -1060,7 +1061,7 @@
 
                         $('.totalCast1').text('$' + to);
                         $('.stncity').html('<small> delivering from ' + data.storeCity + ',' + data.storeName + '</small>')
-                        $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
+                        // $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
                         $('.estimated_del').val(data.Estimated_Delivery_Time);
 
                         $('.dlCast').css("display", "block!important");
@@ -1112,7 +1113,7 @@
                         }
                         $('.totalCast1').text('$' + to);
                         $('.stncity').html('<small> delivering from ' + data.storeCity + ',' + data.storeName + '</small>')
-                        $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
+                        // $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
                         $('.estimated_del').val(data.Estimated_Delivery_Time);
                         $('.dlCast').css("display", "block!important");
                         $('.taxR').html(`<h6 class="my-0">Tax
@@ -1558,7 +1559,7 @@
                                     delivering from ${response.storeCity},${response.storeName}
                                 </small>
                                 <br>
-                                <small>Estimdated Delivery, ${response.estimated_delivery_time}</small>
+                                <small id="estimat_del${id}"></small>
                             </h6>
 
                             <span class="text-muted">${deliveryCharge}</span>
@@ -1729,6 +1730,25 @@
         $(document).ready(function () {
             $('.pickup-date').datepicker();
             $('.delivery-date').datepicker();
+
+            $('.delivery-date').on('change', function () {
+                let date = $(this).val();
+                let id = $(this).data('id');
+
+                if (date) {
+                    if (id) {
+                        $(`#estimat_del${id}`).html(`<strong>Estimated Delivery - </strong>${date}`);
+                    } else {
+                        $('.estimate_del').html(`<small><strong>Estimated Delivery - </strong>${date}</small>`);
+                    }
+                } else {
+                    if (id) {
+                        $(`#estimat_del${id}`).html('');
+                    } else {
+                        $('.estimate_del').html('');
+                    }
+                }
+            });
         });
     </script>
 @endsection
