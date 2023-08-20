@@ -582,12 +582,13 @@
 
                                 <label for="checkbox{{ $id }}">
                                     <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
-                                           data-id="{{ $id }}" {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing']) ? 'checked' : '' }}>
+                                           data-id="{{ $id }}"
+                                        {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
                                     Use same as Billing Address for this item
                                 </label>
 
                                 <div id="div{{ $id }}"
-                                     style="{{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing']) ? 'display:none;' : '' }}">
+                                     style="{{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'display:none;' : '' }}">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="manage_shipping_full_name{{ $id }}">Name</label>
