@@ -15,11 +15,12 @@
     <table id="cart" class="table table-hover table-condensed" style="margin-top: 60px;margin-bottom:60px;">
         <thead>
         <tr>
-            <th style="width:40%">Item</th>
-            <th style="width:20%" class="text-center">Card Message</th>
+            <th style="width:30%">Item</th>
+            <th style="width:10%" class="text-center">Arrangement Type</th>
+            <th style="width:10%" class="text-center">Card Message</th>
             <th style="width:10%" class="text-center">Price</th>
-            <th style="width:8%" class="text-center">Quantity</th>
-            <th style="width:22%" class="text-center">Subtotal</th>
+            <th style="width:10%" class="text-center">Quantity</th>
+            <th style="width:10%" class="text-center">Subtotal</th>
             <th style="width:10%"></th>
         </tr>
         </thead>
@@ -54,6 +55,9 @@
                             </div>
                         </div>
                     </td>
+                    <td class="text-center" data-th="arrangementType">
+                        {{ @$details['arrangementTypesName'] }}
+                    </td>
                     <td class="text-center" data-th="Message">
                         <textarea name="card_message" class="card_message"
                                   data-id="{{ $id }}">{{ @$details['card_message'] }}</textarea>
@@ -81,8 +85,8 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="1"></td>
-            <td class="text-center" colspan="2"><strong>Total Quantity <span
+            <td colspan="3"></td>
+            <td class="text-center" colspan="3"><strong>Total Quantity <span
                         class="cart-quantity">{{ $total_qty }}</span></strong></td>
         </tr>
         <tr>
@@ -103,7 +107,7 @@
                     </button>
                 @endif
             </td>
-            <td colspan="2" class="hidden-xs"></td>
+            <td colspan="4" class="hidden-xs"></td>
             <td class="hidden-xs text-center"><strong>Total $<span
                         class="cart-total">{{ $total }}</span></strong></td>
             <td class="hidden-xs"></td>

@@ -105,6 +105,7 @@
             -moz-appearance: textfield;
         }
     </style>
+
     <div class="container">
         <div class="row" style="margin-top: 60px;margin-bottom: 60px;">
             <span id="status"></span>
@@ -120,10 +121,14 @@
             <!-- <div class="col-md-7" style="display: flex; align-items: center;"> -->
             <div class="col-md-4" style="">
                 <div class="row" id="content-div">
-                    <p class="mt-2" data-title="{{ $flower->title}}"><b>{{ $flower->title}}</b></p><br>
+                    <p class="mt-2" data-title="{{ $flower->title }}">
+                        <b>
+                            {{ $flower->title }}
+                        </b>
+                    </p>
+                    <br>
                     <h5 style="margin-top: 38px;margin-left: -78px;">
-                        $<span id="cng_price">{{ number_format($flower->price,2,'.','') }}</span>
-
+                        $<span id="cng_price">{{ number_format($flower->price, 2) }}</span>
                     </h5>
 
 
@@ -158,8 +163,10 @@
                         <select class="form-select col-8 category-cls " name="arrangementType" id="arrangementType"
                                 style="margin-left: 182px;margin-top: -56px;width: 130px;">
                             @foreach($arrangementTypes as $arrangementType)
-                                <option value="{{$arrangementType->pk_arrangement_type}}"
-                                        data-price="{{number_format($arrangementType->price,2,'.','')}}">{{$arrangementType->arrangement_type}}</option>
+                                <option value="{{ $arrangementType->pk_arrangement_type }}"
+                                        data-price="{{ $arrangementType->price }}">
+                                    {{ $arrangementType->arrangement_type }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -167,7 +174,8 @@
                     <div class="row" style="margin-top: 30px;margin-left: 62px;">
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary btn-lg btn-block subsciptionType"
-                                    data-sub-id="{{ $flower->pk_floral_arrangements}}">Add to cart
+                                    data-sub-id="{{ $flower->pk_floral_arrangements }}">
+                                Add to cart
                             </button>
                         </div>
                     </div>
@@ -180,7 +188,6 @@
 
 
     <script type="text/javascript">
-        var price = parseFloat({{ $flower->price }});
         $(".subsciptionType").click(function (e) {
             e.preventDefault();
             var ele = $(this);
@@ -216,8 +223,8 @@
         });
 
         $(document).on("change", "#arrangementType", function () {
-            var ele = $(this);
             let agn_price = $('option:selected', this).attr('data-price');
+            console.log('agn_price', agn_price)
 
             if ($('option:selected', this).text() == 'Custom') {
                 $("#cng_price").css('display', 'none');
@@ -228,7 +235,9 @@
                 $("#cng_price").css('display', 'inline');
                 $("#custom_price").css('display', 'none');
             }
-            $("#cng_price").text(agn_price);
+            let quantity = $('#quantity').val();
+            let final_price = Number(agn_price) * Number(quantity);
+            $("#cng_price").text(final_price.toFixed(2));
         })
         var input = $("#custom_price");
         var minValue = parseFloat(input.attr("data-min"));
@@ -264,7 +273,10 @@
                 }
             }
 
-            let newPrice = price * newVal;
+            let agn_price = $('#arrangementType option:selected').data('price');
+
+
+            let newPrice = Number(agn_price) * Number(newVal);
             $('#cng_price').text(newPrice.toFixed(2));
             $button.closest('.sp-quantity').find("input.quntity-input").val(newVal);
         });

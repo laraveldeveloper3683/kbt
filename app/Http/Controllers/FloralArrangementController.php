@@ -14,6 +14,8 @@ use App\ArrangementType;
 use App\FloralArrangement;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class FloralArrangementController extends Controller
 {
@@ -47,7 +49,6 @@ class FloralArrangementController extends Controller
         $category     = $flower->pk_product_category;
         $colorFlowers = ColorFlower::all();
         $vaseTypes    = VaseType::all();
-        $vaseColors   = VaseColor::all();
         $styles       = Style::all();
         $flower_list  = Flower::where('active', 1)->get();
 
@@ -55,7 +56,8 @@ class FloralArrangementController extends Controller
         //$dd( $aranPrice);arrangementTypes = ArrangementType::where('pk_account', $flower->pk_account)->get();
 
 
-        $aranPrice = ArrangementType::where('created_by', $flower->created_by)->where('arrangement_type', 'Custom')->where('pk_account', $flower->pk_account)->first();
+        $aranPrice = ArrangementType::where('created_by', $flower->created_by)
+            ->where('arrangement_type', 'Custom')->where('pk_account', $flower->pk_account)->first();
 
 
         $arrangementTypes = ArrangementType::leftjoin('kbt_floral_arrangement_prices', 'kbt_arrangement_type.pk_arrangement_type', '=', 'kbt_floral_arrangement_prices.pk_arrangement_type')
@@ -75,6 +77,11 @@ class FloralArrangementController extends Controller
         return view('floral-arrangement-details', ['flower' => $flower, 'aranPrice' => $aranPrice, 'colorFlowers' => $colorFlowers, 'vaseTypes' => $vaseTypes, 'colorFlowers' => $colorFlowers, 'styles' => $styles, 'arrangementTypes' => $arrangementTypes, 'flower_list' => $flower_list, 'category' => $category]);
     }
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws \Throwable
+     * @throws ContainerExceptionInterface
+     */
     public function addCard(Request $request)
     {
         // Get Floral Arrangement
@@ -118,9 +125,9 @@ class FloralArrangementController extends Controller
         }
 
         // Set Total Quantity & Cart Session
-        $oth_total_quantity++;
+        $total_quantity = array_sum(array_column($oth_cart, 'quantity'));
         session()->put('oth_cart', $oth_cart);
-        session()->put('oth_total_quantity', $oth_total_quantity);
+        session()->put('oth_total_quantity', $total_quantity);
 
         // Get Cart HTML for Header
         $htmlCart = view('_header_cart')->render();
