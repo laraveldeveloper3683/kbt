@@ -23,10 +23,8 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="//code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="//code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-    <script>
-        $(function () {
-            $("#datepicker").datepicker();
-        });
+    <script defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB80hPTftX9xYXqy6_NcooDtW53kiIH3A&libraries=places">
     </script>
 
 
@@ -143,7 +141,6 @@
 <script src="{{asset('home/js/owl.carousel.min.js')}}"></script>
 <script src="{{asset('home/js/jquery.magnific-popup.min.js')}}"></script>
 <script src="{{asset('home/js/scrollax.min.js')}}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
 <script src="{{asset('home/js/google-map.js')}}"></script>
 <script src="{{asset('home/js/main.js')}}"></script>
 

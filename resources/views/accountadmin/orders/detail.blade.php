@@ -119,12 +119,21 @@
                                         </td>
                                     </tr>
 
-                                    <tr>
-                                        <th>Delivery Charge</th>
-                                        <td class="text-right">
-                                            ${{ number_format($orders->delivery_charge, 2) }}
-                                        </td>
-                                    </tr>
+                                    @if($orders->delivery_charge && count($items) > 0 && count($items) == 1)
+                                        <tr>
+                                            <th>Delivery Charge</th>
+                                            <td class="text-right">
+                                                ${{ number_format($orders->delivery_charge, 2) }}
+                                            </td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <th>Delivery Charges</th>
+                                            <td class="text-right">
+                                                ${{ number_format($orders->delivery_charge, 2) }}
+                                            </td>
+                                        </tr>
+                                    @endif
 
                                     <tr>
                                         <th>Tax</th>
@@ -222,17 +231,14 @@
                                         <tr>
                                             <th>Delivery Charge</th>
                                             <td>
-                                                ${{ $item->shippingAddress->same_as_billing ? number_format($orders->delivery_charge, 2)
-                                                                    : number_format($item->shippingAddress->delivery_charge, 2) }}
+                                                ${{ number_format($item->shippingAddress->delivery_charge, 2) }}
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Estimated Delivery</th>
                                             <td>
-                                                @if($item->shippingAddress->delivery_date && !$item->shippingAddress->same_as_billing)
+                                                @if($item->shippingAddress->delivery_date)
                                                     {{ @date('m/d/Y', strtotime(@$item->shippingAddress->delivery_date)) }}
-                                                @else
-                                                    {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
                                                 @endif
                                             </td>
                                         </tr>

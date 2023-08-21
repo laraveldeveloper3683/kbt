@@ -35,28 +35,12 @@ class OtherCheckoutService
                 'username'             => 'nullable|unique:users',
                 'phone'                => 'required',
                 'email'                => 'nullable|unique:users',
-                'primary_address'      => 'required',
-                'primary_city'         => 'required',
-                'primary_state_name'   => 'required',
-                'primary_zip'          => 'required',
-                'primary_country_name' => 'required',
+                'billing_address'      => 'required',
+                'billing_city'         => 'required',
+                'billing_state_name'   => 'required',
+                'billing_zip'          => 'required',
+                'billing_country_name' => 'required',
             ]);
-
-            if ($validator->fails()) {
-                throw ValidationException::withMessages($validator->errors()->toArray());
-            }
-
-            $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$request->choise_details)->first();
-            if ($deliveryOption->delivery_or_pickup == 'Delivery') {
-                $validator = Validator::make($request->all(), [
-                    'billing_address'      => 'required',
-                    'billing_city'         => 'required',
-                    'billing_state_name'   => 'required',
-                    'billing_country_name' => 'required',
-                    'billing_zip'          => 'required',
-                ]);
-            }
-
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages($validator->errors()->toArray());
@@ -289,6 +273,8 @@ class OtherCheckoutService
 
             $customer_data = Customer::find($pk_customer_id);
 
+            $cartItems = session('oth_cart');
+
             // Check customer exists or not
             if (!$customer_data) {
                 throw ValidationException::withMessages(['error' => 'Customer not found!']);
@@ -351,6 +337,7 @@ class OtherCheckoutService
                 $save_order['delivery_charge'] = $request->deleveryCast1;
             }
 
+
             if (isset($request->shippingCharge)) {
                 $save_order['tax_charge'] = $request->shippingCharge;
             }
@@ -383,15 +370,24 @@ class OtherCheckoutService
                 $save_order['delivery_date']   = null;
             }
 
+            if ($cartItems && count($cartItems) > 0 && count($cartItems) == 1) {
+                // get first key
+                $firstKey                      = array_key_first($cartItems);
+                $save_order['delivery_charge'] = $cartItems[$firstKey]['delivery_charge'] ?? null;
+                $save_order['estimated_del']   = $cartItems[$firstKey]['estimated_del'] ?? null;
+                $save_order['delivery_date']   = isset($cartItems[$firstKey]['delivery_date']) ?
+                    Carbon::parse($cartItems[$firstKey]['delivery_date'])->format('Y-m-d') : null;
+            }
+
             // Create order
             $get_order = Order::create($save_order);
 
-            if (session('oth_cart')) {
+            if ($cartItems) {
                 $total           = 0;
                 $deliveryCharges = 0;
-                $sameAsBilling   = 1;
+                // $sameAsBilling   = 1;
 
-                foreach ((array)session('oth_cart') as $key => $orderitem) {
+                foreach ($cartItems as $key => $orderitem) {
                     $quantity = $orderitem['quantity'] ?? 0;
 
                     if ($quantity > 0) {
@@ -450,7 +446,7 @@ class OtherCheckoutService
                                 'delivery_date'      => Carbon::parse($delivery_date)->format('Y-m-d'),
                             ];
 
-                            $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
+                            // $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
 
                             Addres::create($shipping_data);
                         }
@@ -473,8 +469,8 @@ class OtherCheckoutService
                     $get_order->update([
                         'total'           => $total,
                         'delivery_charge' => $deliveryCharges,
-                        'delivery_date'   => $sameAsBilling == 1 && $request->delivery_date ?
-                            Carbon::parse($request->delivery_date)->format('Y-m-d') : null,
+                        /*'delivery_date'   => $sameAsBilling == 1 && $request->delivery_date ?
+                            Carbon::parse($request->delivery_date)->format('Y-m-d') : null,*/
                     ]);
                 }
             }

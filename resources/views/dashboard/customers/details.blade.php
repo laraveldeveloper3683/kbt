@@ -178,7 +178,7 @@
                                             <abbr title="Phone">P:</abbr> {!! $itemAddr->shipping_phone !!}
                                             <br>
                                         </address>
-                                        @if($itemAddr->delivery_date && !$itemAddr->same_as_billing)
+                                        @if($itemAddr->delivery_date)
                                             <p class="text-wrap font-weight-bold">
                                                 Estimated Delivery: {{ @date('m/d/Y', strtotime(@$itemAddr->delivery_date)) }}
                                             </p>
@@ -189,7 +189,7 @@
                                         @endif
                                         <p class="text-wrap font-weight-bold">
                                             Delivery Charge:
-                                            ${{ $itemAddr->same_as_billing ? number_format($orders->delivery_charge, 2) : number_format($itemAddr->delivery_charge, 2) }}
+                                            ${{ number_format($itemAddr->delivery_charge, 2) }}
                                         </p>
                                         <hr>
                                     @endforeach

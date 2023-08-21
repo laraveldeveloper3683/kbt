@@ -66,26 +66,22 @@
                                             {{ @$deliveryOption->delivery_or_pickup }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Coupon Code</th>
-                                        <td>
-                                            {{ @strtoupper(@$data['couponCode']) }}
-                                        </td>
-                                    </tr>
+                                    @if(isset($data['couponCode']))
+                                        <tr>
+                                            <th>Coupon Code</th>
+                                            <td>
+                                                {{ @strtoupper(@$data['couponCode']) }}
+                                            </td>
+                                        </tr>
+                                    @endif
 
-                                    @if($deliveryOption->delivery_or_pickup == 'Delivery' && $sameAsBilling)
+                                    @if($deliveryOption->delivery_or_pickup == 'Delivery' && $cartItems && count($cartItems) > 0 && count($cartItems) == 1)
                                         <tr>
                                             <th>Estimated Delivery</th>
                                             <td>
                                                 {{ @$data['delivery_date'] }}
                                             </td>
                                         </tr>
-                                        {{--<tr>
-                                            <th>Selected Delivery Date</th>
-                                            <td>
-                                                {{ @$data['delivery_date'] }}
-                                            </td>
-                                        </tr>--}}
                                     @endif
 
                                     @if($deliveryOption->delivery_or_pickup == 'Store Pickup')
@@ -99,37 +95,39 @@
                                 </table>
 
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <h5 class="card-title text-center">Primary Address</h5>
-                                        <table class="table table-bordered table-striped">
-                                            <tr>
-                                                <th>Address</th>
-                                                <td>{{ @$data['primary_address'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Address 1</th>
-                                                <td>{{ @$data['primary_address_1'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>City</th>
-                                                <td>{{ @$data['primary_city'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>State</th>
-                                                <td>{{ @$data['primary_state_name'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Zip</th>
-                                                <td>{{ @$data['primary_zip'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Country</th>
-                                                <td>USA</td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                                    @if(isset($data['primary_address']))
+                                        <div class="col-md-6">
+                                            <h5 class="card-title text-center">Primary Address</h5>
+                                            <table class="table table-bordered table-striped">
+                                                <tr>
+                                                    <th>Address</th>
+                                                    <td>{{ @$data['primary_address'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Address 1</th>
+                                                    <td>{{ @$data['primary_address_1'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>City</th>
+                                                    <td>{{ @$data['primary_city'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>State</th>
+                                                    <td>{{ @$data['primary_state_name'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Zip</th>
+                                                    <td>{{ @$data['primary_zip'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Country</th>
+                                                    <td>USA</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    @endif
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 {{ !isset($data['primary_address']) ? 'mx-auto' : '' }}">
                                         <h5 class="card-title text-center">Billing Address</h5>
                                         <table class="table table-bordered table-striped">
                                             <tr>
@@ -248,59 +246,53 @@
                             </h4>
                         </div>
                         <div class="card-body">
-                            @if(!$sameAsBilling)
-                                @forelse($data['item_address'] as $key => $item)
-                                    <h4 class="h4 text-center">Address For
-                                        - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
-                                    <table class="table table-hover table-bordered">
+                            @forelse($data['item_address'] as $key => $item)
+                                <h4 class="h4 text-center">Address For
+                                    - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
+                                <table class="table table-hover table-bordered">
 
-                                        <tr>
-                                            <th>Full Name</th>
-                                            <td>{{ @$item['shipping_full_name'] }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Phone</th>
-                                            <td>{{ @$item['shipping_phone'] }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Address</th>
-                                            <td style="width: 365px;">
-                                                {{ @$item['shipping_address'] }}
-                                                {{ isset($item['shipping_address_1']) ?
-                                                    '#'.$item['shipping_address_1'] : ''}}
-                                                </br>
-                                                {{ @$item['shipping_city'] }}
-                                                {{ @$item['shipping_state_name'] }}
-                                                {{ @$item['shipping_zip'] }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Delivery Charge</th>
-                                            <td>
-                                                ${{ @$item['same_as_billing'] ? '0.00' : @number_format(@$item['delivery_charge'], 2) }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Estimated Delivery</th>
-                                            <td>
-                                                {{ @$item['same_as_billing'] ? '' : @$item['delivery_date'] }}
-                                            </td>
-                                        </tr>
-                                    </table>
-                                @empty
-                                    <table class="table table-hover table-bordered">
-                                        <tr>
-                                            <td>
-                                                No shipping address found!
-                                            </td>
-                                        </tr>
-                                    </table>
-                                @endforelse
-                            @else
-                                <p class="text-center">
-                                    Same as billing address!
-                                </p>
-                            @endif
+                                    <tr>
+                                        <th>Full Name</th>
+                                        <td>{{ @$item['shipping_full_name'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Phone</th>
+                                        <td>{{ @$item['shipping_phone'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Address</th>
+                                        <td style="width: 365px;">
+                                            {{ @$item['shipping_address'] }}
+                                            {{ isset($item['shipping_address_1']) ?
+                                                '#'.$item['shipping_address_1'] : ''}}
+                                            </br>
+                                            {{ @$item['shipping_city'] }}
+                                            {{ @$item['shipping_state_name'] }}
+                                            {{ @$item['shipping_zip'] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Delivery Charge</th>
+                                        <td>
+                                            ${{ @number_format(@$item['delivery_charge'], 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Estimated Delivery</th>
+                                        <td>
+                                            {{ @$item['delivery_date'] }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            @empty
+                                <table class="table table-hover table-bordered">
+                                    <tr>
+                                        <td>
+                                            No shipping address found!
+                                        </td>
+                                    </tr>
+                                </table>
+                            @endforelse
                         </div>
                     </div>
                 </div>

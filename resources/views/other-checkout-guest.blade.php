@@ -3,7 +3,6 @@
 @section('title', 'Cart')
 
 @section('content')
-
     <style>
         .loader {
             border: 16px solid #f3f3f3;
@@ -14,6 +13,10 @@
             -webkit-animation: spin 2s linear infinite;
             /* Safari */
             animation: spin 2s linear infinite;
+        }
+
+        .modal-backdrop.show {
+            display: none !important;
         }
 
         /* Safari */
@@ -69,6 +72,7 @@
             }
         }
     </style>
+
     <div class="container">
         <div class="py-3 text-center">
             <h2>Checkout</h2>
@@ -233,7 +237,7 @@
             </div>
 
             <div class="col-md-8 order-md-1">
-                <form action="{{ route('other-checkout-preview-post') }}" method="POST">
+                <form action="{{ route('other-checkout-preview-post') }}" method="POST" id="checkoutForm">
                     @csrf
 
                     <h4 class="mb-3">Ordering as Guest User</h4>
@@ -242,6 +246,7 @@
                         <a href="{{ url('guestRegister') }}">Register</a> as New User!
                     </label>
 
+                    {{-- User Info Section --}}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="first_name">First name</label>
@@ -265,217 +270,10 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="username">Username</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="username" name="username"
-                                       value="{{ old('username', @$oldData['username']) }}">
-                                @error('username')
-                                <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="phone">Mobile No. <span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="phone" name="phone"
-                                   value="{{ old('phone', @$oldData['phone']) }}">
-                            @error('phone')
-                            <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                            @enderror
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="email">Email <span class="text-muted"></span></label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                   value="{{ old('email', @$oldData['email']) }}">
-                            @error('email')
-                            <span class="invalid-feedback d-block" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                            @enderror
-                        </div>
-
-                    </div>
-                    <div class="mb-3">
-                        <label for="address">Address</label>
-                        <input type="text" class="form-control" id="primary_address" name="primary_address"
-                               value="{{ old('primary_address', @$oldData['primary_address']) }}">
-                        @error('primary_address')
-                        <span class="invalid-feedback d-block" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="address_1">Address 2 <span class="text-muted">(Optional)</span></label>
-                        <input type="text" class="form-control" id="primary_address_1" name="primary_address_1"
-                               value="{{ old('primary_address_1', @$oldData['primary_address_1']) }}">
-                        @error('primary_address_1')
-                        <span class="invalid-feedback d-block" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                        @enderror
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">City</label>
-                                <input type="text" name="primary_city" id="primary_city" class="form-control"
-                                       value="{{ old('primary_city', @$oldData['primary_city']) }}"
-                                       onkeypress="return RestrictCommaSemicolon(event);" ondrop="return false;"
-                                       onpaste="return false;">
-                                @error('primary_city')
-                                <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">State</label>
-                                <input id="primary_state_name" type="text"
-                                       name="primary_state_name"
-                                       class="form-control"
-                                       value="{{ old('primary_state_name', @$oldData['primary_state_name']) }}">
-                                @error('primary_state_name')
-                                <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Zip</label>
-                                <input type="text" id="primary_postal_code" name="primary_zip" class="form-control"
-                                       value="{{ old('primary_zip', @$oldData['primary_zip']) }}">
-                                @error('primary_zip')
-                                <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Country</label>
-                                <input id="primary_country" type="text" name="primary_country_name"
-                                       class="form-control" readonly
-                                       value="{{ old('primary_country_name', @$oldData['primary_country_name'] ?? 'USA') }}">
-                                @error('primary_country_name')
-                                <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
 
                     <hr class="mb-4">
 
-                    <div id="billing-address-section">
-                        <h4 class="mb-3">Billing Address</h4>
-
-                        <div class="form-group">
-                            <label for="billing_address">Address</label>
-                            <input type="text" class="form-control" id="billing_address"
-                                   name="billing_address"
-                                   value="{{ old('billing_address', @$oldData['billing_address']) }}">
-                            @error('billing_address')
-                            <span class="invalid-feedback d-block" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="billing_address_1">Address 2 <span
-                                    class="text-muted">(Optional)</span></label>
-                            <input type="text" class="form-control" id="billing_address_1"
-                                   name="billing_address_1"
-                                   value="{{ old('billing_address_1', @$oldData['billing_address_1']) }}">
-                            @error('billing_address_1')
-                            <span class="invalid-feedback d-block" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">City</label>
-                                    <input type="text" id="billing_city" name="billing_city"
-                                           class="form-control billingCity"
-                                           value="{{ old('billing_city', @$oldData['billing_city']) }}">
-                                    @error('billing_city')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">State</label>
-                                    <input type="text" id="billing_state_name" name="billing_state_name"
-                                           class="form-control"
-                                           value="{{ old('billing_state_name', @$oldData['billing_state_name']) }}">
-                                    @error('billing_state_name')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Zip</label>
-                                    <input type="text" id="billing_zip" name="billing_zip" class="form-control"
-                                           value="{{ old('billing_zip', @$oldData['billing_zip']) }}">
-                                    @error('billing_zip')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Country</label>
-                                    <input type="text" id="billing_country_name" name="billing_country_name"
-                                           class="form-control" readonly
-                                           value="{{ old('billing_country_name', @$oldData['billing_country_name'] ?? 'USA') }}">
-                                    @error('billing_country_name')
-                                    <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <hr class="mb-4">
-
+                    {{-- Delivery Options --}}
                     @if($deliveryOptions->count())
                         @php
                             $isOldChoiseDetails = 0;
@@ -505,7 +303,7 @@
                             @endforeach
                         </div>
 
-                        <div class="form-group mt-4" id="delivery-date-div">
+                        {{--<div class="form-group mt-4" id="delivery-date-div">
                             <label for="delivery-date" class="form-label">
                                 Select Delivery Date
                             </label>
@@ -518,7 +316,7 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
-                        </div>
+                        </div>--}}
 
                         <div class="form-group mt-4" id="pickup-date-div" style="display: none;">
                             <label for="pickup-date" class="form-label">
@@ -535,22 +333,11 @@
                             @enderror
                         </div>
                     @endif
-                    <br>
 
-                    <div class="radio">
-                        <label>
-                            <input
-                                {{ old('address_type', @$oldData['address_type']) == 'new_address' ? 'checked' : '' }} type="radio"
-                                onclick="setNewAddress(this.checked);" name="address_type" value="new_address">
-                            &nbsp;I want to use a new address
-                        </label>
-                    </div>
-
-                    <hr>
+                    <hr class="mb-4">
 
 
-                    <div class="billing full-address-div"
-                         style="{{ old('address_type', @$oldData['address_type']) == 'new_address' ? '' : 'display:none;' }}">
+                    <div class="billing full-address-div">
 
                         <h3 class="mb-3">
                             <strong>
@@ -580,15 +367,17 @@
                                     <h5>{{ $details['description'] }}</h5>
                                 </div>
 
-                                <label for="checkbox{{ $id }}">
-                                    <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
-                                           data-id="{{ $id }}"
-                                        {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
-                                    Use same as Billing Address for this item
-                                </label>
+                                @if(!$loop->first)
+                                    <label for="checkbox{{ $id }}">
+                                        <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
+                                               data-id="{{ $id }}"
+                                            {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
+                                        Use same as First Item for this item
+                                    </label>
+                                @endif
 
-                                <div id="div{{ $id }}"
-                                     style="{{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'display:none;' : '' }}">
+                                <div id="div{{ $id }}" data-id="{{ $id }}" class="item-addr"
+                                     style="{{ !$loop->first && old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'display:none;' : '' }}">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="manage_shipping_full_name{{ $id }}">Name</label>
@@ -770,7 +559,7 @@
                                            name="item_address[{{ $id }}][store_city]"
                                            value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.store_city')) ?
-                                                        old('item_address.'.$id.'.store_city') : @$addressItems[$id]['store_city'] }}">
+                                                        old('item_address.'.$id.'.store_city') ?? 1 : @$addressItems[$id]['store_city'] ?? 1 }}">
 
                                     <input type="hidden" id="store_name{{ $id }}"
                                            name="item_address[{{ $id }}][store_name]"
@@ -800,6 +589,98 @@
 
                     <hr class="mb-4">
 
+                    {{-- Billing Address Section --}}
+                    <div id="billing-address-section">
+                        <h4 class="mb-3">Billing Address</h4>
+
+                        <div class="form-group">
+                            <label for="billing_address">Address</label>
+                            <input type="text" class="form-control" id="billing_address"
+                                   name="billing_address"
+                                   value="{{ old('billing_address', @$oldData['billing_address']) }}">
+                            @error('billing_address')
+                            <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="billing_address_1">Address 2 <span
+                                    class="text-muted">(Optional)</span></label>
+                            <input type="text" class="form-control" id="billing_address_1"
+                                   name="billing_address_1"
+                                   value="{{ old('billing_address_1', @$oldData['billing_address_1']) }}">
+                            @error('billing_address_1')
+                            <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" id="billing_city" name="billing_city"
+                                           class="form-control billingCity"
+                                           value="{{ old('billing_city', @$oldData['billing_city']) }}">
+                                    @error('billing_city')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">State</label>
+                                    <input type="text" id="billing_state_name" name="billing_state_name"
+                                           class="form-control"
+                                           value="{{ old('billing_state_name', @$oldData['billing_state_name']) }}">
+                                    @error('billing_state_name')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Zip</label>
+                                    <input type="text" id="billing_zip" name="billing_zip" class="form-control"
+                                           value="{{ old('billing_zip', @$oldData['billing_zip']) }}">
+                                    @error('billing_zip')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Country</label>
+                                    <input type="text" id="billing_country_name" name="billing_country_name"
+                                           class="form-control" readonly
+                                           value="{{ old('billing_country_name', @$oldData['billing_country_name'] ?? 'USA') }}">
+                                    @error('billing_country_name')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+
                     <input type="hidden" class="form-control amountTotal" id="amount" name="amount"
                            value="{{ old('amount', @$oldData['amount'] ?? $total) }}">
 
@@ -821,74 +702,80 @@
                     <input type="hidden" class="form-control estimated_del" name="estimated_del"
                            value="{{ old('estimated_del', @$oldData['estimated_del']) }}">
 
-                    <button class="btn btn-primary btn-lg btn-block mb-5" type="submit">Continue to Review</button>
+                    <input type="hidden" id="username" class="form-control" name="username"
+                           value="{{ old('username', @$oldData['username']) }}">
+
+                    <input type="hidden" id="email" class="form-control" name="email"
+                           value="{{ old('email', @$oldData['email']) }}">
+
+                    <input type="hidden" id="phone" class="form-control" name="phone"
+                           value="{{ old('phone', @$oldData['phone']) }}">
+
+                    <input type="hidden" id="password" class="form-control" name="password"
+                           value="{{ old('password', @$oldData['password']) }}">
+
+                    <button class="btn btn-primary btn-lg btn-block mb-5" type="submit" id="previewBtn">
+                        Continue to Review
+                    </button>
                 </form>
 
             </div>
         </div>
     </div>
 
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB80hPTftX9xYXqy6_NcooDtW53kiIH3A&libraries=places&callback=initAutocomplete"
-        async defer></script>
+    <!-- User Info Prompt Modal -->
+    <div class="modal fade" id="userInfoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">User Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="modalCloseIcon">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="user-info-form">
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="user-info-username" class="text-dark">Username</label>
+                                <input type="text" id="user-info-username" class="form-control"
+                                       placeholder="Enter username" value="{{ old('username', @$oldData['username']) }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="user-info-email" class="text-dark">Email</label>
+                                <input type="email" id="user-info-email" class="form-control"
+                                       placeholder="Enter email" value="{{ old('email', @$oldData['email']) }}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="user-info-phone" class="text-dark">Phone</label>
+                                <input type="text" id="user-info-phone" class="form-control"
+                                       placeholder="Enter phone" value="{{ old('phone', @$oldData['phone']) }}"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="user-info-password" class="text-dark">Password</label>
+                                <input type="password" id="user-info-password" class="form-control"
+                                       placeholder="Enter password" value="{{ old('password', @$oldData['password']) }}"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="modalCloseBtn">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            // Get references to the checkboxes and the target divs
-            const checkboxes = $('input[type="checkbox"]');
-            const divs = $('[id^="div"]');
-
-            // Handle the change event of all checkboxes
-            checkboxes.on("change", function () {
-                // Loop through each checkbox
-                checkboxes.each(function (index) {
-                    // Get the corresponding div based on the index
-                    const div = divs.eq(index);
-
-                    // Check the state of the checkbox
-                    if ($(this).is(":checked")) {
-                        div.hide(); // Show the div when the checkbox is checked
-                    } else {
-                        div.show(); // Hide the div when the checkbox is unchecked
-                    }
-                });
-            });
-        });
-
-        var ifLogin = '{{ auth()->id() }}';
-        if (ifLogin) {
-            var aadd = $('#existing_address_id').val();
-            getAddreessById(aadd);
-
-            $('#existing_address_id').on('change', function () {
-                getAddreessById($(this).val());
-            });
-        }
-
-        function getAddreessById(id) {
-            $.ajax({
-                url     : "{{ url('getAddressId') }}",
-                type    : 'post',
-                dataType: 'json',
-                data    : {
-                    '_token': '{{ csrf_token() }}',
-                    id      : id,
-                },
-                success : function (data) {
-                    $('.loder').text("");
-                    if (data) {
-                        var city = data.city;
-                        var address = data.address;
-                        shippingCity(city, address);
-                    }
-
-                },
-                complete: function () {
-                    $('.loder').text("");
-                },
-            })
-        }
-
         $('.dlCast').hide();
 
         function couponApply(value) {
@@ -1020,7 +907,6 @@
         }
 
         function shippingCity(city, address) {
-            console.log(city, address)
             var billCity = $('.billingCity').val();
             $('.couponApply').val('');
             $('#couponCode').val('');
@@ -1075,7 +961,6 @@
                         $('.pk_locations').val(data.pk_location)
 
                         if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                            console.log(1);
                             $('.DeliveryChargeDiv').hide();
                         }
 
@@ -1139,26 +1024,19 @@
             }
         }
 
-        function setNewAddress(value) {
-            var city = $('#billing_city').val();
-            var address = $('#billing_address').val();
-            if (city) {
-                shippingCity(city, address);
-            }
-
-            $('.billing').show();
-            $('.store').hide();
-            $('.full-address-div').hide();
-            if (value == true) {
-                $('.full-address-div').show();
-                $('.copyAdrs').addClass('d-none');
-            }
-        }
-
         function myFun() {
             let checkedItem = $('input[name="choise_details"]:checked');
 
             let value = checkedItem.data('text');
+
+            var city = ($("#billing_city").val());
+            var address = ($("#billing_address").val());
+            var address_1 = ($("#billing_address_1").val());
+            var postal_code = ($("#billing_zip").val());
+
+            if (city) {
+                shippingCity(city, address);
+            }
 
             if (value == 'Delivery') {
                 // $('.billing').show();
@@ -1166,65 +1044,22 @@
                 $('.store').find('input[name="store_id"]').removeAttr('checked');
                 $('.store').find('input[name="store_id"]').removeAttr('required');
 
-                var order_add = $('.abcde:selected').attr('city');
-                if (order_add) {
-                    shippingCity('', order_add);
-                } else {
-                    var city = ($("#billing_city").val());
-                    var address = ($("#billing_address").val());
-                    if (city) {
-                        shippingCity(city, address);
-                    }
-                }
                 $('.DeliveryChargeDiv').show();
+
                 $('#pickup-date-div').hide();
                 $('#pickup-date').removeAttr('required');
                 $('#pickup-date').val('');
-
-                $('#delivery-date-div').show();
-                $('#delivery-date').attr('required', 'required');
             }
 
             if (value == 'Store Pickup') {
-                var order_add = $('.abcde:selected').attr('city');
-                var adds = $('.abcde:selected').attr('address');
-                var adds1 = $('.abcde:selected').attr('address_1');
-                var zip = $('.abcde:selected').attr('postal_code');
-                var storeaddress = $('.storeaddress').val();
-                var storeaddress1 = $('.storeaddress1').val();
-                var storezip = $('.storezip').val();
-                var storecity = $('.storecity').val();
                 $('.billing').hide();
                 $('.store').show();
 
-                $('#delivery-date-div').hide();
-                $('#delivery-date').removeAttr('required');
-                $('#delivery-date').val('');
+                $('.store').find('input[name="store_id"]').attr('required', 'required');
 
                 $('#pickup-date-div').show();
                 $('#pickup-date').attr('required', 'required');
 
-                if (order_add) {
-                    var city = order_add;
-                    var address = adds;
-                    var address_1 = adds1;
-                    var postal_code = zip;
-
-                } else if (storeaddress) {
-                    var city = storeaddress;
-                    var address = storeaddress1;
-                    var address_1 = storezip;
-                    var postal_code = storecity;
-                } else {
-                    var city = ($("#billing_city").val());
-                    var address = ($("#billing_address").val());
-                    var address_1 = ($("#billing_address_1").val());
-                    var postal_code = ($("#billing_zip").val());
-
-                }
-                if (city) {
-                    shippingCity(city, address);
-                }
                 $.ajax({
                     url       : "{{ url('other-checkouts') }}",
                     type      : 'post',
@@ -1255,7 +1090,6 @@
 
                 });
 
-
             }
         }
 
@@ -1281,11 +1115,8 @@
     </script>
 
     <script type="text/javascript">
-        var addresno = 0;
-        var autocomplete;
-        var autocomplete2;
-        var autocomplete3;
-        var autocomplete4;
+        var primaryAutocomplete;
+        var billingAutocomplete;
         var componentForm = {
             street_number: 'short_name',
             //route: 'long_name',
@@ -1295,56 +1126,9 @@
             postal_code                : 'short_name'
         };
 
-        function initAutocomplete() {
-            autocomplete = new google.maps.places.Autocomplete(
-                /** @type {!HTMLInputElement} */
-                (document.getElementById('address')), {
-                    componentRestrictions: {
-                        country: ["us"]
-                    },
-                    fields               : ["address_components", "geometry"],
-                    types                : ['geocode']
-                }
-            );
-            autocomplete.addListener('place_changed', function () {
-                fillInAddress.call(autocomplete, 1)
-                var city = ($("#locality").val());
-                var address = ($("#address").val());
-                if (city) {
-                    console.log('city')
-                    shippingCity(city, address);
-                }
-            });
-
-            autocomplete2 = new google.maps.places.Autocomplete(
-                /** @type {!HTMLInputElement} */
-                (document.getElementById('billing_address')), {
-                    componentRestrictions: {
-                        country: ["us"]
-                    },
-                    fields               : ["address_components", "geometry"],
-                    types                : ['geocode']
-                }
-            );
-            autocomplete2.addListener('place_changed', function () {
-                fillInAddress.call(autocomplete2, 2)
-            });
-
-            autocomplete3 = new google.maps.places.Autocomplete(
-                /** @type {!HTMLInputElement} */
-                (document.getElementById('shipping_address')), {
-                    componentRestrictions: {
-                        country: ["us"]
-                    },
-                    fields               : ["address_components", "geometry"],
-                    types                : ['geocode']
-                }
-            );
-            autocomplete3.addListener('place_changed', function () {
-                fillInAddress.call(autocomplete3, 3)
-            });
-
-            autocomplete4 = new google.maps.places.Autocomplete(
+        // Init Primary Address Autocomplete
+        function initPrimaryAutocomplete() {
+            primaryAutocomplete = new google.maps.places.Autocomplete(
                 /** @type {!HTMLInputElement} */
                 (document.getElementById('primary_address')), {
                     componentRestrictions: {
@@ -1354,25 +1138,35 @@
                     types                : ['geocode']
                 }
             );
-            autocomplete4.addListener('place_changed', function () {
-                fillInAddress.call(autocomplete4, 4)
+            primaryAutocomplete.addListener('place_changed', function () {
+                fillInAddress.call(primaryAutocomplete, 'primary')
             });
         }
 
-        function fillInAddress(v1) {
+        // Init Billing Address Autocomplete
+        function initBillingAutocomplete() {
+            billingAutocomplete = new google.maps.places.Autocomplete(
+                (document.getElementById('billing_address')), {
+                    componentRestrictions: {
+                        country: ["us"]
+                    },
+                    fields               : ["address_components", "geometry"],
+                    types                : ['geocode']
+                }
+            );
+            billingAutocomplete.addListener('place_changed', function () {
+                fillInAddress.call(billingAutocomplete, 'billing')
+            });
+        }
+
+        function fillInAddress(type = 'primary') {
             // Get the place details from the autocomplete object.
-            if (v1 == 1) {
-                var place = autocomplete.getPlace();
-            }
-            if (v1 == 2) {
-                var place = autocomplete2.getPlace();
-            }
-            if (v1 == 3) {
-                var place = autocomplete3.getPlace();
+            if (type == 'primary') {
+                var place = primaryAutocomplete.getPlace();
             }
 
-            if (v1 == 4) {
-                var place = autocomplete4.getPlace();
+            if (type == 'billing') {
+                var place = billingAutocomplete.getPlace();
             }
 
             var new_address = '';
@@ -1381,76 +1175,59 @@
 
                 if (addressType == 'street_number') {
                     new_address += place.address_components[i]['short_name'];
-                    if (v1 == 1) {
-                        document.getElementById("address").value = new_address;
-                    }
-                    if (v1 == 2) {
-                        document.getElementById("billing_address").value = new_address;
-                    }
-                    if (v1 == 3) {
-                        document.getElementById("shipping_address").value = new_address;
-                    }
-
-                    if (v1 == 4) {
+                    if (type == 'primary') {
                         $('#primary_address').val(new_address);
                     }
+
+                    if (type == 'billing') {
+                        $('#billing_address').val(new_address);
+                    }
                 }
+
                 if (addressType == 'route') {
                     if (new_address)
                         new_address += " " + place.address_components[i]['long_name'];
                     else
                         new_address += place.address_components[i]['long_name'];
 
-                    if (v1 == 1) {
-                        document.getElementById("address").value = new_address;
-                    }
-                    if (v1 == 2) {
-                        document.getElementById("billing_address").value = new_address;
-                    }
-                    if (v1 == 3) {
-                        document.getElementById("shipping_address").value = new_address;
+                    if (type == 'primary') {
+                        $('#primary_address').val(new_address);
                     }
 
-                    if (v1 == 4) {
-                        $('#primary_address').val(new_address);
+                    if (type == 'billing') {
+                        $('#billing_address').val(new_address);
                     }
                 } else if (new_address == '' && addressType == 'locality') {
                     new_address += place.address_components[i]['long_name'];
 
-                    if (v1 == 1) {
-                        document.getElementById("address").value = new_address;
-                    }
-                    if (v1 == 2) {
-                        document.getElementById("billing_address").value = new_address;
-                    }
-                    if (v1 == 3) {
-                        document.getElementById("shipping_address").value = new_address;
-                    }
-
-                    if (v1 == 4) {
+                    if (type == 'primary') {
                         $('#primary_address').val(new_address);
                     }
 
+                    if (type == 'billing') {
+                        $('#billing_address').val(new_address);
+                    }
                 }
 
                 if (componentForm[addressType]) {
                     var val = place.address_components[i][componentForm[addressType]];
-                    if (v1 == 1) {
+
+                    if (type == 'primary') {
                         if (addressType == 'locality') {
-                            $('#locality').val(val);
+                            $('#primary_city').val(val);
                         }
                         if (addressType == 'administrative_area_level_1') {
-                            $('#administrative_area_level_1').val(val);
+                            $('#primary_state_name').val(val);
                         }
                         /*if (addressType == 'country') {
-                            $('#country').val(val);
+                            $('#primary_country').val(val);
                         }*/
                         if (addressType == 'postal_code') {
-                            $('#postal_code').val(val);
+                            $('#primary_postal_code').val(val);
                         }
                     }
 
-                    if (v1 == 2) {
+                    if (type == 'billing') {
                         if (addressType == 'locality') {
                             $('#billing_city').val(val);
                             addressUpdate(val, 'billing_city', val);
@@ -1466,44 +1243,23 @@
                         }
                     }
 
-                    if (v1 == 3) {
-                        if (addressType == 'locality') {
-                            $('#shipping_city').val(val);
-                            var address = $('#shipping_address').val();
-                            shippingCity(val, address);
-                        }
-                        if (addressType == 'administrative_area_level_1') {
-                            $('#shipping_state_name').val(val);
-                        }
-                        /*if (addressType == 'country') {
-                            $('#shipping_country_name').val(val);
-                        }*/
-                        if (addressType == 'postal_code') {
-                            $('#shipping_zip').val(val);
-                        }
-                    }
-
-                    if (v1 == 4) {
-                        if (addressType == 'locality') {
-                            $('#primary_city').val(val);
-                        }
-                        if (addressType == 'administrative_area_level_1') {
-                            $('#primary_state_name').val(val);
-                        }
-                        /*if (addressType == 'country') {
-                            $('#primary_country').val(val);
-                        }*/
-                        if (addressType == 'postal_code') {
-                            $('#primary_postal_code').val(val);
-                        }
-                    }
-
                 }
 
             }
 
-
         }
+
+        $(document).ready(function () {
+            // Init Primary Address Autocomplete
+            if ($('#primary_address').is(':visible')) {
+                initPrimaryAutocomplete();
+            }
+
+            // Init Billing Address Autocomplete
+            if ($('#billing_address').is(':visible')) {
+                initBillingAutocomplete();
+            }
+        });
     </script>
 
     <script type="text/javascript">
@@ -1537,14 +1293,18 @@
                         var taxRate = $('#tax_rate').val() || response.taxRate;
 
                         var deliveryCharge = response.delivery_charge;
-                        console.log(totalcast)
-                        console.log(taxRate)
-                        console.log(deliveryCharge)
 
                         $(`#delivery_charge${id}`).val(deliveryCharge);
                         $(`#store_city${id}`).val(response.storeCity);
                         $(`#store_name${id}`).val(response.storeName);
                         $(`#estimated_del${id}`).val(response.estimated_delivery_time);
+
+                        const firstItemAddr = $('.item-addr').first();
+                        let firstItemId = firstItemAddr.data('id');
+
+                        if (id == firstItemId) {
+                            fillAllItemAddrFromFirstItem();
+                        }
 
                         if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                             var to = totalcast + parseFloat(taxRate);
@@ -1563,9 +1323,8 @@
                                 <small id="estimat_del${id}"></small>
                             </h6>
 
-                            <span class="text-muted">${deliveryCharge}</span>
+                            <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                        console.log('cartItemShipAddrCharges to -> ', chargeHtml)
                         $('.totalCast1').text('$' + to);
                         $('.amountTotal').val(to);
                         $('.totalCast').val(totalcast + parseFloat(deliveryCharge));
@@ -1580,9 +1339,10 @@
                             $('#tax_rate').val(response.taxRate);
                         }
 
+                        $('.DeliveryChargeDiv').hide();
+
                     }
                 })
-
             }
 
             function cartItemAddrIsSame() {
@@ -1592,20 +1352,15 @@
                 itemAddresses.each(function () {
                     allChecked = $(this).is(':checked');
                 });
-                console.log('cartItemAddrIsSame allChecked -> ', allChecked)
+
                 if (allChecked) {
                     $('.DeliveryChargeDiv').show();
-                    $('#delivery-date').attr('required', 'required');
-                    $('#delivery-date-div').show();
 
                     $('#pickup-date').removeAttr('required');
                     $('#pickup-date').val('');
                     $('#pickup-date-div').hide();
                 } else {
                     $('.DeliveryChargeDiv').hide();
-                    $('#delivery-date').removeAttr('required');
-                    $('#delivery-date').val('');
-                    $('#delivery-date-div').hide();
 
                     $('#pickup-date').removeAttr('required');
                     $('#pickup-date').val('');
@@ -1618,7 +1373,31 @@
                 let isChecked = $(this).is(':checked');
                 let id = $(this).data('id');
                 let addressInput = document.getElementById('billing_address' + id);
+
                 $(`#is_same_as_billing${id}`).val(isChecked ? 1 : 0);
+
+                const firstItemAddr = $('.item-addr').first();
+                let firstItemId = firstItemAddr.data('id');
+                let firstAddrName = $(`#shipping_full_name${firstItemId}`).val();
+                let firstAddrPhone = $(`#shipping_phone${firstItemId}`).val();
+                let firstAddr = $(`#billing_address${firstItemId}`).val();
+                let firstAddr1 = $(`#billing_address_1${firstItemId}`).val();
+                let firstCity = $(`#billing_city${firstItemId}`).val();
+                let firstState = $(`#billing_state_name${firstItemId}`).val();
+                let firstZip = $(`#shipping_zip${firstItemId}`).val();
+                let firstDelDate = $(`#delivery-date${firstItemId}`).val();
+                let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+
+
+                let billFullName = $(`#shipping_full_name${id}`);
+                let billPhone = $(`#shipping_phone${id}`);
+                let billingAddr = $(`#billing_address${id}`);
+                let billingAddr1 = $(`#billing_address_1${id}`);
+                let billingCity = $(`#billing_city${id}`);
+                let billingState = $(`#billing_state_name${id}`);
+                let billingZip = $(`#shipping_zip${id}`);
+                let billingDelDate = $(`#delivery-date${id}`);
+                let billingDelCharge = $(`#delivery_charge${id}`);
 
                 if (!isChecked) {
                     let itemAutocomplete = new google.maps.places.Autocomplete(
@@ -1638,21 +1417,142 @@
                         let address = $(`#billing_address${id}`).val();
                         cartItemShipAddrCharges(address, city, id);
                     });
+                    $(`#div${id}`).show();
+
+                    // Reset all fields
+                    billFullName.val('');
+                    billPhone.val('');
+                    billingAddr.val('');
+                    billingAddr1.val('');
+                    billingCity.val('');
+                    billingState.val('');
+                    billingZip.val('');
+                    billingDelDate.val('');
+                    billingDelCharge.val('');
                 } else {
                     $(`#delivery_charge${id}`).val(0);
                     $(`#delivery-charge-item${id}`).remove();
+                    $(`#div${id}`).hide();
+
+                    // Fill all field
+                    billFullName.val(firstAddrName);
+                    billPhone.val(firstAddrPhone);
+                    billingAddr.val(firstAddr);
+                    billingAddr1.val(firstAddr1);
+                    billingCity.val(firstCity);
+                    billingState.val(firstState);
+                    billingZip.val(firstZip);
+                    billingDelDate.val(firstDelDate);
+                    billingDelCharge.val(firstDelCharge);
                 }
                 cartItemAddrIsSame();
             });
 
-            @if(isset($oldData['item_address']))
+            // first item addr autocomplete init
+            function firstItemAddrInit() {
+                const firstItemAddr = $('.item-addr').first();
+                let id = firstItemAddr.data('id');
+                if ($(`#billing_address${id}`).is(':visible')) {
+                    let addressInput = document.getElementById('billing_address' + id);
+                    let itemAutocomplete = new google.maps.places.Autocomplete(
+                        /** @type {!HTMLInputElement} */
+                        (addressInput), {
+                            componentRestrictions: {
+                                country: ["us"]
+                            },
+                            fields               : ["address_components", "geometry"],
+                            types                : ['geocode']
+                        }
+                    );
 
+                    itemAutocomplete.addListener('place_changed', async function () {
+                        await fillInItemAddress.call(itemAutocomplete, itemAutocomplete, id);
+                        let city = $(`#billing_city${id}`).val();
+                        let address = $(`#billing_address${id}`).val();
+                        cartItemShipAddrCharges(address, city, id);
+                        fillAllItemAddrFromFirstItem();
+                    });
+                }
+
+                $(`#shipping_full_name${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
+
+                $(`#shipping_phone${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
+
+                $(`#delivery-date${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
+
+                $(`#delivery_charge${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
+            }
+
+            firstItemAddrInit();
+
+            function fillAllItemAddrFromFirstItem() {
+                const firstItemAddr = $('.item-addr').first();
+                let firstItemId = firstItemAddr.data('id');
+                let firstAddrName = $(`#shipping_full_name${firstItemId}`).val();
+                let firstAddrPhone = $(`#shipping_phone${firstItemId}`).val();
+                let firstAddr = $(`#billing_address${firstItemId}`).val();
+                let firstAddr1 = $(`#billing_address_1${firstItemId}`).val();
+                let firstCity = $(`#billing_city${firstItemId}`).val();
+                let firstState = $(`#billing_state_name${firstItemId}`).val();
+                let firstZip = $(`#shipping_zip${firstItemId}`).val();
+                let firstDelDate = $(`#delivery-date${firstItemId}`).val();
+                let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+
+                // select all item-addr without first item
+                $('.item-addr').each(function () {
+                    let itemId = $(this).data('id');
+
+                    $(`#shipping_full_name${itemId}`).val(firstAddrName);
+                    $(`#shipping_phone${itemId}`).val(firstAddrPhone);
+                    $(`#billing_address${itemId}`).val(firstAddr);
+                    $(`#billing_address_1${itemId}`).val(firstAddr1);
+                    $(`#billing_city${itemId}`).val(firstCity);
+                    $(`#billing_state_name${itemId}`).val(firstState);
+                    $(`#shipping_zip${itemId}`).val(firstZip);
+                    $(`#delivery-date${itemId}`).val(firstDelDate);
+                    $(`#delivery_charge${itemId}`).val(firstDelCharge);
+                });
+
+            }
+
+            @if(isset($oldData['item_address']))
             $('.item-address-checkbox').each(function () {
                 let isChecked = $(this).is(':checked');
                 let id = $(this).data('id');
                 let addressInput = document.getElementById('billing_address' + id);
                 $(`#is_same_as_billing${id}`).val(isChecked ? 1 : 0);
 
+                const firstItemAddr = $('.item-addr').first();
+                let firstItemId = firstItemAddr.data('id');
+                let firstAddrName = $(`#shipping_full_name${firstItemId}`).val();
+                let firstAddrPhone = $(`#shipping_phone${firstItemId}`).val();
+                let firstAddr = $(`#billing_address${firstItemId}`).val();
+                let firstAddr1 = $(`#billing_address_1${firstItemId}`).val();
+                let firstCity = $(`#billing_city${firstItemId}`).val();
+                let firstState = $(`#billing_state_name${firstItemId}`).val();
+                let firstZip = $(`#shipping_zip${firstItemId}`).val();
+                let firstDelDate = $(`#delivery-date${firstItemId}`).val();
+                let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+
+
+                let billFullName = $(`#shipping_full_name${id}`);
+                let billPhone = $(`#shipping_phone${id}`);
+                let billingAddr = $(`#billing_address${id}`);
+                let billingAddr1 = $(`#billing_address_1${id}`);
+                let billingCity = $(`#billing_city${id}`);
+                let billingState = $(`#billing_state_name${id}`);
+                let billingZip = $(`#shipping_zip${id}`);
+                let billingDelDate = $(`#delivery-date${id}`);
+                let billingDelCharge = $(`#delivery_charge${id}`);
+
                 if (!isChecked) {
                     let itemAutocomplete = new google.maps.places.Autocomplete(
                         /** @type {!HTMLInputElement} */
@@ -1671,9 +1571,33 @@
                         let address = $(`#billing_address${id}`).val();
                         cartItemShipAddrCharges(address, city, id);
                     });
+                    $(`#div${id}`).show();
+
+                    // Reset all fields
+                    billFullName.val('');
+                    billPhone.val('');
+                    billingAddr.val('');
+                    billingAddr1.val('');
+                    billingCity.val('');
+                    billingState.val('');
+                    billingZip.val('');
+                    billingDelDate.val('');
+                    billingDelCharge.val('');
                 } else {
                     $(`#delivery_charge${id}`).val(0);
                     $(`#delivery-charge-item${id}`).remove();
+                    $(`#div${id}`).hide();
+
+                    // Fill all field
+                    billFullName.val(firstAddrName);
+                    billPhone.val(firstAddrPhone);
+                    billingAddr.val(firstAddr);
+                    billingAddr1.val(firstAddr1);
+                    billingCity.val(firstCity);
+                    billingState.val(firstState);
+                    billingZip.val(firstZip);
+                    billingDelDate.val(firstDelDate);
+                    billingDelCharge.val(firstDelCharge);
                 }
                 cartItemAddrIsSame();
             });
@@ -1749,6 +1673,59 @@
                         $('.estimate_del').html('');
                     }
                 }
+            });
+
+            $('#previewBtn').on('click', function (e) {
+                e.preventDefault();
+
+                $('#userInfoModal').modal('show');
+            });
+
+            $('#user-info-form').on('submit', function (e) {
+                e.preventDefault();
+
+                console.log('user-info-form submit')
+                let username = $(this).find('#user-info-username').val();
+                let email = $(this).find('#user-info-email').val();
+                let phone = $(this).find('#user-info-phone').val();
+                let password = $(this).find('#user-info-password').val();
+
+                if (!username) {
+                    $(this).find('#user-info-username').focus();
+                    return false;
+                }
+
+                if (!email) {
+                    $(this).find('#user-info-email').focus();
+                    return false;
+                }
+
+                if (!phone) {
+                    $(this).find('#user-info-phone').focus();
+                    return false;
+                }
+
+                if (!password) {
+                    $(this).find('#user-info-password').focus();
+                    return false;
+                }
+                const checkoutForm = $('#checkoutForm');
+
+                checkoutForm.find('#username').val(username);
+                checkoutForm.find('#email').val(email);
+                checkoutForm.find('#phone').val(phone);
+                checkoutForm.find('#password').val(password);
+
+                console.log('checkoutForm submit')
+                checkoutForm.submit();
+            });
+
+            $('#modalCloseBtn').on('click', function () {
+                $('#userInfoModal').modal('hide');
+            });
+
+            $('#modalCloseIcon').on('click', function () {
+                $('#userInfoModal').modal('hide');
             });
         });
     </script>

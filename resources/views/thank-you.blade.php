@@ -48,17 +48,22 @@
                                     {{ $itemAddr->shipping_address }} , {{ $itemAddr->shipping_city }}
                                     , {{ $itemAddr->shipping_zip }}
                                 </p>
-                                @if($itemAddr->same_as_billing == 0)
+                                @if($itemAddr->delivery_charge)
                                     <p class="text-center font-weight-bold">
                                         Delivery Charge:
-                                        ${{ $itemAddr->same_as_billing ? '0.00' : number_format($itemAddr->delivery_charge, 2) }}
+                                        ${{ number_format($itemAddr->delivery_charge, 2) }}
                                     </p>
-                                    @if($itemAddr->delivery_date)
-                                        <p class="text-center font-weight-bold">
-                                            Estimated Delivery:
-                                            {{ $itemAddr->same_as_billing ? '' : date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
-                                        </p>
-                                    @endif
+                                @else
+                                    <p class="text-center font-weight-bold">
+                                        Delivery Charge:
+                                        ${{ number_format($order->delivery_charge, 2) }}
+                                    </p>
+                                @endif
+                                @if($itemAddr->delivery_date)
+                                    <p class="text-center font-weight-bold">
+                                        Estimated Delivery:
+                                        {{ date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
+                                    </p>
                                 @endif
                             </div>
                         @endforeach
@@ -85,8 +90,7 @@
                         @endif
 
                         @if($order->deliveryOption->delivery_or_pickup != 'Store Pickup')
-                            @if(isset($order->delivery_charge))
-
+                            @if(isset($order->delivery_charge) && count($order_items) > 0 && count($order_items) == 1)
                                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                                     <div>
                                         <h6 class="my-0">Delivery Charge</h6>
@@ -96,7 +100,8 @@
                                         </small><br>
                                         @if($order->delivery_date)
                                             <small class="text-muted">
-                                                <strong>Estimated Delivery</strong> - {{ @date('m/d/Y', strtotime(@$order->delivery_date)) }}
+                                                <strong>Estimated Delivery</strong>
+                                                - {{ @date('m/d/Y', strtotime(@$order->delivery_date)) }}
                                             </small>
                                             {{--<br>
                                             <small class="text-muted">
@@ -106,6 +111,13 @@
                                                 - {{ @date('m/d/Y', strtotime(@$order->delivery_date)) }}
                                             </small>--}}
                                         @endif
+                                    </div>
+                                    <span class="text-muted">${{ number_format($order->delivery_charge, 2) }}</span>
+                                </li>
+                            @else
+                                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                    <div>
+                                        <h6 class="my-0">Delivery Charges</h6>
                                     </div>
                                     <span class="text-muted">${{ number_format($order->delivery_charge, 2) }}</span>
                                 </li>
@@ -176,7 +188,6 @@
                        role="button">Track Order</a>
                 </p>
             </div>
-
 
         </div>
     </div>

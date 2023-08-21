@@ -108,6 +108,7 @@ class FloralArrangementController extends Controller
         // Add to Cart Session
         $oth_cart           = session()->get('oth_cart');
         $oth_total_quantity = session()->get('oth_total_quantity');
+
         if (!isset($oth_cart[$request->id])) {
             $oth_cart[$request->id] = [
                 "name"                 => $flowerName,

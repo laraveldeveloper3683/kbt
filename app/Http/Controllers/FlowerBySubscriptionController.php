@@ -294,25 +294,6 @@ class FlowerBySubscriptionController extends Controller
                 return redirect('other-checkout')->withErrors($validator)->withInput();
             }
 
-
-            $deliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$request->choise_details)->first();
-            if ($deliveryOption->delivery_or_pickup == 'Delivery') {
-                $validator = Validator::make($request->all(), [
-                    'billing_address'      => 'required',
-                    'billing_city'         => 'required',
-                    'billing_state_name'   => 'required',
-                    'billing_country_name' => 'required',
-                    'billing_zip'          => 'required',
-                ]);
-            }
-
-
-            if ($validator->fails()) {
-                session()->flash('message', 'Order could not be placed, please correct errors -> ' . $validator->errors()->first());
-                session()->flash('level', 'danger');
-                return redirect('other-checkout')->withErrors($validator)->withInput();
-            }
-
         } else {
             $user_data                    = auth()->user();
             $request['billing_full_name'] = $request->first_name ?? $user_data->first_name . ' ' . $user_data->last_name;
@@ -380,6 +361,12 @@ class FlowerBySubscriptionController extends Controller
 
         if ($deliveryCharge <= 0 && isset($data['deleveryCast1'])) {
             $deliveryCharge += $data['deleveryCast1'];
+        }
+
+        if ($cartItems && count($cartItems) > 0 && count($cartItems) == 1) {
+            $firstItemKey          = array_key_first($cartItems);
+            $data['delivery_date'] = $cartItems[$firstItemKey]['delivery_date'] ?? null;
+            $data['deleveryCast1'] = $cartItems[$firstItemKey]['delivery_charge'] ?? null;
         }
 
         $view = view('other-checkout-guest-preview', compact(
@@ -1097,7 +1084,7 @@ class FlowerBySubscriptionController extends Controller
         $deliveryCharge = DB::table('kbt_delivery_charges')
             ->where('miles_from', '<', $result[0])
             ->where('miles_to', '>', $result[0])
-            ->first();
+            ->latest()->first();
 
         $output['delivery_charge'] = !$deliveryCharge ? 0 : $deliveryCharge->cost;
 
