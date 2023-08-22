@@ -134,6 +134,7 @@
 
                     <input type="number" id="custom_price" placeholder="Price"
                            data-max="{{ $aranPrice->maximum_amount}}" data-min="{{ $aranPrice->minimum_amount}}"/>
+
                     <div class="sp-quantity" style="margin-top: 92px;margin-left: 94px;">
                         <span style="margin-left:-306px;">Items</span>
                         <div class="sp-minus fff"><a class="addMinues" href="javascript:void(0)">-</a>
@@ -225,8 +226,13 @@
         $(document).on("change", "#arrangementType", function () {
             let agn_price = $('option:selected', this).attr('data-price');
             console.log('agn_price', agn_price)
+            let selectedOptionText = $('option:selected', this).text();
+            // trim the text
+            selectedOptionText = selectedOptionText.trim();
 
-            if ($('option:selected', this).text() == 'Custom') {
+            console.log(selectedOptionText)
+
+            if (selectedOptionText == 'Custom') {
                 $("#cng_price").css('display', 'none');
 
                 $("#custom_price").css('display', 'inline-block');
