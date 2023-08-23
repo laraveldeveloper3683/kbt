@@ -18,94 +18,150 @@
 
                         <div class="card-body">
                             {{-- Billing Address Section --}}
-                            <div id="billing-address-section">
-                                <h4 class="mb-3">Billing Address</h4>
+                            @if(!count($kbt_address) || !$billingAddress)
+                                <div id="billing-address-section">
+                                    <h4 class="mb-3">Billing Address</h4>
 
-                                <div class="form-group">
-                                    <label for="billing_address">Address</label>
-                                    <input type="text" class="form-control" id="billing_address"
-                                           name="billing_address"
-                                           value="{{ old('billing_address', @$oldData['billing_address']) }}">
-                                    @error('billing_address')
-                                    <span class="invalid-feedback d-block" role="alert">
+                                    <div class="form-group">
+                                        <label for="billing_address">Address</label>
+                                        <input type="text" class="form-control" id="billing_address"
+                                               name="billing_address"
+                                               value="{{ old('billing_address', @$oldData['billing_address']) }}">
+                                        @error('billing_address')
+                                        <span class="invalid-feedback d-block" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <label for="billing_address_1">Address 2 <span
-                                            class="text-muted">(Optional)</span></label>
-                                    <input type="text" class="form-control" id="billing_address_1"
-                                           name="billing_address_1"
-                                           value="{{ old('billing_address_1', @$oldData['billing_address_1']) }}">
-                                    @error('billing_address_1')
-                                    <span class="invalid-feedback d-block" role="alert">
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="billing_address_1">Address 2 <span
+                                                class="text-muted">(Optional)</span></label>
+                                        <input type="text" class="form-control" id="billing_address_1"
+                                               name="billing_address_1"
+                                               value="{{ old('billing_address_1', @$oldData['billing_address_1']) }}">
+                                        @error('billing_address_1')
+                                        <span class="invalid-feedback d-block" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">City</label>
+                                                <input type="text" id="billing_city" name="billing_city"
+                                                       class="form-control billingCity"
+                                                       value="{{ old('billing_city', @$oldData['billing_city']) }}">
+                                                @error('billing_city')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">State</label>
+                                                <input type="text" id="billing_state_name" name="billing_state_name"
+                                                       class="form-control"
+                                                       value="{{ old('billing_state_name', @$oldData['billing_state_name']) }}">
+                                                @error('billing_state_name')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Zip</label>
+                                                <input type="text" id="billing_zip" name="billing_zip"
+                                                       class="form-control"
+                                                       value="{{ old('billing_zip', @$oldData['billing_zip']) }}">
+                                                @error('billing_zip')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Country</label>
+                                                <input type="text" id="billing_country_name" name="billing_country_name"
+                                                       class="form-control" readonly
+                                                       value="{{ old('billing_country_name', @$oldData['billing_country_name'] ?? 'USA') }}">
+                                                @error('billing_country_name')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @else
+                                <input type="hidden" name="billing_address"
+                                       value="{{ old('billing_address', @$oldData['billing_address'] ?? @$billingAddress->address) }}">
+                                <input type="hidden" name="billing_address_1"
+                                       value="{{ old('billing_address_1', @$oldData['billing_address_1'] ?? @$billingAddress->address_1) }}">
+                                <input type="hidden" name="billing_city"
+                                       value="{{ old('billing_city', @$oldData['billing_city'] ?? @$billingAddress->city) }}">
+                                <input type="hidden" name="billing_state_name"
+                                       value="{{ old('billing_state_name', @$oldData['billing_state_name'] ?? @$billingState->state_code) }}">
+                                <input type="hidden" name="billing_zip"
+                                       value="{{ old('billing_zip', @$oldData['billing_zip'] ?? @$billingAddress->zip) }}">
+                                <input type="hidden" name="billing_country_name"
+                                       value="{{ old('billing_country_name', @$oldData['billing_country_name'] ?? 'USA') }}">
+                            @endif
+
+                            @if(count($kbt_address))
+                                <div class="col-md-12 mb-3 pl-0">
+                                    <h4 class="mb-3">Billing Address</h4>
+                                    <select class="custom-select d-block w-100" id="existing_address_id"
+                                            name="existing_address_id">
+                                        @if($kbt_address->count())
+                                            @foreach ($kbt_address as $value)
+                                                @php
+                                                    $full_name = $user_data->first_name . ' ' . $user_data->last_name;
+                                                    $address          = $value->address ? $value->address . ', ' : '';
+                                                    $address_1        = $value->address_1 ? $value->address_1 . ', ' : '';
+                                                    $city             = $value->city ? $value->city . ', ' : '';
+                                                    $state_name       = @$value->state->state_code ? @$value->state->state_code . ', ' : '';
+                                                    $country_name     = 'USA';
+                                                    $zip              = $value->zip ? $value->zip : '';
+                                                    $get_full_address = $full_name . $address . $address_1 . $city . $state_name . $country_name . $zip;
+                                                @endphp
+
+                                                <option value="{{ $value->pk_customer_address }}"
+                                                        data-city="{{ $value->city ?? '' }}"
+                                                        data-address="{{ $value->address ?? '' }}"
+                                                        data-address-1="{{ $value->address_1 ?? '' }}"
+                                                        data-zip="{{ $value->zip ?? '' }}"
+                                                        class="abcde"
+                                                    {{ old('existing_address_id', @$oldData['existing_address_id']) == $value->pk_customer_address ? 'selected' : '' }}>
+                                                    {{ $get_full_address }}
+                                                </option>
+                                            @endforeach
+                                        @else
+                                            <option value="">No data found!</option>
+                                        @endif
+                                    </select>
+                                    @error('address_type')
+                                    <span class="invalid-feedback d-block" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
                                     @enderror
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">City</label>
-                                            <input type="text" id="billing_city" name="billing_city"
-                                                   class="form-control billingCity"
-                                                   value="{{ old('billing_city', @$oldData['billing_city']) }}">
-                                            @error('billing_city')
-                                            <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">State</label>
-                                            <input type="text" id="billing_state_name" name="billing_state_name"
-                                                   class="form-control"
-                                                   value="{{ old('billing_state_name', @$oldData['billing_state_name']) }}">
-                                            @error('billing_state_name')
-                                            <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Zip</label>
-                                            <input type="text" id="billing_zip" name="billing_zip" class="form-control"
-                                                   value="{{ old('billing_zip', @$oldData['billing_zip']) }}">
-                                            @error('billing_zip')
-                                            <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Country</label>
-                                            <input type="text" id="billing_country_name" name="billing_country_name"
-                                                   class="form-control" readonly
-                                                   value="{{ old('billing_country_name', @$oldData['billing_country_name'] ?? 'USA') }}">
-                                            @error('billing_country_name')
-                                            <span class="invalid-feedback d-block" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+                            @endif
 
                             <hr>
                             {{-- Payment Information --}}
@@ -232,22 +288,9 @@
                         <input type="hidden" name="username" value="{{ old('username', @$data['username']) }}">
                         <input type="hidden" name="phone" value="{{ old('phone', @$data['phone']) }}">
                         <input type="hidden" name="email" value="{{ old('email', @$data['email']) }}">
-                        <input type="hidden" name="primary_address"
-                               value="{{ old('primary_address', @$data['primary_address']) }}">
-                        <input type="hidden" name="primary_address_1"
-                               value="{{ old('primary_address_1', @$data['primary_address_1']) }}">
-                        <input type="hidden" name="primary_city"
-                               value="{{ old('primary_city', @$data['primary_city']) }}">
-                        <input type="hidden" name="primary_state_name"
-                               value="{{ old('primary_state_name', @$data['primary_state_name']) }}">
-                        <input type="hidden" name="primary_zip" value="{{ old('primary_zip', @$data['primary_zip']) }}">
-                        <input type="hidden" name="primary_country_name"
-                               value="{{ old('primary_country_name', @$data['primary_country_name']) }}">
 
                         <input type="hidden" name="choise_details"
                                value="{{ old('choise_details', @$data['choise_details']) }}">
-                        <input type="hidden" name="address_type"
-                               value="{{ old('address_type', @$data['address_type']) }}">
                         <input type="hidden" name="amount" value="{{ old('amount', @$data['amount']) }}">
                         <input type="hidden" name="deleveryCast1"
                                value="{{ old('deleveryCast1', @$data['deleveryCast1']) }}">
@@ -268,6 +311,7 @@
                         <input type="hidden" name="delivery_date"
                                value="{{ old('delivery_date', @$data['delivery_date']) }}">
 
+                        {{-- Items Shipping Address --}}
                         @if(isset($data['item_address']) && count($data['item_address']))
                             @foreach($data['item_address'] as $id => $item_address)
                                 <input type="hidden" class="form-control"
@@ -339,6 +383,62 @@
 
 
     <script type="text/javascript">
+        var ifLogin = '{{ auth()->id() }}';
+        if (ifLogin) {
+            var aadd = $('#existing_address_id').val();
+            getAddreessById(aadd);
+
+            $('#existing_address_id').on('change', function () {
+                getAddreessById($(this).val());
+            });
+        }
+
+        function shippingCity(city, address) {
+            console.log(city, address)
+
+            $.ajax({
+                url     : "{{ url('other-checkoutss') }}",
+                type    : 'post',
+                dataType: 'json',
+                data    : {
+                    '_token': '{{ csrf_token() }}',
+                    city    : city,
+                    address : address
+                },
+                success : function (data) {
+                    console.log("shippingCity -> ", data);
+                    $('input[name="deleveryCast1"]').val(data.cost);
+                    $('input[name="pk_locations"]').val(data.pk_location);
+                    $('input[name="estimated_del"]').val(data.Estimated_Delivery_Time);
+                }
+            })
+        }
+
+        function getAddreessById(id) {
+            $.ajax({
+                url     : "{{ url('getAddressId') }}",
+                type    : 'post',
+                dataType: 'json',
+                data    : {
+                    '_token': '{{ csrf_token() }}',
+                    id      : id,
+                },
+                success : function (data) {
+                    $('.loder').text("");
+                    if (data) {
+                        var city = data.city;
+                        var address = data.address;
+                        shippingCity(city, address);
+                    }
+
+                },
+                complete: function () {
+                    $('.loder').text("");
+                },
+            })
+        }
+
+
         var billingAutocomplete;
         var componentForm = {
             street_number: 'short_name',

@@ -78,10 +78,13 @@
                                     @endif
 
                                     @if($deliveryOption->delivery_or_pickup == 'Delivery' && $cartItems && count($cartItems) > 0 && count($cartItems) == 1)
+                                        @php
+                                            $deliveryDate = $data['item_address'][array_key_first($cartItems)]['delivery_date'];
+                                        @endphp
                                         <tr>
                                             <th>Estimated Delivery</th>
                                             <td>
-                                                {{ @$data['delivery_date'] }}
+                                                {{ @$data['delivery_date'] ?? @$deliveryDate }}
                                             </td>
                                         </tr>
                                     @endif
@@ -95,70 +98,6 @@
                                         </tr>
                                     @endif
                                 </table>
-
-                                <div class="row">
-                                    @if(isset($data['primary_address']))
-                                        <div class="col-md-6">
-                                            <h5 class="card-title text-center">Primary Address</h5>
-                                            <table class="table table-bordered table-striped">
-                                                <tr>
-                                                    <th>Address</th>
-                                                    <td>{{ @$data['primary_address'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Address 1</th>
-                                                    <td>{{ @$data['primary_address_1'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>City</th>
-                                                    <td>{{ @$data['primary_city'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>State</th>
-                                                    <td>{{ @$data['primary_state_name'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Zip</th>
-                                                    <td>{{ @$data['primary_zip'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Country</th>
-                                                    <td>USA</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    @endif
-
-                                    <div class="col-md-6 {{ !isset($data['primary_address']) ? 'mx-auto' : '' }}">
-                                        <h5 class="card-title text-center">Billing Address</h5>
-                                        <table class="table table-bordered table-striped">
-                                            <tr>
-                                                <th>Address</th>
-                                                <td>{{ @$data['billing_address'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Address 1</th>
-                                                <td>{{ @$data['billing_address_1'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>City</th>
-                                                <td>{{ @$data['billing_city'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>State</th>
-                                                <td>{{ @$data['billing_state_name'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Zip</th>
-                                                <td>{{ @$data['billing_zip'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Country</th>
-                                                <td>USA</td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

@@ -242,7 +242,6 @@ class FlowerBySubscriptionController extends Controller
             $user_data = auth()->user();
 
             $pk_customer_id = @$user_data->pk_customers;
-            $kbt_address    = CustomerAddres::where('pk_customers', @$pk_customer_id)->get();
             $primaryAddress = CustomerAddres::where('pk_customers', @$pk_customer_id)
                 ->where('pk_address_type', 1)->first();
             $primaryState   = State::where('pk_states', @$primaryAddress->pk_states)->first();
@@ -252,7 +251,6 @@ class FlowerBySubscriptionController extends Controller
 
             $view = view('other-checkout', compact(
                 'user_data',
-                'kbt_address',
                 'deliveryOptions',
                 'oldData',
                 'primaryAddress',
@@ -459,7 +457,18 @@ class FlowerBySubscriptionController extends Controller
         $page = view('other-checkout-guest-payment', compact('data'));
 
         if (auth()->check()) {
-            $page = view('other-checkout-payment', compact('data'));
+            $user_data   = auth()->user();
+            $kbt_address = CustomerAddres::where('pk_customers', @$user_data->pk_customers)->get();
+            $billingAddress = CustomerAddres::where('pk_customers', @$user_data->pk_customers)
+                ->where('pk_address_type', 2)->first();
+            $billingState   = State::where('pk_states', @$billingAddress->pk_states)->first();
+            $page        = view('other-checkout-payment', compact(
+                'data',
+                'kbt_address',
+                'billingAddress',
+                'billingState',
+                'user_data'
+            ));
         }
 
         return $page;
@@ -527,26 +536,14 @@ class FlowerBySubscriptionController extends Controller
             }
 
             // Customer address create
-            if (!auth()->check()) {
-                [
-                    $customer,
-                    $customer_user,
-                    $pk_user_id,
-                    $pk_customer_id,
-                    $primaryAddress,
-                    $billingAddress,
-                    $validator
-                ] = $this->otherCheckoutService->otherCheckoutForGuest($request);
-            } else {
-                [
-                    $customer_data1,
-                    $pk_user_id,
-                    $pk_customer_id,
-                    $primaryAddress,
-                    $billingAddress,
-                    $validator
-                ] = $this->otherCheckoutService->otherCheckoutForAuth($request);
-            }
+            [
+                $customer_data1,
+                $pk_user_id,
+                $pk_customer_id,
+                $primaryAddress,
+                $billingAddress,
+                $validator
+            ] = $this->otherCheckoutService->otherCheckoutForAuth($request);
 
 
             [
@@ -1025,7 +1022,7 @@ class FlowerBySubscriptionController extends Controller
             'password'  => 'required|min:6|confirmed',
         ]);
 
-        $order = Order::with(['customer', 'transactions'])->find($request->pk_orders);
+        $order = Order::with(['customer'])->find($request->pk_orders);
 
         // explode customer name
         $name = explode(' ', $order->customer->name);
