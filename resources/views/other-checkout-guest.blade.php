@@ -273,7 +273,7 @@
                                         $choiseDetailsChecked = 'checked';
                                     }
                                 @endphp
-                                <input type="radio" name="choise_details" onClick="myFun();"
+                                <input type="radio" name="choise_details" class="choise-details"
                                        value="{{ $deliveryOption->pk_delivery_or_pickup }}"
                                        data-text="{{ $deliveryOption->delivery_or_pickup }}"
                                     {{ $choiseDetailsChecked }}>
@@ -655,172 +655,6 @@
             //end code
         }
 
-        function shippingCity(city, address) {
-            var billCity = $('.billingCity').val();
-            $('.couponApply').val('');
-            $('#couponCode').val('');
-            $('.disc1').html('');
-            $('.disc').html('');
-
-            var totalcast = parseFloat($('.totalCast').val());
-            $('.amountTotal').val(totalcast);
-            var to = totalcast;
-            $('.totalCast1').html('$' + to);
-            $('.discountCharge').val('');
-
-            if (city == billCity) {
-                // this code
-                $.ajax({
-                    url       : "{{ url('other-checkoutss') }}",
-                    type      : 'post',
-                    dataType  : 'json',
-                    data      : {
-                        '_token': '{{ csrf_token() }}',
-                        city    : city,
-                        address : address
-                    },
-                    beforeSend: function () {
-                        $('.loade').html(`<div class="loader1"></div>
-                            `);
-
-                    },
-                    success   : function (data) {
-                        var totalcast = parseFloat($('.totalCast').val());
-                        var de = data.cost;
-                        $('.deleveryCast').text('$' + de);
-                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                            de = 0;
-                            var to = totalcast + parseFloat(data.taxRate);
-                        } else {
-                            var to = totalcast + parseFloat(data.cost) + parseFloat(data.taxRate);
-                        }
-
-                        $('.totalCast1').text('$' + to);
-                        $('.stncity').html('<small> delivering from ' + data.storeCity + ',' + data.storeName + '</small>')
-                        // $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
-                        $('.estimated_del').val(data.Estimated_Delivery_Time);
-
-                        $('.dlCast').css("display", "block!important");
-                        $('.taxR').html(`<h6 class="my-0">Tax
-                                    </h6>`);
-                        $('.taxRa').html('$' + data.taxRate);
-                        $('.amountTotal').val(to);
-                        $('.deleveryCast1').val(de);
-                        $('.shippingCharge').val(data.taxRate);
-                        $('.pk_locations').val(data.pk_location)
-
-                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                            $('.DeliveryChargeDiv').hide();
-                        }
-
-                    },
-                    complete  : function () {
-                        $('.loder').text("");
-                    },
-                })
-                //end code
-            } else {
-                // this code
-                $.ajax({
-                    url       : "{{ url('other-checkoutss') }}",
-                    type      : 'post',
-                    dataType  : 'json',
-                    data      : {
-                        '_token': '{{ csrf_token() }}',
-                        city    : city,
-                        address : address
-                    },
-                    beforeSend: function () {
-                        $('.loade').html(`<div class="loader1"></div>
-                            `);
-
-                    },
-                    success   : function (data) {
-                        var totalcast = parseFloat($('.totalCast').val());
-                        var de = data.cost;
-                        $('.deleveryCast').text('$' + de);
-
-                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                            de = 0;
-                            var to = totalcast + parseFloat(data.taxRate);
-                        } else {
-                            var to = totalcast + parseFloat(data.cost) + parseFloat(data.taxRate);
-                        }
-                        $('.totalCast1').text('$' + to);
-                        $('.stncity').html('<small> delivering from ' + data.storeCity + ',' + data.storeName + '</small>')
-                        // $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
-                        $('.estimated_del').val(data.Estimated_Delivery_Time);
-                        $('.dlCast').css("display", "block!important");
-                        $('.taxR').html(`<h6 class="my-0">Tax
-                                    </h6>`);
-                        $('.taxRa').html('$' + data.taxRate);
-                        $('.amountTotal').val(to);
-                        $('.deleveryCast1').val(de);
-                        $('.shippingCharge').val(data.taxRate);
-                        $('.pk_locations').val(data.pk_location)
-
-                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                            console.log(2);
-                            $('.DeliveryChargeDiv').hide();
-                        }
-
-                    },
-                    complete  : function () {
-                        $('.loder').text("");
-                    },
-                })
-                //end code
-            }
-        }
-
-        function myFun() {
-            let checkedItem = $('input[name="choise_details"]:checked');
-
-            let value = checkedItem.data('text');
-
-            var city = ($("#billing_city").val());
-            var address = ($("#billing_address").val());
-
-            if (city) {
-                shippingCity(city, address);
-            }
-
-            if (value == 'Delivery') {
-                $('.billing').show();
-                $('.store').hide();
-                $('.store').find('input[name="store_id"]').removeAttr('checked');
-                $('.store').find('input[name="store_id"]').removeAttr('required');
-
-                $('.DeliveryChargeDiv').show();
-
-                $('#pickup-date-div').hide();
-                $('#pickup-date').removeAttr('required');
-                $('#pickup-date').val('');
-
-                $('#pickup-zip-div').hide();
-                $('#pickup-zip').removeAttr('required');
-                $('#pickup-zip').val('');
-            }
-
-            if (value == 'Store Pickup') {
-                $('.billing').hide();
-                $('.store').show();
-
-                $('.store').find('input[name="store_id"]').attr('required', 'required');
-
-                $('#pickup-date-div').show();
-                $('#pickup-date').attr('required', 'required');
-
-                $('#pickup-zip-div').show();
-                $('#pickup-zip').attr('required', 'required');
-            }
-        }
-
-        var isOldChoiseDetails = {{ $isOldChoiseDetails ?? 0 }};
-        if (isOldChoiseDetails) {
-            myFun();
-        }
-
         function getLatLngFromPickupZipCode(zipCode) {
             var geocoder = new google.maps.Geocoder();
 
@@ -866,11 +700,15 @@
                 },
                 success   : function (data) {
                     $('.abcd').html(data.html);
-                    $('.DeliveryChargeDiv').hide();
+                    $('.delivery-charge-item').remove();
                     $('.estimate_del').html('');
                     $('.deleveryCast').html('$' + 0);
                     $('.deleveryCast1').val('');
                     $('.store_select').attr('value', 'existing');
+                    $('#tax_rate').val(data.taxRate);
+                    $('.taxR').html(`<h6 class="my-0">Tax
+                                    </h6>`);
+                    $('.taxRa').html('$' + data.taxRate);
                 },
                 complete  : function () {
                     $('.loder').text("");
@@ -963,7 +801,8 @@
                             var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxRate);
                         }
                         let cartItemName = $(`#cart-item-name${id}`).text();
-                        let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed" id="delivery-charge-item${id}">
+                        let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
+                                            id="delivery-charge-item${id}">
                             <h6 class="my-0">
                                 Delivery Charge For <strong>${cartItemName}</strong>
                                 <br>
@@ -978,7 +817,6 @@
                     </li>`;
                         $('.totalCast1').text('$' + to);
                         $('.amountTotal').val(to);
-                        $('.totalCast').val(totalcast + parseFloat(deliveryCharge));
                         $(`#delivery-charge-item${id}`).remove();
 
                         $(chargeHtml).insertBefore('#tax-rate-section');
@@ -990,9 +828,6 @@
                             $('.taxRa').html('$' + response.taxRate);
                             $('#tax_rate').val(response.taxRate);
                         }
-
-                        $('.DeliveryChargeDiv').hide();
-
                     }
                 })
             }
@@ -1006,14 +841,10 @@
                 });
 
                 if (allChecked) {
-                    $('.DeliveryChargeDiv').show();
-
                     $('#pickup-date').removeAttr('required');
                     $('#pickup-date').val('');
                     $('#pickup-date-div').hide();
                 } else {
-                    $('.DeliveryChargeDiv').hide();
-
                     $('#pickup-date').removeAttr('required');
                     $('#pickup-date').val('');
                     $('#pickup-date-div').hide();
@@ -1178,83 +1009,102 @@
 
             }
 
-            @if(isset($oldData['item_address']))
-            $('.item-address-checkbox').each(function () {
-                let isChecked = $(this).is(':checked');
-                let id = $(this).data('id');
-                let addressInput = document.getElementById('billing_address' + id);
-                $(`#is_same_as_billing${id}`).val(isChecked ? 1 : 0);
+            function itemAddrInit() {
+                $('.item-address-checkbox').each(function () {
+                    console.log('item-address-checkbox each')
+                    let isChecked = $(this).is(':checked');
+                    let id = $(this).data('id');
+                    let addressInput = document.getElementById('billing_address' + id);
+                    $(`#is_same_as_billing${id}`).val(isChecked ? 1 : 0);
 
+                    const firstItemAddr = $('.item-addr').first();
+                    let firstItemId = firstItemAddr.data('id');
+                    let firstAddrName = $(`#shipping_full_name${firstItemId}`).val();
+                    let firstAddrPhone = $(`#shipping_phone${firstItemId}`).val();
+                    let firstAddr = $(`#billing_address${firstItemId}`).val();
+                    let firstAddr1 = $(`#billing_address_1${firstItemId}`).val();
+                    let firstCity = $(`#billing_city${firstItemId}`).val();
+                    let firstState = $(`#billing_state_name${firstItemId}`).val();
+                    let firstZip = $(`#shipping_zip${firstItemId}`).val();
+                    let firstDelDate = $(`#delivery-date${firstItemId}`).val();
+                    let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+
+
+                    let billFullName = $(`#shipping_full_name${id}`);
+                    let billPhone = $(`#shipping_phone${id}`);
+                    let billingAddr = $(`#billing_address${id}`);
+                    let billingAddr1 = $(`#billing_address_1${id}`);
+                    let billingCity = $(`#billing_city${id}`);
+                    let billingState = $(`#billing_state_name${id}`);
+                    let billingZip = $(`#shipping_zip${id}`);
+                    let billingDelDate = $(`#delivery-date${id}`);
+                    let billingDelCharge = $(`#delivery_charge${id}`);
+
+                    if (!isChecked) {
+                        let itemAutocomplete = new google.maps.places.Autocomplete(
+                            /** @type {!HTMLInputElement} */
+                            (addressInput), {
+                                componentRestrictions: {
+                                    country: ["us"]
+                                },
+                                fields               : ["address_components", "geometry"],
+                                types                : ['geocode']
+                            }
+                        );
+
+                        itemAutocomplete.addListener('place_changed', async function () {
+                            await fillInItemAddress.call(itemAutocomplete, itemAutocomplete, id);
+                            let city = $(`#billing_city${id}`).val();
+                            let address = $(`#billing_address${id}`).val();
+                            cartItemShipAddrCharges(address, city, id);
+                        });
+                        $(`#div${id}`).show();
+
+                        // Reset all fields
+                        billFullName.val('');
+                        billPhone.val('');
+                        billingAddr.val('');
+                        billingAddr1.val('');
+                        billingCity.val('');
+                        billingState.val('');
+                        billingZip.val('');
+                        billingDelDate.val('');
+                        billingDelCharge.val('');
+                    } else {
+                        $(`#delivery_charge${id}`).val(0);
+                        $(`#delivery-charge-item${id}`).remove();
+                        $(`#div${id}`).hide();
+
+                        // Fill all field
+                        billFullName.val(firstAddrName);
+                        billPhone.val(firstAddrPhone);
+                        billingAddr.val(firstAddr);
+                        billingAddr1.val(firstAddr1);
+                        billingCity.val(firstCity);
+                        billingState.val(firstState);
+                        billingZip.val(firstZip);
+                        billingDelDate.val(firstDelDate);
+                        billingDelCharge.val(firstDelCharge);
+                    }
+                    cartItemAddrIsSame();
+                });
+            }
+
+            function firstItemAddrInit2() {
                 const firstItemAddr = $('.item-addr').first();
-                let firstItemId = firstItemAddr.data('id');
-                let firstAddrName = $(`#shipping_full_name${firstItemId}`).val();
-                let firstAddrPhone = $(`#shipping_phone${firstItemId}`).val();
-                let firstAddr = $(`#billing_address${firstItemId}`).val();
-                let firstAddr1 = $(`#billing_address_1${firstItemId}`).val();
-                let firstCity = $(`#billing_city${firstItemId}`).val();
-                let firstState = $(`#billing_state_name${firstItemId}`).val();
-                let firstZip = $(`#shipping_zip${firstItemId}`).val();
-                let firstDelDate = $(`#delivery-date${firstItemId}`).val();
-                let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
-
-
-                let billFullName = $(`#shipping_full_name${id}`);
-                let billPhone = $(`#shipping_phone${id}`);
-                let billingAddr = $(`#billing_address${id}`);
-                let billingAddr1 = $(`#billing_address_1${id}`);
-                let billingCity = $(`#billing_city${id}`);
-                let billingState = $(`#billing_state_name${id}`);
-                let billingZip = $(`#shipping_zip${id}`);
-                let billingDelDate = $(`#delivery-date${id}`);
-                let billingDelCharge = $(`#delivery_charge${id}`);
-
-                if (!isChecked) {
-                    let itemAutocomplete = new google.maps.places.Autocomplete(
-                        /** @type {!HTMLInputElement} */
-                        (addressInput), {
-                            componentRestrictions: {
-                                country: ["us"]
-                            },
-                            fields               : ["address_components", "geometry"],
-                            types                : ['geocode']
-                        }
-                    );
-
-                    itemAutocomplete.addListener('place_changed', async function () {
-                        await fillInItemAddress.call(itemAutocomplete, itemAutocomplete, id);
-                        let city = $(`#billing_city${id}`).val();
-                        let address = $(`#billing_address${id}`).val();
-                        cartItemShipAddrCharges(address, city, id);
-                    });
-                    $(`#div${id}`).show();
-
-                    // Reset all fields
-                    billFullName.val('');
-                    billPhone.val('');
-                    billingAddr.val('');
-                    billingAddr1.val('');
-                    billingCity.val('');
-                    billingState.val('');
-                    billingZip.val('');
-                    billingDelDate.val('');
-                    billingDelCharge.val('');
-                } else {
-                    $(`#delivery_charge${id}`).val(0);
-                    $(`#delivery-charge-item${id}`).remove();
-                    $(`#div${id}`).hide();
-
-                    // Fill all field
-                    billFullName.val(firstAddrName);
-                    billPhone.val(firstAddrPhone);
-                    billingAddr.val(firstAddr);
-                    billingAddr1.val(firstAddr1);
-                    billingCity.val(firstCity);
-                    billingState.val(firstState);
-                    billingZip.val(firstZip);
-                    billingDelDate.val(firstDelDate);
-                    billingDelCharge.val(firstDelCharge);
+                let id = firstItemAddr.data('id');
+                let city = $(`#billing_city${id}`).val();
+                let address = $(`#billing_address${id}`).val();
+                if (city && address) {
+                    cartItemShipAddrCharges(address, city, id);
+                    fillAllItemAddrFromFirstItem();
                 }
-                cartItemAddrIsSame();
+            }
+
+            @if(isset($oldData['item_address']))
+            $(document).ready(function () {
+                firstItemAddrInit2();
+                itemAddrInit();
             });
             @endif
 
@@ -1302,6 +1152,69 @@
 
                 }
 
+            }
+
+
+            $('.choise-details').on('change', function () {
+                myFun();
+            });
+
+            $('.choise-details').on('click', function () {
+                myFun();
+            });
+
+            function myFun() {
+                console.log('myFun')
+                let checkedItem = $('input[name="choise_details"]:checked');
+
+                let value = checkedItem.data('text');
+
+                let totalCast = Number($('.totalCast').val());
+                let taxRate = $('#tax_rate').val();
+
+                if (value == 'Delivery') {
+                    console.log(value)
+                    $('.billing').show();
+                    $('.store').hide();
+                    $('.store').find('input[name="store_id"]').removeAttr('checked');
+                    $('.store').find('input[name="store_id"]').removeAttr('required');
+
+                    firstItemAddrInit2();
+                    itemAddrInit();
+
+                    $('#pickup-date-div').hide();
+                    $('#pickup-date').removeAttr('required');
+                    $('#pickup-date').val('');
+
+                    $('#pickup-zip-div').hide();
+                    $('#pickup-zip').removeAttr('required');
+                    $('#pickup-zip').val('');
+                }
+
+                if (value == 'Store Pickup') {
+                    console.log(value)
+                    $('.billing').hide();
+                    $('.store').show();
+
+                    $('.delivery-charge-item').remove();
+
+                    $('.store').find('input[name="store_id"]').attr('required', 'required');
+
+                    $('#pickup-date-div').show();
+                    $('#pickup-date').attr('required', 'required');
+
+                    $('#pickup-zip-div').show();
+                    $('#pickup-zip').attr('required', 'required');
+
+                    let to = totalCast + Number(taxRate);
+                    $('.totalCast1').text('$' + to.toFixed(2));
+                    $('.amountTotal').val(to);
+                }
+            }
+
+            var isOldChoiseDetails = {{ $isOldChoiseDetails ?? 0 }};
+            if (isOldChoiseDetails) {
+                myFun();
             }
         });
     </script>

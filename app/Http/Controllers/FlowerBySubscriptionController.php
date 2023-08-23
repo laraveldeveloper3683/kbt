@@ -457,12 +457,12 @@ class FlowerBySubscriptionController extends Controller
         $page = view('other-checkout-guest-payment', compact('data'));
 
         if (auth()->check()) {
-            $user_data   = auth()->user();
-            $kbt_address = CustomerAddres::where('pk_customers', @$user_data->pk_customers)->get();
+            $user_data      = auth()->user();
+            $kbt_address    = CustomerAddres::where('pk_customers', @$user_data->pk_customers)->get();
             $billingAddress = CustomerAddres::where('pk_customers', @$user_data->pk_customers)
                 ->where('pk_address_type', 2)->first();
             $billingState   = State::where('pk_states', @$billingAddress->pk_states)->first();
-            $page        = view('other-checkout-payment', compact(
+            $page           = view('other-checkout-payment', compact(
                 'data',
                 'kbt_address',
                 'billingAddress',
@@ -826,7 +826,8 @@ class FlowerBySubscriptionController extends Controller
             $distance1   = $responses['rows'][0]['elements'][0]['distance']['text'] ?? null;
 
             if ($distance1 !== null) {
-                $output['html'] .= '
+                $output['taxRate'] = $storecity->tax_rate;
+                $output['html']    .= '
         <div class="col-md-12 mb-3 store1">
             <div class="row">
                 <div class="col-md-12"><h6>' . $storecity->location_name . '</h6></div>
