@@ -407,48 +407,50 @@ class OtherCheckoutService
                         $orderItem = OrderItem::create($save_order_item);
 
                         // Create item address
-                        $user_name  = $user_data ? $user_data->first_name . ' ' . $user_data->last_name :
-                            $request->first_name . ' ' . $request->last_name;
-                        $user_email = !$user_data ? $request->email : $user_data->email;
-                        $user_phone = !$user_data ? $request->phone : $user_data->phone;
+                        if ($deliveryOption->delivery_or_pickup == 'Delivery') {
+                            $user_name  = $user_data ? $user_data->first_name . ' ' . $user_data->last_name :
+                                $request->first_name . ' ' . $request->last_name;
+                            $user_email = !$user_data ? $request->email : $user_data->email;
+                            $user_phone = !$user_data ? $request->phone : $user_data->phone;
 
-                        if (isset($request->item_address) && count($request->item_address)) {
-                            $itemAddress = $request->item_address;
-                            if ($itemAddress[$key]['same_as_billing'] == 0) {
-                                $deliveryCharges += $itemAddress[$key]['delivery_charge'];
+                            if (isset($request->item_address) && count($request->item_address)) {
+                                $itemAddress = $request->item_address;
+                                if ($itemAddress[$key]['same_as_billing'] == 0) {
+                                    $deliveryCharges += $itemAddress[$key]['delivery_charge'];
+                                }
+                                $cusAddr            = @$user_data->customer->address[0];
+                                $shipping_address   = $itemAddress[$key]['shipping_address'] ?? $request->billing_address ??
+                                    $cusAddr->address ?? '';
+                                $shipping_address_1 = $itemAddress[$key]['shipping_address_1'] ?? $request->billing_address_1 ??
+                                    $cusAddr->address_1 ?? '';
+                                $shipping_city      = $itemAddress[$key]['shipping_city'] ?? $request->billing_city
+                                    ?? $cusAddr->city ?? '';
+                                $shipping_zip       = $itemAddress[$key]['shipping_zip'] ?? $request->billing_zip
+                                    ?? $cusAddr->zip ?? '';
+                                $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
+                                    ?? $request->billing_state_name ?? '')->first();
+                                $delivery_date      = $itemAddress[$key]['delivery_date'] ?? $request->delivery_date ?? null;
+                                $shipping_data      = [
+                                    'pk_customers'       => $pk_customer_id,
+                                    'pk_order_items'     => $orderItem->pk_order_items ?? 1,
+                                    'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
+                                    'shipping_email'     => $itemAddress[$key]['shipping_email'] ?? $user_email,
+                                    'shipping_phone'     => $itemAddress[$key]['shipping_phone'] ?? $user_phone,
+                                    'shipping_address'   => $shipping_address,
+                                    'shipping_address_1' => $shipping_address_1,
+                                    'shipping_city'      => $shipping_city,
+                                    'pk_states'          => $state->pk_states ?? $cusAddr->pk_states ?? 1,
+                                    'pk_country'         => $state->pk_country ?? $cusAddr->pk_country ?? 1,
+                                    'shipping_zip'       => $shipping_zip,
+                                    'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
+                                    'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
+                                    'delivery_date'      => Carbon::parse($delivery_date)->format('Y-m-d'),
+                                ];
+
+                                // $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
+
+                                Addres::create($shipping_data);
                             }
-                            $cusAddr            = @$user_data->customer->address[0];
-                            $shipping_address   = $itemAddress[$key]['shipping_address'] ?? $request->billing_address ??
-                                $cusAddr->address ?? '';
-                            $shipping_address_1 = $itemAddress[$key]['shipping_address_1'] ?? $request->billing_address_1 ??
-                                $cusAddr->address_1 ?? '';
-                            $shipping_city      = $itemAddress[$key]['shipping_city'] ?? $request->billing_city
-                                ?? $cusAddr->city ?? '';
-                            $shipping_zip       = $itemAddress[$key]['shipping_zip'] ?? $request->billing_zip
-                                ?? $cusAddr->zip ?? '';
-                            $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
-                                ?? $request->billing_state_name ?? '')->first();
-                            $delivery_date      = $itemAddress[$key]['delivery_date'] ?? $request->delivery_date ?? null;
-                            $shipping_data      = [
-                                'pk_customers'       => $pk_customer_id,
-                                'pk_order_items'     => $orderItem->pk_order_items ?? 1,
-                                'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
-                                'shipping_email'     => $itemAddress[$key]['shipping_email'] ?? $user_email,
-                                'shipping_phone'     => $itemAddress[$key]['shipping_phone'] ?? $user_phone,
-                                'shipping_address'   => $shipping_address,
-                                'shipping_address_1' => $shipping_address_1,
-                                'shipping_city'      => $shipping_city,
-                                'pk_states'          => $state->pk_states ?? $cusAddr->pk_states ?? 1,
-                                'pk_country'         => $state->pk_country ?? $cusAddr->pk_country ?? 1,
-                                'shipping_zip'       => $shipping_zip,
-                                'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
-                                'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
-                                'delivery_date'      => Carbon::parse($delivery_date)->format('Y-m-d'),
-                            ];
-
-                            // $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
-
-                            Addres::create($shipping_data);
                         }
                     }
                 }
@@ -468,9 +470,13 @@ class OtherCheckoutService
                     $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
                     $get_order->update([
                         'total'           => $total,
-                        'delivery_charge' => $deliveryCharges,
-                        /*'delivery_date'   => $sameAsBilling == 1 && $request->delivery_date ?
-                            Carbon::parse($request->delivery_date)->format('Y-m-d') : null,*/
+                        'delivery_charge' => $deliveryCharges
+                    ]);
+                } else {
+                    $total           += $request->shippingCharge - $save_order['discountCharge'];
+                    $get_order->update([
+                        'total'           => $total,
+                        'delivery_charge' => null,
                     ]);
                 }
             }

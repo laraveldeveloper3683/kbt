@@ -351,6 +351,22 @@
                             @endforeach
                         </div>
 
+                        <div class="form-group mt-4" id="pickup-zip-div" style="display: none;">
+                            <label for="pickup-zip" class="form-label">
+                                Enter Pickup Zip
+                            </label>
+                            <input type="text" name="pickup_zip" id="pickup-zip"
+                                   class="form-control pickup-zip"
+                                   placeholder="Enter pickup zip"
+                                   value="{{ old('pickup_zip', @$oldData['pickup_zip']) }}">
+                            <span class="invalid-feedback" role="alert" id="pickup-zip-msg"
+                                  style="display: none;">
+                                    <strong>Sorry, we don't have pickup point to your area!</strong>
+                                </span>
+                            <input type="hidden" id="pickup_zip_lat" name="pickup_zip_lat">
+                            <input type="hidden" id="pickup_zip_lng" name="pickup_zip_lng">
+                        </div>
+
                         <div class="form-group mt-4" id="pickup-date-div" style="display: none;">
                             <label for="pickup-date" class="form-label">
                                 Select Pickup Date
@@ -424,7 +440,6 @@
                                             <label for="manage_shipping_full_name{{ $id }}">Name</label>
                                             <input type="text" class="form-control" id="shipping_full_name{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_full_name]"
-                                                   {{ $loop->first ? 'required' : '' }}
                                                    value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.shipping_full_name')) ?
                                                         old('item_address.'.$id.'.shipping_full_name') : @$addressItems[$id]['shipping_full_name'] ?? @$user_data->first_name . ' ' . @$user_data->last_name }}">
@@ -438,7 +453,6 @@
                                         <div class="col-md-6 mb-3">
                                             <label for="shipping_phone{{ $id }}">Phone</label>
                                             <input type="text" class="form-control" id="shipping_phone{{ $id }}"
-                                                   {{ $loop->first ? 'required' : '' }}
                                                    name="item_address[{{ $id }}][shipping_phone]" value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.shipping_phone')) ?
                                                         old('item_address.'.$id.'.shipping_phone') : @$addressItems[$id]['shipping_phone'] ?? @$billingAddress->customer->office_phone }}">
@@ -457,7 +471,6 @@
                                             <input type="text" class="form-control"
                                                    id="billing_address{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_address]"
-                                                   {{ $loop->first ? 'required' : '' }}
                                                    value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.shipping_address')) ?
                                                         old('item_address.'.$id.'.shipping_address') : @$addressItems[$id]['shipping_address'] ?? @$billingAddress->address }}">
@@ -491,7 +504,6 @@
                                                        onkeypress="return RestrictCommaSemicolon(event);"
                                                        ondrop="return false;" onpaste="return false;"
                                                        id="billing_city{{ $id }}"
-                                                       {{ $loop->first ? 'required' : '' }}
                                                        name="item_address[{{ $id }}][shipping_city]"
                                                        class="form-control shipping_city"
                                                        value="{{ old('item_address') &&
@@ -514,7 +526,6 @@
                                                 <label class="form-label">State</label>
                                                 <input type="text"
                                                        id="billing_state_name{{ $id }}"
-                                                       {{ $loop->first ? 'required' : '' }}
                                                        name="item_address[{{ $id }}][shipping_state_name]"
                                                        class="form-control" value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.shipping_state_name')) ?
@@ -532,7 +543,6 @@
                                                 <label class="form-label">Zip</label>
                                                 <input type="text"
                                                        id="shipping_zip{{ $id }}"
-                                                       {{ $loop->first ? 'required' : '' }}
                                                        name="item_address[{{ $id }}][shipping_zip]"
                                                        class="form-control"
                                                        value="{{ old('item_address') &&
@@ -572,7 +582,6 @@
                                                 <input type="text" name="item_address[{{ $id }}][delivery_date]"
                                                        id="delivery-date{{ $id }}"
                                                        data-id="{{ $id }}"
-                                                       {{ $loop->first ? 'required' : '' }}
                                                        class="form-control delivery-date"
                                                        placeholder="Enter delivery date"
                                                        value="{{ old('item_address') &&
@@ -1129,6 +1138,10 @@
                 $('#pickup-date-div').hide();
                 $('#pickup-date').removeAttr('required');
                 $('#pickup-date').val('');
+
+                $('#pickup-zip-div').hide();
+                $('#pickup-zip').removeAttr('required');
+                $('#pickup-zip').val('');
             }
 
             if (value == 'Store Pickup') {
@@ -1140,7 +1153,10 @@
                 $('#pickup-date-div').show();
                 $('#pickup-date').attr('required', 'required');
 
-                $.ajax({
+                $('#pickup-zip-div').show();
+                $('#pickup-zip').attr('required', 'required');
+
+                /*$.ajax({
                     url       : "{{ url('other-checkouts') }}",
                     type      : 'post',
                     dataType  : 'json',
@@ -1168,7 +1184,7 @@
                         $('.loder').text("");
                     },
 
-                });
+                });*/
 
             }
         }
@@ -1177,6 +1193,75 @@
         if (isOldChoiseDetails) {
             myFun();
         }
+
+        function getLatLngFromPickupZipCode(zipCode) {
+            var geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({'address': zipCode}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    let lat = results[0].geometry.location.lat();
+                    let lng = results[0].geometry.location.lng();
+
+                    // check lat id and lng id is exist or not
+                    if ($('#pickup_zip_lat').length) {
+                        $('#pickup_zip_lat').val(lat);
+                    }
+
+                    if ($('#pickup_zip_lng').length) {
+                        $('#pickup_zip_lng').val(lng);
+                    }
+                    $('#pickup-zip-msg').hide();
+
+                    getPickupAddress();
+                } else {
+                    $('#pickup_zip_lat').val('');
+                    $('#pickup_zip_lng').val('');
+                    $('#pickup-zip-msg').show();
+                    console.log('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+        function getPickupAddress() {
+            $.ajax({
+                url       : "{{ url('other-checkout-pickup-address') }}",
+                type      : 'POST',
+                dataType  : 'json',
+                data      : {
+                    '_token': '{{ csrf_token() }}',
+                    lat     : $('#pickup_zip_lat').val(),
+                    lng     : $('#pickup_zip_lng').val(),
+                },
+                beforeSend: function () {
+                    $('.loder').html(`<div class="loader"></div>
+                    `);
+
+                },
+                success   : function (data) {
+                    $('.abcd').html(data.html);
+                    $('.DeliveryChargeDiv').hide();
+                    $('.estimate_del').html('');
+                    $('.deleveryCast').html('$' + 0);
+                    $('.deleveryCast1').val('');
+                    $('.store_select').attr('value', 'existing');
+                },
+                complete  : function () {
+                    $('.loder').text("");
+                },
+
+            });
+        }
+
+        $(document).ready(function () {
+            $('#pickup-zip').on('input', function () {
+                let zipCode = $(this).val();
+                if (!zipCode) {
+                    return false;
+                }
+
+                getLatLngFromPickupZipCode(zipCode);
+            });
+        });
     </script>
 
     <script type="text/javascript">

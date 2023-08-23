@@ -48,12 +48,14 @@
                                             {{ @$data['username'] }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Phone</th>
-                                        <td>
-                                            {{ @$data['phone'] }}
-                                        </td>
-                                    </tr>
+                                    @if(isset($data['phone']))
+                                        <tr>
+                                            <th>Phone</th>
+                                            <td>
+                                                {{ @$data['phone'] }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <th>Email</th>
                                         <td>
@@ -192,10 +194,12 @@
                                         <th colspan="2" class="text-right">Subtotal</th>
                                         <td>${{ @number_format(@$subtotal, 2) }}</td>
                                     </tr>
-                                    <tr>
-                                        <th colspan="2" class="text-right">Delivery Charge</th>
-                                        <td>${{ @number_format(@$deliveryCharge , 2)}}</td>
-                                    </tr>
+                                    @if($deliveryOption->delivery_or_pickup == 'Delivery')
+                                        <tr>
+                                            <th colspan="2" class="text-right">Delivery Charge</th>
+                                            <td>${{ @number_format(@$deliveryCharge , 2)}}</td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <th colspan="2" class="text-right">Tax</th>
                                         <td>${{ @$data['shippingCharge'] }}</td>
@@ -216,7 +220,11 @@
                                         </tr>
                                     @endif
                                     @php
-                                        $total += (@$deliveryCharge + @$data['shippingCharge']) - @$discountedAmount;
+                                        if ($deliveryOption->delivery_or_pickup == 'Delivery') {
+                                            $total += (@$deliveryCharge + @$data['shippingCharge']) - @$discountedAmount;
+                                        } else {
+                                            $total += @$data['shippingCharge'] - @$discountedAmount;
+                                        }
                                     @endphp
                                     <tr>
                                         <th colspan="2" class="text-right">Total</th>
@@ -238,64 +246,96 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mx-auto">
-                    <div class="card mt-4 mb-5">
-                        <div class="card-header">
-                            <h4 class="card-title text-center">
-                                Shipping Address
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            @forelse($data['item_address'] as $key => $item)
-                                <h4 class="h4 text-center">Address For
-                                    - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
-                                <table class="table table-hover table-bordered">
+                @if($deliveryOption->delivery_or_pickup == 'Delivery')
+                    <div class="col-md-6 mx-auto">
+                        <div class="card mt-4 mb-5">
+                            <div class="card-header">
+                                <h4 class="card-title text-center">
+                                    Shipping Address
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                @forelse($data['item_address'] as $key => $item)
+                                    <h4 class="h4 text-center">Address For
+                                        - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
+                                    <table class="table table-hover table-bordered">
 
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <td>{{ @$item['shipping_full_name'] }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Phone</th>
-                                        <td>{{ @$item['shipping_phone'] }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Address</th>
-                                        <td style="width: 365px;">
-                                            {{ @$item['shipping_address'] }}
-                                            {{ isset($item['shipping_address_1']) ?
-                                                '#'.$item['shipping_address_1'] : ''}}
-                                            </br>
-                                            {{ @$item['shipping_city'] }}
-                                            {{ @$item['shipping_state_name'] }}
-                                            {{ @$item['shipping_zip'] }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Delivery Charge</th>
-                                        <td>
-                                            ${{ @number_format(@$item['delivery_charge'], 2) }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Estimated Delivery</th>
-                                        <td>
-                                            {{ @$item['delivery_date'] }}
-                                        </td>
-                                    </tr>
-                                </table>
-                            @empty
-                                <table class="table table-hover table-bordered">
-                                    <tr>
-                                        <td>
-                                            No shipping address found!
-                                        </td>
-                                    </tr>
-                                </table>
-                            @endforelse
+                                        <tr>
+                                            <th>Full Name</th>
+                                            <td>{{ @$item['shipping_full_name'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Phone</th>
+                                            <td>{{ @$item['shipping_phone'] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Address</th>
+                                            <td style="width: 365px;">
+                                                {{ @$item['shipping_address'] }}
+                                                {{ isset($item['shipping_address_1']) ?
+                                                    '#'.$item['shipping_address_1'] : ''}}
+                                                </br>
+                                                {{ @$item['shipping_city'] }}
+                                                {{ @$item['shipping_state_name'] }}
+                                                {{ @$item['shipping_zip'] }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Delivery Charge</th>
+                                            <td>
+                                                ${{ @number_format(@$item['delivery_charge'], 2) }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Estimated Delivery</th>
+                                            <td>
+                                                {{ @$item['delivery_date'] }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                @empty
+                                    <table class="table table-hover table-bordered">
+                                        <tr>
+                                            <td>
+                                                No shipping address found!
+                                            </td>
+                                        </tr>
+                                    </table>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="col-md-6 mx-auto">
+                        <div class="card mt-4 mb-5">
+                            <div class="card-header">
+                                <h4 class="card-title text-center">
+                                    Pickup Address
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div
+                                    style="background-color: #FFF;text-align: center;    margin: 0 0 20px 40px;padding-top: 10px;">
+                                    <!-- <h6><strong>Pickup Location</strong></h6> -->
+                                    <p class="lead">{{$location->address}} , {{$location->city}}, {{$location->zip}}</p>
+                                    <ul>
+                                        @if(isset($location->locationTime->pk_location_times))
+                                            <li class="list-group-item d-flex justify-content-between lh-condensed"
+                                                style="border:unset;">{{$location->locationTime->day}}
+                                                : {{$location->locationTime->open_time}}
+                                                To {{$location->locationTime->close_time}}</li>
+                                        @endif
+                                    </ul>
+                                    @if(isset($data['pickup_date']))
+                                        <small class="text-muted font-weight-bold">
+                                            Selected Pickup Date - {{ @$data['pickup_date'] }}
+                                        </small>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
