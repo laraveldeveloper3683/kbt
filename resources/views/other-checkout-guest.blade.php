@@ -119,7 +119,31 @@
                         }
                     @endphp
 
-                    <li class="list-group-item d-flex justify-content-between lh-condensed dlCast">
+                    @if(!$allChecked && @count(@$itemAddresses))
+                        @php
+                            $cartItems = session('oth_cart') ?? [];
+                        @endphp
+                        @foreach(@$itemAddresses as $ik => $itemAddress)
+                            <li class="list-group-item d-flex justify-content-between lh-condensed"
+                                id="delivery-charge-item{{ $ik }}">
+                                <h6 class="my-0">
+                                    Delivery Charge For <strong>{{ $cartItems[$ik]['name'] }}</strong>
+                                    <br>
+                                    <small>
+                                        delivering from
+                                        {{ @$itemAddress['store_city'] }}, {{ @$itemAddress['store_name'] }}
+                                    </small>
+                                    <br>
+                                    <small>Estimdated Delivery, {{ @$oldData['estimated_del'] }}</small>
+                                </h6>
+
+                                <span class="text-muted">${{ @$itemAddress['delivery_charge'] }}</span>
+                            </li>
+                        @endforeach
+                    @endif
+
+                    <li class="list-group-item d-flex justify-content-between lh-condensed dlCast"
+                        id="tax-rate-section">
                         @php
                             $taxRate = old('shippingCharge', @$oldData['shippingCharge']);
                         @endphp
@@ -183,37 +207,6 @@
                         <input type="hidden" value="{{ $total }}" class="totalCast">
                     </li>
                 </ul>
-
-                @if($allChecked == 1)
-                    <ul class="list-group mb-3 sticky-top" id="cart-item-delivery-charges"
-                        style="display: none;">
-                    </ul>
-                @else
-                    <ul class="list-group mb-3 sticky-top" id="cart-item-delivery-charges">
-                        @if(@count(@$itemAddresses))
-                            @php
-                                $cartItems = session('oth_cart') ?? [];
-                            @endphp
-                            @foreach(@$itemAddresses as $ik => $itemAddress)
-                                <li class="list-group-item d-flex justify-content-between lh-condensed"
-                                    id="delivery-charge-item{{ $ik }}">
-                                    <h6 class="my-0">
-                                        Delivery Charge For <strong>{{ $cartItems[$ik]['name'] }}</strong>
-                                        <br>
-                                        <small>
-                                            delivering from
-                                            {{ @$itemAddress['store_city'] }}, {{ @$itemAddress['store_name'] }}
-                                        </small>
-                                        <br>
-                                        <small>Estimdated Delivery, {{ @$oldData['estimated_del'] }}</small>
-                                    </h6>
-
-                                    <span class="text-muted">${{ @$itemAddress['delivery_charge'] }}</span>
-                                </li>
-                            @endforeach
-                        @endif
-                    </ul>
-                @endif
 
                 <div class="form-group">
                     <label>Apply Coupon (If you have)</label>
@@ -935,9 +928,6 @@
                 var to = totalcast;
                 $('.totalCast1').html('$' + to);
                 $('.discountCharge').val('');
-                let deliveryChargeSection = $('#cart-item-delivery-charges');
-                let isSameAsBilling = !!$(`#is_same_as_billing${id}`).val();
-                console.log('cartItemShipAddrCharges isSameAsBilling -> ', isSameAsBilling)
 
                 $.ajax({
                     url     : "{{ url('other-checkout-ship-info') }}",
@@ -990,8 +980,9 @@
                         $('.amountTotal').val(to);
                         $('.totalCast').val(totalcast + parseFloat(deliveryCharge));
                         $(`#delivery-charge-item${id}`).remove();
-                        deliveryChargeSection.append(chargeHtml);
-                        deliveryChargeSection.show();
+
+                        $(chargeHtml).insertBefore('#tax-rate-section');
+
                         cartItemAddrIsSame();
                         if (!$('#tax_rate').val()) {
                             $('.taxR').html(`<h6 class="my-0">Tax
