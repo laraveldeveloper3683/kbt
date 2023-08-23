@@ -276,16 +276,16 @@ class FlowerBySubscriptionController extends Controller
         // Customer address create
         if (!auth()->check()) {
             $validator = Validator::make($request->all(), [
-                'first_name'           => 'required',
-                'last_name'            => 'required',
-                'username'             => 'nullable|unique:users',
-                'phone'                => 'required',
-                'email'                => 'nullable|unique:users',
-                'billing_address'      => 'required',
-                'billing_city'         => 'required',
-                'billing_state_name'   => 'required',
-                'billing_zip'          => 'required',
-                'billing_country_name' => 'required',
+                'first_name'                        => 'required',
+                'last_name'                         => 'required',
+                'item_address'                      => 'required',
+                'item_address.*.shipping_full_name' => 'required',
+                'item_address.*.shipping_phone'     => 'required',
+                'item_address.*.shipping_address'   => 'required',
+            ], [], [
+                'item_address.*.shipping_full_name' => 'item address name',
+                'item_address.*.shipping_phone'     => 'item address phone',
+                'item_address.*.shipping_address'   => 'item address',
             ]);
 
             if ($validator->fails()) {
@@ -403,6 +403,49 @@ class FlowerBySubscriptionController extends Controller
         return $view;
     }
 
+    public function otherCheckoutPaymentPost(Request $request)
+    {
+        if (empty(session('oth_cart'))) {
+            session()->flash('message', 'Your Cart Is Currently Empty.');
+            session()->flash('level', 'danger');
+            return redirect('shop');
+        }
+
+        if (!session('oth_checkout_preview') || !session('oth_cart')
+            || !count(session('oth_cart')) || !count(session('oth_checkout_preview'))) {
+            session()->flash('message', 'Cart or preview data could not be found, please correct errors!');
+            session()->flash('level', 'danger');
+            return redirect('other-checkout');
+        }
+
+
+        // Customer address create
+        if (!auth()->check()) {
+            $validator = Validator::make($request->all(), [
+                'phone' => 'required',
+                'email' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                session()->flash('message', 'Order could not be placed, please correct errors. -> ' . $validator->errors()->first());
+                session()->flash('level', 'danger');
+                return redirect('other-checkout-preview')->withErrors($validator)->withInput();
+            }
+
+        } else {
+            $user_data                    = auth()->user();
+            $request['billing_full_name'] = $request->first_name ?? $user_data->first_name . ' ' . $user_data->last_name;
+        }
+
+        $request_data = $request->except(['_token', '_method']);
+        $data         = session('oth_checkout_preview');
+        // merge request data with session data
+        $data = array_merge($data, $request_data);
+        session()->put('oth_checkout_preview', $data);
+
+        return redirect()->route('other-checkout-payment');
+    }
+
     public function otherCheckoutPayment()
     {
         if (!session('oth_checkout_preview') || !session('oth_cart') || !count(session('oth_cart')) || !count(session('oth_checkout_preview'))) {
@@ -413,7 +456,63 @@ class FlowerBySubscriptionController extends Controller
 
         $data = session('oth_checkout_preview');
 
-        return view('other-checkout-payment', compact('data'));
+        $page = view('other-checkout-guest-payment', compact('data'));
+
+        if (auth()->check()) {
+            $page = view('other-checkout-payment', compact('data'));
+        }
+
+        return $page;
+    }
+
+    public function other_checkout_guest(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            if (empty(session('oth_cart'))) {
+                session()->flash('message', 'Your Cart Is Currently Empty.');
+                session()->flash('level', 'danger');
+                return redirect('shop');
+            }
+
+            // Customer address create
+            [
+                $customer,
+                $pk_customer_id,
+                $primaryAddress,
+                $billingAddress,
+                $validator
+            ] = $this->otherCheckoutService->otherCheckoutForGuest($request);
+
+
+            [
+                $get_order,
+                $save_order
+            ] = $this->otherCheckoutService->otherCheckoutGuestStore($request, $pk_customer_id);
+
+            // Forget session data
+            $this->otherCheckoutService->removeOtherCheckoutSession();
+
+            DB::commit();
+
+            // Set success message
+            session()->flash('message', 'Order has been placed successfully!');
+            session()->flash('level', 'success');
+
+            return redirect('thank-you/' . $get_order->pk_orders);
+        } catch (ValidationException $exception) {
+            DB::rollBack();
+//            session()->flash('message', 'Order could not be placed, please correct errors.');
+            session()->flash('message', $exception->getMessage() . ', please correct errors.');
+            session()->flash('level', 'danger');
+            return redirect('other-checkout')->withInput();
+        } catch (\Exception $exception) {
+//            dd($exception->getMessage(), $exception->getTraceAsString(), $exception->getLine());
+            session()->flash('message', 'Order could not be placed, please correct errors -> ' . $exception->getMessage());
+            session()->flash('level', 'danger');
+            return redirect('other-checkout')->withInput();
+        }
     }
 
     public function other_checkout(Request $request)
@@ -657,7 +756,6 @@ class FlowerBySubscriptionController extends Controller
         return response()->json($output);
     }
 
-
     public function otherCheckoutPickupAddress(Request $request)
     {
         $store = Location::where('pk_account', 2)->latest()->first();
@@ -853,166 +951,12 @@ class FlowerBySubscriptionController extends Controller
         return response()->json([$couponAmount, $type]);
     }
 
-    public function handleonlinepay($request, $user_id, $totla_amount, $qty, $order_no)
+    public function thank_you($pk_orders = null)
     {
-        $input = $request->input();
-        //  echo "<pre>"; print_R($request->all()); die;
-        if (auth()->check() && isset($input['address'])) {
-            $billing_address    = $request->address;
-            $billing_city       = $request->city;
-            $billing_state_name = $request->state_name;
-            $billing_zip        = $request->zip;
-            $billing_email      = auth()->user()->email;
-        } else {
-            $billing_address    = isset($request->billing_address) ? $request->billing_address : '';
-            $billing_city       = isset($request->billing_city) ? $request->billing_city : '';
-            $billing_state_name = isset($request->billing_state_name) ? $request->billing_state_name : '';
-            $billing_zip        = isset($request->billing_zip) ? $request->billing_zip : '';
-            $billing_email      = isset($request->billing_email) ? $request->billing_email : '';
-        }
-        /* Create a merchantAuthenticationType object with authentication details
-          retrieved from the constants file */
-        $merchantAuthentication = new AnetAPI\MerchantAuthenticationType();
-        //$merchantAuthentication->setName(env('MERCHANT_LOGIN_ID'));
-        $merchantAuthentication->setName('4Y5pCy8Qr');
-        //$merchantAuthentication->setTransactionKey(env('MERCHANT_TRANSACTION_KEY'));
-        $merchantAuthentication->setTransactionKey('4ke43FW8z3287HV5');
+        $order = Order::with(['orderStatus', 'deliveryOption'])->find($pk_orders);
 
-        // Set the transaction's refId
-        $refId      = 'ref' . time();
-        $cardNumber = preg_replace('/\s+/', '', $input['cc_number']);
+        $locationTime = LocationTime::where('pk_location_times', $order->pk_location_times)->first();
 
-        // Create the payment data for a credit card
-        $creditCard = new AnetAPI\CreditCardType();
-        $creditCard->setCardNumber($cardNumber);
-        $creditCard->setExpirationDate($input['expiry_year'] . "-" . $input['expiry_month']);
-        $creditCard->setCardCode($input['cvv']);
-
-        // Add the payment data to a paymentType object
-        $paymentOne = new AnetAPI\PaymentType();
-        $paymentOne->setCreditCard($creditCard);
-
-        // Create order information
-        $order = new AnetAPI\OrderType();
-        $order->setInvoiceNumber($order_no);
-        $order->setDescription('KBT');
-
-
-        // Set the customer's Bill To address
-        $customerAddress = new AnetAPI\CustomerAddressType();
-        $customerAddress->setFirstName($input['cc_name']);
-        $customerAddress->setLastName($input['cc_name']);
-
-        if (auth()->check() && !isset($input['address'])) {
-            $authUser            = auth()->user();
-            $cusAddr             = $authUser->customer->address[0];
-            $input['email']      = $authUser->customer->email;
-            $input['address']    = $cusAddr->address;
-            $input['city']       = $cusAddr->city;
-            $input['state_name'] = $cusAddr->state->state_name ?? 'CA';
-            $input['zip']        = $cusAddr->zip;
-        }
-
-        $customerAddress->setAddress($input['address'] ?? $billing_address);
-        $customerAddress->setCity($input['city'] ?? $billing_city);
-        $customerAddress->setState($input['state_name'] ?? $billing_state_name);
-        $customerAddress->setZip($input['zip'] ?? $billing_zip);
-        $customerAddress->setCountry('United States');
-
-        // Set the customer's identifying information
-        $customerData = new AnetAPI\CustomerDataType();
-        $customerData->setEmail($input['email'] ?? $billing_email);
-
-        // Create a TransactionRequestType object and add the previous objects to it
-        $transactionRequestType = new AnetAPI\TransactionRequestType();
-        $transactionRequestType->setTransactionType("authCaptureTransaction");
-        $transactionRequestType->setAmount($totla_amount);
-        $transactionRequestType->setOrder($order);
-        $transactionRequestType->setPayment($paymentOne);
-        $transactionRequestType->setBillTo($customerAddress);
-
-        // Assemble the complete transaction request
-        $requests = new AnetAPI\CreateTransactionRequest();
-        $requests->setMerchantAuthentication($merchantAuthentication);
-        $requests->setRefId($refId);
-        $requests->setTransactionRequest($transactionRequestType);
-
-        // Create the controller and get the response
-        $controller = new AnetController\CreateTransactionController($requests);
-        $response   = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
-        //$response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
-
-        $trans_id = 0;
-        if ($response != null) {
-            // Check to see if the API request was successfully received and acted upon
-            if ($response->getMessages()->getResultCode() == "Ok") {
-                // Since the API request was successful, look for a transaction response
-                // and parse it to display the results of authorizing the card
-                $tresponse = $response->getTransactionResponse();
-
-                if ($tresponse != null && $tresponse->getMessages() != null) {
-                    //                    echo " Successfully created transaction with Transaction ID: " . $tresponse->getTransId() . "\n";
-                    //                    echo " Transaction Response Code: " . $tresponse->getResponseCode() . "\n";
-                    //                    echo " Message Code: " . $tresponse->getMessages()[0]->getCode() . "\n";
-                    //                    echo " Auth Code: " . $tresponse->getAuthCode() . "\n";
-                    //                    echo " Description: " . $tresponse->getMessages()[0]->getDescription() . "\n";
-                    $message_text = $tresponse->getMessages()[0]->getDescription() . ", Transaction ID: " . $tresponse->getTransId();
-                    $msg_type     = "success_msg";
-
-                    $trans_id = Transaction::create([
-                        'amount'         => $totla_amount,
-                        'response_code'  => $tresponse->getResponseCode(),
-                        'transaction_id' => $tresponse->getTransId(),
-                        'auth_id'        => $tresponse->getAuthCode(),
-                        'message_code'   => $tresponse->getMessages()[0]->getCode(),
-                        'name_on_card'   => trim($input['cc_name']),
-                        'account_type'   => $tresponse->getAccountType(),
-                        'currency'       => 'USD',
-                        'created_by'     => $user_id,
-                        'quantity'       => $qty
-                    ])->pk_transactions;
-                } else {
-                    $message_text = 'There were some issue with the payment. Please try again later.';
-                    $msg_type     = "error_msg";
-
-                    if ($tresponse->getErrors() != null) {
-                        $message_text = $tresponse->getErrors()[0]->getErrorText();
-                        $msg_type     = "error_msg";
-                    }
-                }
-                // Or, print errors if the API request wasn't successful
-            } else {
-                $message_text = 'There were some issue with the payment. Please try again later.';
-                $msg_type     = "error_msg";
-
-                $tresponse = $response->getTransactionResponse();
-
-                if ($tresponse != null && $tresponse->getErrors() != null) {
-                    $message_text = $tresponse->getErrors()[0]->getErrorText();
-                    $msg_type     = "error_msg";
-                } else {
-                    $message_text = $response->getMessages()->getMessage()[0]->getText();
-                    $msg_type     = "error_msg";
-                }
-            }
-        } else {
-            $message_text = "No response returned";
-            $msg_type     = "error_msg";
-        }
-
-        return array('msg_type' => $msg_type, 'message_text' => $message_text, 'trans_id' => $trans_id);
-        //print_r($msg_type);
-        //print_r($message_text);exit;
-        // test by lemon
-    }
-
-
-    public function thank_you(Request $request, $pk_orders = null)
-    {
-        $user_data = auth()->user();
-        $order     = Order::with(['orderStatus', 'deliveryOption'])->find($pk_orders);
-
-        $locationTime = LocationTime::where('pk_location_times', $order->pk_location_times)->first();      //Location::where('pk_locations',$order->pk_locations)->with('locationTime')
         if (isset($locationTime->pk_locations)) {
             $store = Location::where('pk_locations', $locationTime->pk_locations)->with('locationTime')->first();
         } else {
@@ -1021,14 +965,32 @@ class FlowerBySubscriptionController extends Controller
 
         $account = "";
         if ($order->choise_details == 'store') {
-            $account = Account::where('pk_account', $order->pk_account)->with(['locationType', 'locationType.locationTime'])->first();
+            $account = Account::where('pk_account', $order->pk_account)
+                ->with(['locationType', 'locationType.locationTime'])->first();
         }
-
-        //dd($account);
 
         $order_items = $order->order_items;
 
-        return view('thank-you', compact('user_data', 'order_items', 'pk_orders', 'order', 'store', 'account'));
+        $page = view('thank-you-guest', compact(
+            'order_items',
+            'pk_orders',
+            'order',
+            'store',
+            'account'
+        ));
+
+        if (auth()->check()) {
+            $user_data = auth()->user();
+            $page      = view('thank-you', compact(
+                'user_data',
+                'order_items',
+                'pk_orders',
+                'order',
+                'store',
+                'account'
+            ));
+        }
+        return $page;
     }
 
     private function getCartTotal()
@@ -1052,5 +1014,64 @@ class FlowerBySubscriptionController extends Controller
         }
 
         return json_encode($kbt_address);
+    }
+
+    // Create account for other checkout
+    public function otherCheckoutCreateAccount(Request $request)
+    {
+        $request->validate([
+            'pk_orders' => 'required|integer',
+            'username'  => 'required|string|unique:users',
+            'password'  => 'required|min:6|confirmed',
+        ]);
+
+        $order = Order::with(['customer', 'transactions'])->find($request->pk_orders);
+
+        // explode customer name
+        $name = explode(' ', $order->customer->name);
+
+        // if count of name is 1 then set first name and last name
+        if (count($name) == 1) {
+            $first_name = $name[0];
+            $last_name  = '';
+        } else {
+            $first_name = $name[0];
+            $last_name  = $name[1];
+        }
+
+
+        // Create User for customer
+        $user = User::create([
+            'first_name'   => $first_name,
+            'last_name'    => $last_name,
+            'email'        => $request->email,
+            'phone'        => $request->office_phone,
+            'username'     => $request->username,
+            'password'     => Hash::make($request->password),
+            'pk_roles'     => 4,
+            'pk_account'   => 2,
+            'pk_customers' => $order->pk_customers,
+        ]);
+
+
+        // Update customer data
+        $order->customer->update([
+            'login_enable' => 1,
+            'created_by'   => $user->pk_users,
+            'updated_by'   => $user->pk_users,
+        ]);
+
+        // Update order data
+        $order->update([
+            'pk_users'   => $user->pk_users,
+            'created_by' => $user->pk_users,
+            'updated_by' => $user->pk_users,
+        ]);
+
+        // Login user
+        Auth::loginUsingId($user->pk_users);
+
+
+        return redirect('/customer');
     }
 }

@@ -13,7 +13,7 @@
                             ORDER PAYMENT
                         </h4>
                     </div>
-                    <form action="{{ route('other-checkout') }}" method="POST">
+                    <form action="{{ url('other-checkout-guest') }}" method="POST">
                         @csrf
 
                         <div class="card-body">
@@ -229,25 +229,11 @@
 
                         <input type="hidden" name="first_name" value="{{ old('first_name', @$data['first_name']) }}">
                         <input type="hidden" name="last_name" value="{{ old('last_name', @$data['last_name']) }}">
-                        <input type="hidden" name="username" value="{{ old('username', @$data['username']) }}">
                         <input type="hidden" name="phone" value="{{ old('phone', @$data['phone']) }}">
                         <input type="hidden" name="email" value="{{ old('email', @$data['email']) }}">
-                        <input type="hidden" name="primary_address"
-                               value="{{ old('primary_address', @$data['primary_address']) }}">
-                        <input type="hidden" name="primary_address_1"
-                               value="{{ old('primary_address_1', @$data['primary_address_1']) }}">
-                        <input type="hidden" name="primary_city"
-                               value="{{ old('primary_city', @$data['primary_city']) }}">
-                        <input type="hidden" name="primary_state_name"
-                               value="{{ old('primary_state_name', @$data['primary_state_name']) }}">
-                        <input type="hidden" name="primary_zip" value="{{ old('primary_zip', @$data['primary_zip']) }}">
-                        <input type="hidden" name="primary_country_name"
-                               value="{{ old('primary_country_name', @$data['primary_country_name']) }}">
 
                         <input type="hidden" name="choise_details"
                                value="{{ old('choise_details', @$data['choise_details']) }}">
-                        <input type="hidden" name="address_type"
-                               value="{{ old('address_type', @$data['address_type']) }}">
                         <input type="hidden" name="amount" value="{{ old('amount', @$data['amount']) }}">
                         <input type="hidden" name="deleveryCast1"
                                value="{{ old('deleveryCast1', @$data['deleveryCast1']) }}">
@@ -265,9 +251,8 @@
                                value="{{ old('couponCode', @$data['couponCode']) }}">
                         <input type="hidden" name="pickup_date"
                                value="{{ old('pickup_date', @$data['pickup_date']) }}">
-                        <input type="hidden" name="delivery_date"
-                               value="{{ old('delivery_date', @$data['delivery_date']) }}">
 
+                        {{-- Item address --}}
                         @if(isset($data['item_address']) && count($data['item_address']))
                             @foreach($data['item_address'] as $id => $item_address)
                                 <input type="hidden" class="form-control"
@@ -349,73 +334,29 @@
             postal_code                : 'short_name'
         };
 
-        function addressUpdate(value, fname, city) {
-            console.log(value, fname, city);
-            $("#" + fname).val(value);
-            $('.couponApply').val('');
-            $('#couponCode').val('');
-            $('.disc1').html('');
-            $('.disc').html('');
-            var totalcast = parseFloat($('.totalCast').val());
-            $('.amountTotal').val(totalcast);
-            var to = totalcast;
-            $('.totalCast1').html('$' + to);
-            $('.discountCharge').val('');
-
-
-            if (fname == 'billing_city') {
-                var address = $('#billing_address').val();
-                var Shipcity = city;
+        function addressUpdate() {
+            let address = $('#billing_address').val();
+            let city = $('#billing_city').val();
+            if (!address || !city) {
+                console.log("addressUpdate -> address or city is empty")
+                return false;
             }
 
             $.ajax({
-                url       : "{{ url('other-checkoutss') }}",
-                type      : 'post',
-                dataType  : 'json',
-                data      : {
+                url     : "{{ url('other-checkoutss') }}",
+                type    : 'post',
+                dataType: 'json',
+                data    : {
                     '_token': '{{ csrf_token() }}',
-                    city    : Shipcity,
+                    city    : city,
                     address : address
                 },
-                beforeSend: function () {
-                    $('.loade').html(`<div class="loader1"></div>
-                            `);
-
-                },
-                success   : function (data) {
+                success : function (data) {
                     console.log("addressUpdate -> ", data);
-                    var totalcast = parseFloat($('.totalCast').val());
-                    var de = data.cost;
-                    $('.deleveryCast').text('$' + de);
-
-                    if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                        var to = totalcast + parseFloat(data.taxRate);
-                    } else {
-                        var to = totalcast + parseFloat(data.cost) + parseFloat(data.taxRate);
-                    }
-                    $('.totalCast1').text('$' + to);
-                    $('.stncity').html('<small> delivering from ' + data.storeCity + ',' + data.storeName + '</small>')
-                    // $('.estimate_del').html('<small> Estimated Delivery ,' + data.Estimated_Delivery_Time + '</small>')
-                    $('.estimated_del').val(data.Estimated_Delivery_Time);
-
-                    $('.dlCast').css("display", "block!important");
-                    $('.taxR').html(`<h6 class="my-0">Tax
-                                    </h6>`);
-                    $('.taxRa').html('$' + data.taxRate);
-                    $('.amountTotal').val(to);
-                    $('.deleveryCast1').val(de);
-                    $('.shippingCharge').val(data.taxRate);
-                    $('.pk_locations').val(data.pk_location)
-
-                    if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                        console.log(6);
-                        $('.DeliveryChargeDiv').hide();
-                    }
-
-                },
-                complete  : function () {
-                    // $('.loade').text("");
-                },
+                    $('input[name="deleveryCast1"]').val(data.cost);
+                    $('input[name="pk_locations"]').val(data.pk_location);
+                    $('input[name="estimated_del"]').val(data.Estimated_Delivery_Time);
+                }
             })
 
         }
@@ -476,7 +417,7 @@
                     if (type == 'billing') {
                         if (addressType == 'locality') {
                             $('#billing_city').val(val);
-                            addressUpdate(val, 'billing_city', val);
+                            addressUpdate();
                         }
                         if (addressType == 'administrative_area_level_1') {
                             $('#billing_state_name').val(val);
