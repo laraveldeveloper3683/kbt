@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//URL::forceScheme('https');
+URL::forceScheme('https');
 Route::get('/location-we-serve', 'FrontendController@locationWeServe');
 
 Route::get('/new-home', function () {
