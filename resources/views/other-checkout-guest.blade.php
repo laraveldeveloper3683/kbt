@@ -1039,7 +1039,7 @@
             }
 
             if (value == 'Delivery') {
-                // $('.billing').show();
+                $('.billing').show();
                 $('.store').hide();
                 $('.store').find('input[name="store_id"]').removeAttr('checked');
                 $('.store').find('input[name="store_id"]').removeAttr('required');
@@ -1509,7 +1509,10 @@
                 // select all item-addr without first item
                 $('.item-addr').each(function () {
                     let itemId = $(this).data('id');
-
+                    let isSameChecked = $(`#checkbox${itemId}`).is(':checked');
+                    if (!isSameChecked || itemId == firstItemId) {
+                        return;
+                    }
                     $(`#shipping_full_name${itemId}`).val(firstAddrName);
                     $(`#shipping_phone${itemId}`).val(firstAddrPhone);
                     $(`#billing_address${itemId}`).val(firstAddr);

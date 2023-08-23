@@ -473,7 +473,6 @@
                                                     class="text-muted">(Optional)</span></label>
                                             <input type="text" class="form-control"
                                                    id="billing_address_1{{ $id }}"
-                                                   {{ $loop->first ? 'required' : '' }}
                                                    name="item_address[{{ $id }}][shipping_address_1]"
                                                    value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.shipping_address_1')) ?
@@ -1594,7 +1593,10 @@
                 // select all item-addr without first item
                 $('.item-addr').each(function () {
                     let itemId = $(this).data('id');
-
+                    let isSameChecked = $(`#checkbox${itemId}`).is(':checked');
+                    if (!isSameChecked || itemId == firstItemId) {
+                        return;
+                    }
                     $(`#shipping_full_name${itemId}`).val(firstAddrName);
                     $(`#shipping_phone${itemId}`).val(firstAddrPhone);
                     $(`#billing_address${itemId}`).val(firstAddr);
