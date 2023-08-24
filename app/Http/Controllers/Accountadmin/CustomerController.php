@@ -70,7 +70,6 @@ class CustomerController extends Controller
         $orders = Order::where('pk_customers', $id)->latest()->get();
         $families       = DB::table('kbt_customer_family')
             ->join('kbt_important_day','kbt_customer_family.pk_important_day','kbt_important_day.pk_important_day')
-            ->join('kbt_customer_family_relation','kbt_customer_family.pk_customer_family_relation','kbt_customer_family_relation.pk_customer_family_relation')
             ->where('pk_account', $pk_account)
             ->where('pk_customers', $id)
             ->get();
@@ -561,7 +560,6 @@ class CustomerController extends Controller
         ];
       $request->validate([
           'name' => 'required|max:200',
-          'relationship'=> 'required|max:200',
           'day'=>'required',
           'date'=>'required|max:5',
       ],$messages);
@@ -571,7 +569,7 @@ class CustomerController extends Controller
         $impDay->pk_account  = auth()->user()->pk_account;
         $impDay->pk_customers  = $request->pk_customers;
         $impDay->customer_family  = $request->name;
-        $impDay->pk_customer_family_relation = $request->relationship;
+        $impDay->relationship = $request->relationship;
         $impDay->pk_important_day = $request->day;
         $impDay->phone = $request->phone;
         $impDay->email = $request->email;
@@ -583,7 +581,7 @@ class CustomerController extends Controller
       $impDay->pk_account  = auth()->user()->pk_account;
       $impDay->pk_customers  = $request->pk_customers;
       $impDay->customer_family  = $request->name;
-      $impDay->pk_customer_family_relation = $request->relationship;
+      $impDay->relationship = $request->relationship;
       $impDay->pk_important_day = $request->day;
       $impDay->phone = $request->phone;
       $impDay->email = $request->email;

@@ -65,7 +65,7 @@
                                                       action="{{ isset($customer) && ($customer->pk_customers) ? '/accountadmin/customers/update' : '/accountadmin/customers/submit' }}">
                                                     @csrf
                                                     <div class="card-body">
-                                                        <div class="row pt-3">
+                                                        <div class="row">
 
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
@@ -96,9 +96,10 @@
                                                                     @enderror
                                                                 </div>
                                                             </div>
+                                                          </div>
 
                                                             <div class="row" id="loginform">
-                                                                <div class="col-md-12">
+                                                                <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label class="form-label">User Name</label>
                                                                         <input type="text" name="username"
@@ -140,7 +141,7 @@
                                                                     </div>
                                                                 @endif
                                                             </div>
-
+                                                            <div class="row">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Office Phone</label>
@@ -336,7 +337,7 @@
                                                                         {{ $family->customer_family }}
                                                                     </td>
                                                                     <td onclick="window.location='{{ route('accountadmin.customers.family.edit', ['id' => $family->pk_customer_family]) }}'">
-                                                                        {{ $family->customer_family_relation }}
+                                                                        {{ $family->relationship }}
                                                                     </td>
                                                                     <td onclick="window.location='{{ route('accountadmin.customers.family.edit', ['id' => $family->pk_customer_family]) }}'">
                                                                         {{ $family->important_day }}
