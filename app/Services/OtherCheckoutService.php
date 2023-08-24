@@ -254,7 +254,7 @@ class OtherCheckoutService
                                 $state              = State::where('state_code', $itemAddress[$key]['shipping_state_name']
                                     ?? $request->billing_state_name ?? null)->first();
                                 $delivery_date      = $itemAddress[$key]['delivery_date'] ?? $request->delivery_date ?? null;
-                                $shipping_data = [
+                                $shipping_data      = [
                                     'pk_customers'       => $pk_customer_id,
                                     'pk_order_items'     => $orderItem->pk_order_items ?? 1,
                                     'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
@@ -274,6 +274,21 @@ class OtherCheckoutService
                                 // Create shipping address
                                 if ($shipping_address) {
                                     Addres::create($shipping_data);
+
+                                    // Create customer address
+                                    CustomerAddres::updateOrCreate([
+                                        'pk_customers'    => $pk_customer_id,
+                                        'pk_address_type' => 0,
+                                        'address'         => $shipping_address,
+                                        'city'            => $shipping_city,
+                                        'zip'             => $shipping_zip,
+                                        'pk_states'       => $state->pk_states ?? $cusAddr->pk_states ?? 1,
+                                    ], [
+                                        'address_1'  => $shipping_address_1,
+                                        'pk_country' => $state->pk_country ?? $cusAddr->pk_country ?? 1,
+                                        'lat'        => $itemAddress[$key]['shipping_lat'] ?? null,
+                                        'lng'        => $itemAddress[$key]['shipping_lng'] ?? null,
+                                    ]);
                                 }
 
                             }
@@ -800,7 +815,24 @@ class OtherCheckoutService
 
                                 // $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;
 
-                                Addres::create($shipping_data);
+                                if ($shipping_address) {
+                                    Addres::create($shipping_data);
+
+                                    // Create customer address
+                                    CustomerAddres::updateOrCreate([
+                                        'pk_customers'    => $pk_customer_id,
+                                        'pk_address_type' => 0,
+                                        'address'         => $shipping_address,
+                                        'city'            => $shipping_city,
+                                        'zip'             => $shipping_zip,
+                                        'pk_states'       => $state->pk_states ?? $cusAddr->pk_states ?? 1,
+                                    ], [
+                                        'address_1'  => $shipping_address_1,
+                                        'pk_country' => $state->pk_country ?? $cusAddr->pk_country ?? 1,
+                                        'lat'        => $itemAddress[$key]['shipping_lat'] ?? null,
+                                        'lng'        => $itemAddress[$key]['shipping_lng'] ?? null,
+                                    ]);
+                                }
                             }
                         }
                     }

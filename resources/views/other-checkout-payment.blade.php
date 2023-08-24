@@ -106,6 +106,12 @@
                                             </div>
                                         </div>
 
+                                        <input type="text" id="billing_lat" name="billing_lat"
+                                               value="{{ old('billing_lat', @$oldData['billing_lat']) }}">
+
+                                        <input type="text" id="billing_lng" name="billing_lng"
+                                               value="{{ old('billing_lng', @$oldData['billing_lng']) }}">
+
                                     </div>
                                 </div>
                             @else
@@ -121,6 +127,12 @@
                                        value="{{ old('billing_zip', @$oldData['billing_zip'] ?? @$billingAddress->zip) }}">
                                 <input type="hidden" name="billing_country_name"
                                        value="{{ old('billing_country_name', @$oldData['billing_country_name'] ?? 'USA') }}">
+
+                                <input type="text" id="billing_lat" name="billing_lat"
+                                       value="{{ old('billing_lat', @$oldData['billing_lat'] ?? @$billingAddress->lat) }}">
+
+                                <input type="text" id="billing_lng" name="billing_lng"
+                                       value="{{ old('billing_lng', @$oldData['billing_lng'] ?? @$billingAddress->lng) }}">
                             @endif
 
                             @if(count($kbt_address))
@@ -369,6 +381,16 @@
                                        value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.delivery_date')) ?
                                                         old('item_address.'.$id.'.delivery_date') : @$item_address['delivery_date'] }}">
+
+                                <input type="hidden" name="item_address[{{ $id }}][shipping_lat]"
+                                       value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.shipping_lat')) ?
+                                                        old('item_address.'.$id.'.shipping_lat') : @$item_address['shipping_lat'] }}">
+
+                                <input type="hidden" name="item_address[{{ $id }}][shipping_lng]"
+                                       value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.shipping_lng')) ?
+                                                        old('item_address.'.$id.'.shipping_lng') : @$item_address['shipping_lng'] }}">
                             @endforeach
                         @else
                             <input type="hidden" name="item_address">
@@ -539,6 +561,10 @@
         function fillInAddress(type) {
             if (type == 'billing') {
                 var place = billingAutocomplete.getPlace();
+                if (place.geometry) {
+                    $('#billing_lat').val(place.geometry.location.lat());
+                    $('#billing_lng').val(place.geometry.location.lng());
+                }
             }
 
             var new_address = '';
