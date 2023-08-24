@@ -546,6 +546,17 @@
                                            value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.store_name')) ?
                                                         old('item_address.'.$id.'.store_name') : @$addressItems[$id]['store_name'] }}">
+
+                                    <input type="hidden" id="shipping-lat{{ $id }}"
+                                           name="item_address[{{ $id }}][shipping_lat]"
+                                           value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.shipping_lat')) ?
+                                                        old('item_address.'.$id.'.shipping_lat') : @$addressItems[$id]['shipping_lat'] }}">
+                                    <input type="hidden" id="shipping-lng{{ $id }}"
+                                           name="item_address[{{ $id }}][shipping_lng]"
+                                           value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.shipping_lng')) ?
+                                                        old('item_address.'.$id.'.shipping_lng') : @$addressItems[$id]['shipping_lng'] }}">
                                 </div>
                             @endforeach
                         @endif
@@ -1112,13 +1123,18 @@
                 // Get the place details from the autocomplete object.
                 let place = autocomplete.getPlace();
 
+                if (place.geometry) {
+                    $(`#shipping-lat${id}`).val(place.geometry.location.lat());
+                    $(`#shipping-lng${id}`).val(place.geometry.location.lng());
+                }
+
                 var new_address = '';
                 for (var i = 0; i < place.address_components.length; i++) {
                     var addressType = place.address_components[i].types[0];
 
                     if (addressType == 'street_number') {
                         new_address += place.address_components[i]['short_name'];
-                        document.getElementById("billing_address" + id).value = new_address;
+                        $(`#billing_address_1${id}`).val(new_address);
                     }
 
                     if (addressType == 'route') {
@@ -1127,11 +1143,11 @@
                         else
                             new_address += place.address_components[i]['long_name'];
 
-                        document.getElementById("billing_address" + id).value = new_address;
+                        $(`#billing_address${id}`).val(new_address);
                     } else if (new_address == '' && addressType == 'locality') {
                         new_address += place.address_components[i]['long_name'];
 
-                        document.getElementById("billing_address" + id).value = new_address;
+                        $(`#billing_address${id}`).val(new_address);
                     }
 
                     if (componentForm[addressType]) {
