@@ -104,10 +104,10 @@
                                         </div>
                                     </div>
 
-                                    <input type="text" id="billing_lat" name="billing_lat"
+                                    <input type="hidden" id="billing_lat" name="billing_lat"
                                            value="{{ old('billing_lat', @$oldData['billing_lat']) }}">
 
-                                    <input type="text" id="billing_lng" name="billing_lng"
+                                    <input type="hidden" id="billing_lng" name="billing_lng"
                                            value="{{ old('billing_lng', @$oldData['billing_lng']) }}">
 
                                 </div>

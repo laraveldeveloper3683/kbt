@@ -73,7 +73,7 @@ Route::get('other-checkout-preview', 'FlowerBySubscriptionController@otherChecko
 Route::post('other-checkout-preview', 'FlowerBySubscriptionController@otherCheckoutPreviewPost')->name('other-checkout-preview-post');
 Route::get('other-checkout-payment', 'FlowerBySubscriptionController@otherCheckoutPayment')->name('other-checkout-payment');
 Route::post('other-checkout-payment', 'FlowerBySubscriptionController@otherCheckoutPaymentPost')->name('other-checkout-payment-post');
-Route::post('other-checkout-pickup-address', 'FlowerBySubscriptionController@otherCheckoutPickupAddress');
+Route::post('other-checkout-pickup-address', 'FlowerBySubscriptionController@otherCheckoutPickupAddressByGoogle');
 Route::any('other-checkouts', 'FlowerBySubscriptionController@other_checkouts');
 Route::any('other-checkoutss', 'FlowerBySubscriptionController@other_checkoutss');
 Route::post('other-checkout-ship-info', 'FlowerBySubscriptionController@otherCheckoutShipInfo');

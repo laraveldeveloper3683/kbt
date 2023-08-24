@@ -124,7 +124,7 @@
                             $cartItems = session('oth_cart') ?? [];
                         @endphp
                         @foreach(@$itemAddresses as $ik => $itemAddress)
-                            <li class="list-group-item d-flex justify-content-between lh-condensed"
+                            <li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
                                 id="delivery-charge-item{{ $ik }}">
                                 <h6 class="my-0">
                                     Delivery Charge For <strong>{{ $cartItems[$ik]['name'] }}</strong>
@@ -666,6 +666,10 @@
             //end code
         }
 
+        // Get old pickup data for initialize
+        const oldPickupZip = '{{ old('pickup_zip', @$oldData['pickup_zip']) }}';
+        const oldPickupStoreId = '{{ old('pk_locations', @$oldData['pk_locations']) }}';
+
         function getLatLngFromPickupZipCode(zipCode) {
             var geocoder = new google.maps.Geocoder();
 
@@ -710,22 +714,34 @@
 
                 },
                 success   : function (data) {
+                    console.log(data)
                     $('.abcd').html(data.html);
                     $('.delivery-charge-item').remove();
                     $('.estimate_del').html('');
                     $('.deleveryCast').html('$' + 0);
                     $('.deleveryCast1').val('');
                     $('.store_select').attr('value', 'existing');
-                    $('#tax_rate').val(data.taxRate);
-                    $('.taxR').html(`<h6 class="my-0">Tax
-                                    </h6>`);
-                    $('.taxRa').html('$' + data.taxRate);
+
+                    if (oldPickupStoreId) {
+                        $(`#pickup-store-checkbox-${oldPickupStoreId}`).prop('checked', true);
+                        $(`#pickup-store-checkbox-${oldPickupStoreId}`).trigger('change');
+                    }
                 },
                 complete  : function () {
                     $('.loder').text("");
                 },
+                error     : function (data) {
+                    console.log('error -> ', data);
+                    $('#pickup-zip-msg').show();
+                }
 
-            });
+            })
+        }
+
+        function initPickupAddressIfOldData() {
+            if (oldPickupZip) {
+                getLatLngFromPickupZipCode(oldPickupZip);
+            }
         }
 
         $(document).ready(function () {
@@ -737,6 +753,25 @@
 
                 getLatLngFromPickupZipCode(zipCode);
             });
+
+            $(document).on('change', '.pickup-store-checkbox', function () {
+                let item = $(this);
+                console.log('taxRate -> ', item.data('taxrate'));
+                let taxRate = item.data('taxrate');
+                let pkLocation = item.data('storeid');
+
+                if (pkLocation) {
+                    $('.pk_locations').val(pkLocation);
+                }
+
+                if (taxRate) {
+                    $('#tax_rate').val(taxRate);
+                    $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
+                    $('.taxRa').html('$' + taxRate);
+                }
+            });
+
+            initPickupAddressIfOldData();
         });
     </script>
 
@@ -851,15 +886,21 @@
                     allChecked = $(this).is(':checked');
                 });
 
-                if (allChecked) {
-                    $('#pickup-date').removeAttr('required');
-                    $('#pickup-date').val('');
-                    $('#pickup-date-div').hide();
-                } else {
-                    $('#pickup-date').removeAttr('required');
-                    $('#pickup-date').val('');
-                    $('#pickup-date-div').hide();
+                let checkedItem = $('input[name="choise_details"]:checked');
+                let value = checkedItem.data('text');
+
+                if (value == 'Delivery') {
+                    if (allChecked) {
+                        $('#pickup-date').removeAttr('required');
+                        $('#pickup-date').val('');
+                        $('#pickup-date-div').hide();
+                    } else {
+                        $('#pickup-date').removeAttr('required');
+                        $('#pickup-date').val('');
+                        $('#pickup-date-div').hide();
+                    }
                 }
+
                 return allChecked;
             }
 
