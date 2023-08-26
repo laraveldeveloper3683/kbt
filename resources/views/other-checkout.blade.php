@@ -102,40 +102,57 @@
                             </li>
                         @endforeach
                     @endif
+
                     @php
                         $itemAddresses = @$oldData['item_address'] ?? [];
-                        $allChecked = 1;
                         $deliveryCharge = 0;
-                        foreach ($itemAddresses as $itemAddress) {
-                            $allChecked = $itemAddress['same_as_billing'] ?? 1;
-                            $deliveryCharge += $itemAddress['delivery_charge'];
+                        $duplicateItemAddresses = [];
+
+                        foreach ($itemAddresses as $key => $itemAddress) {
+                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'];
+                            if ($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses)) {
+                                $deliveryCharge += $itemAddress['delivery_charge'];
+                            }
+
+                            $duplicateItemAddresses[$key] = $address;
+
                         }
-                        if ($deliveryCharge <= 0) {
-                            $deliveryCharge = old('deleveryCast1', @$oldData['deleveryCast1']);
-                        }
+                        $cartItems = session('oth_cart') ?? [];
                     @endphp
-                    @if(!$allChecked && @count(@$itemAddresses))
+
+                    @if(@count(@$itemAddresses))
                         @php
-                            $cartItems = session('oth_cart') ?? [];
+                            $duplicateItemAddresses = [];
                         @endphp
                         @foreach(@$itemAddresses as $ik => $itemAddress)
-                            <li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
-                                id="delivery-charge-item{{ $ik }}">
-                                <h6 class="my-0">
-                                    Delivery Charge For <strong>{{ $cartItems[$ik]['name'] }}</strong>
-                                    <br>
-                                    <small>
-                                        delivering from
-                                        {{ @$itemAddress['store_city'] }}, {{ @$itemAddress['store_name'] }}
-                                    </small>
-                                    <br>
-                                    <small>Estimdated Delivery, {{ @$oldData['estimated_del'] }}</small>
-                                </h6>
+                            @php
+                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'];
+                            @endphp
 
-                                <span class="text-muted">${{ @$itemAddress['delivery_charge'] }}</span>
-                            </li>
+                            @if($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
+                                <li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
+                                    id="delivery-charge-item{{ $ik }}">
+                                    <h6 class="my-0">
+                                        Delivery Charge For <strong>{{ $cartItems[$ik]['name'] }}</strong>
+                                        <br>
+                                        <small>
+                                            delivering from
+                                            {{ @$itemAddress['store_city'] }}, {{ @$itemAddress['store_name'] }}
+                                        </small>
+                                        <br>
+                                        <small>Estimdated Delivery, {{ @$itemAddress['delivery_date'] }}</small>
+                                    </h6>
+
+                                    <span class="text-muted">${{ @$itemAddress['delivery_charge'] }}</span>
+                                </li>
+                            @endif
+
+                            @php
+                                $duplicateItemAddresses[$ik] = $address;
+                            @endphp
                         @endforeach
                     @endif
+
                     <li class="list-group-item d-flex justify-content-between lh-condensed dlCast"
                         id="tax-rate-section">
                         @php
@@ -203,16 +220,6 @@
                         <input type="hidden" value="{{ $total }}" class="totalCast">
                     </li>
                 </ul>
-
-                @if($allChecked == 1)
-                    <ul class="list-group mb-3 sticky-top" id="cart-item-delivery-charges"
-                        style="display: none;">
-                    </ul>
-                @else
-                    <ul class="list-group mb-3 sticky-top" id="cart-item-delivery-charges">
-
-                    </ul>
-                @endif
 
                 <div class="form-group">
                     <label>Apply Coupon (If you have)</label>
@@ -575,10 +582,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" id="is_same_as_billing{{ $id }}"
-                                           name="item_address[{{ $id }}][same_as_billing]" value="{{ old('item_address') &&
+
+                                    @if($loop->first)
+                                        <input type="hidden" id="is_same_as_billing{{ $id }}"
+                                               name="item_address[{{ $id }}][same_as_billing]" value="0">
+                                    @else
+                                        <input type="hidden" id="is_same_as_billing{{ $id }}"
+                                               name="item_address[{{ $id }}][same_as_billing]" value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.same_as_billing')) ?
                                                         old('item_address.'.$id.'.same_as_billing') : @$addressItems[$id]['same_as_billing'] }}">
+                                    @endif
 
                                     <input type="hidden" id="delivery_charge{{ $id }}"
                                            name="item_address[{{ $id }}][delivery_charge]"
@@ -641,7 +654,7 @@
                            value="{{ old('amount', @$oldData['amount'] ?? $total) }}">
 
                     <input type="hidden" class="form-control deleveryCast1" name="deleveryCast1"
-                           value="{{ old('deleveryCast1', @$oldData['deleveryCast1']) }}">
+                           value="{{ old('deleveryCast1', @$oldData['deleveryCast1'] ?? @$deliveryCharge) }}">
 
                     <input type="hidden" class="form-control shippingCharge" id="tax_rate" name="shippingCharge"
                            value="{{ old('shippingCharge', @$oldData['shippingCharge']) }}">
@@ -855,6 +868,22 @@
             country                    : 'long_name',
             postal_code                : 'short_name'
         };
+
+        var duplicateAddresses = [];
+
+        function initDuplicateAddresses() {
+            const itemAddresses = $('.item-addr');
+            itemAddresses.each(function () {
+                let id = $(this).data('id');
+                let address = $(`#billing_address${id}`).val();
+                let city = $(`#billing_city${id}`).val();
+                let newAddress = address + ', ' + city;
+                duplicateAddresses.push(newAddress);
+            });
+        }
+
+        initDuplicateAddresses();
+
         $(document).ready(function () {
             function cartItemShipAddrCharges(address, city, id) {
                 $('.couponApply').val('');
@@ -867,41 +896,44 @@
                 $('.totalCast1').html('$' + to);
                 $('.discountCharge').val('');
 
-                $.ajax({
-                    url     : "{{ url('other-checkout-ship-info') }}",
-                    type    : 'POST',
-                    dataType: 'json',
-                    data    : {
-                        '_token': '{{ csrf_token() }}',
-                        city    : city,
-                        address : address
-                    },
-                    success : function (response) {
-                        console.log('cartItemShipAddrCharges response -> ', response)
-                        var totalcast = parseFloat($('.totalCast').val());
-                        var taxRate = $('#tax_rate').val() || response.taxRate;
+                $newAddress = address + ', ' + city;
 
-                        var deliveryCharge = response.delivery_charge;
+                if (!duplicateAddresses.includes($newAddress)) {
+                    $.ajax({
+                        url     : "{{ url('other-checkout-ship-info') }}",
+                        type    : 'POST',
+                        dataType: 'json',
+                        data    : {
+                            '_token': '{{ csrf_token() }}',
+                            city    : city,
+                            address : address
+                        },
+                        success : function (response) {
+                            console.log('cartItemShipAddrCharges response -> ', response)
+                            var totalcast = parseFloat($('.totalCast').val());
+                            var taxRate = $('#tax_rate').val() || response.taxRate;
 
-                        $(`#delivery_charge${id}`).val(deliveryCharge);
-                        $(`#store_city${id}`).val(response.storeCity);
-                        $(`#store_name${id}`).val(response.storeName);
-                        $(`#estimated_del${id}`).val(response.estimated_delivery_time);
+                            var deliveryCharge = response.delivery_charge;
 
-                        const firstItemAddr = $('.item-addr').first();
-                        let firstItemId = firstItemAddr.data('id');
+                            $(`#delivery_charge${id}`).val(deliveryCharge);
+                            $(`#store_city${id}`).val(response.storeCity);
+                            $(`#store_name${id}`).val(response.storeName);
+                            $(`#estimated_del${id}`).val(response.estimated_delivery_time);
 
-                        if (id == firstItemId) {
-                            fillAllItemAddrFromFirstItem();
-                        }
+                            const firstItemAddr = $('.item-addr').first();
+                            let firstItemId = firstItemAddr.data('id');
 
-                        if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                            var to = totalcast + parseFloat(taxRate);
-                        } else {
-                            var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxRate);
-                        }
-                        let cartItemName = $(`#cart-item-name${id}`).text();
-                        let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
+                            if (id == firstItemId) {
+                                fillAllItemAddrFromFirstItem();
+                            }
+
+                            if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
+                                var to = totalcast + parseFloat(taxRate);
+                            } else {
+                                var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxRate);
+                            }
+                            let cartItemName = $(`#cart-item-name${id}`).text();
+                            let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
                                             id="delivery-charge-item${id}">
                             <h6 class="my-0">
                                 Delivery Charge For <strong>${cartItemName}</strong>
@@ -915,21 +947,24 @@
 
                             <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                        $('.totalCast1').text('$' + to);
-                        $('.amountTotal').val(to);
-                        $(`#delivery-charge-item${id}`).remove();
+                            $('.totalCast1').text('$' + to);
+                            $('.amountTotal').val(to);
+                            $(`#delivery-charge-item${id}`).remove();
 
-                        $(chargeHtml).insertBefore('#tax-rate-section');
+                            $(chargeHtml).insertBefore('#tax-rate-section');
 
-                        cartItemAddrIsSame();
-                        if (!$('#tax_rate').val()) {
-                            $('.taxR').html(`<h6 class="my-0">Tax
+                            cartItemAddrIsSame();
+                            if (!$('#tax_rate').val()) {
+                                $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                            $('.taxRa').html('$' + response.taxRate);
-                            $('#tax_rate').val(response.taxRate);
+                                $('.taxRa').html('$' + response.taxRate);
+                                $('#tax_rate').val(response.taxRate);
+                            }
                         }
-                    }
-                })
+                    })
+                }
+
+                duplicateAddresses.push($newAddress);
             }
 
             function cartItemAddrIsSame() {
@@ -1062,9 +1097,6 @@
                         cartItemShipAddrCharges(address, city, id);
                         fillAllItemAddrFromFirstItem();
                     });
-
-                    cartItemShipAddrCharges(address, city, id);
-                    fillAllItemAddrFromFirstItem();
                 }
 
                 $(`#shipping_full_name${id}`).on('change', function () {
@@ -1103,18 +1135,17 @@
                 $('.item-addr').each(function () {
                     let itemId = $(this).data('id');
                     let isSameChecked = $(`#checkbox${itemId}`).is(':checked');
-                    if (!isSameChecked || itemId == firstItemId) {
-                        return;
+                    if (!isSameChecked && itemId != firstItemId) {
+                        $(`#shipping_full_name${itemId}`).val(firstAddrName);
+                        $(`#shipping_phone${itemId}`).val(firstAddrPhone);
+                        $(`#billing_address${itemId}`).val(firstAddr);
+                        $(`#billing_address_1${itemId}`).val(firstAddr1);
+                        $(`#billing_city${itemId}`).val(firstCity);
+                        $(`#billing_state_name${itemId}`).val(firstState);
+                        $(`#shipping_zip${itemId}`).val(firstZip);
+                        $(`#delivery-date${itemId}`).val(firstDelDate);
+                        $(`#delivery_charge${itemId}`).val(firstDelCharge);
                     }
-                    $(`#shipping_full_name${itemId}`).val(firstAddrName);
-                    $(`#shipping_phone${itemId}`).val(firstAddrPhone);
-                    $(`#billing_address${itemId}`).val(firstAddr);
-                    $(`#billing_address_1${itemId}`).val(firstAddr1);
-                    $(`#billing_city${itemId}`).val(firstCity);
-                    $(`#billing_state_name${itemId}`).val(firstState);
-                    $(`#shipping_zip${itemId}`).val(firstZip);
-                    $(`#delivery-date${itemId}`).val(firstDelDate);
-                    $(`#delivery_charge${itemId}`).val(firstDelCharge);
                 });
 
             }
@@ -1126,29 +1157,6 @@
                     let id = $(this).data('id');
                     let addressInput = document.getElementById('billing_address' + id);
                     $(`#is_same_as_billing${id}`).val(isChecked ? 1 : 0);
-
-                    const firstItemAddr = $('.item-addr').first();
-                    let firstItemId = firstItemAddr.data('id');
-                    let firstAddrName = $(`#shipping_full_name${firstItemId}`).val();
-                    let firstAddrPhone = $(`#shipping_phone${firstItemId}`).val();
-                    let firstAddr = $(`#billing_address${firstItemId}`).val();
-                    let firstAddr1 = $(`#billing_address_1${firstItemId}`).val();
-                    let firstCity = $(`#billing_city${firstItemId}`).val();
-                    let firstState = $(`#billing_state_name${firstItemId}`).val();
-                    let firstZip = $(`#shipping_zip${firstItemId}`).val();
-                    let firstDelDate = $(`#delivery-date${firstItemId}`).val();
-                    let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
-
-
-                    let billFullName = $(`#shipping_full_name${id}`);
-                    let billPhone = $(`#shipping_phone${id}`);
-                    let billingAddr = $(`#billing_address${id}`);
-                    let billingAddr1 = $(`#billing_address_1${id}`);
-                    let billingCity = $(`#billing_city${id}`);
-                    let billingState = $(`#billing_state_name${id}`);
-                    let billingZip = $(`#shipping_zip${id}`);
-                    let billingDelDate = $(`#delivery-date${id}`);
-                    let billingDelCharge = $(`#delivery_charge${id}`);
 
                     if (!isChecked) {
                         let itemAutocomplete = new google.maps.places.Autocomplete(
@@ -1169,32 +1177,10 @@
                             cartItemShipAddrCharges(address, city, id);
                         });
                         $(`#div${id}`).show();
-
-                        // Reset all fields
-                        billFullName.val('');
-                        billPhone.val('');
-                        billingAddr.val('');
-                        billingAddr1.val('');
-                        billingCity.val('');
-                        billingState.val('');
-                        billingZip.val('');
-                        billingDelDate.val('');
-                        billingDelCharge.val('');
                     } else {
                         $(`#delivery_charge${id}`).val(0);
                         $(`#delivery-charge-item${id}`).remove();
                         $(`#div${id}`).hide();
-
-                        // Fill all field
-                        billFullName.val(firstAddrName);
-                        billPhone.val(firstAddrPhone);
-                        billingAddr.val(firstAddr);
-                        billingAddr1.val(firstAddr1);
-                        billingCity.val(firstCity);
-                        billingState.val(firstState);
-                        billingZip.val(firstZip);
-                        billingDelDate.val(firstDelDate);
-                        billingDelCharge.val(firstDelCharge);
                     }
                     cartItemAddrIsSame();
                 });
@@ -1212,10 +1198,7 @@
             }
 
             @if(isset($oldData['item_address']))
-            $(document).ready(function () {
-                firstItemAddrInit2();
                 itemAddrInit();
-            });
             @endif
 
             function fillInItemAddress(autocomplete, id) {
@@ -1292,9 +1275,6 @@
                     $('.store').hide();
                     $('.store').find('input[name="store_id"]').removeAttr('checked');
                     $('.store').find('input[name="store_id"]').removeAttr('required');
-
-                    firstItemAddrInit2();
-                    itemAddrInit();
 
                     $('#pickup-date-div').hide();
                     $('#pickup-date').removeAttr('required');

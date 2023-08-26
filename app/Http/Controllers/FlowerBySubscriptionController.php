@@ -352,16 +352,20 @@ class FlowerBySubscriptionController extends Controller
 
         $cartItems = session('oth_cart');
 
-        $deliveryCharge = 0;
-        $sameAsBilling  = 0;
+        $deliveryCharge     = 0;
+        $sameAsBilling      = 0;
+        $duplicateAddresses = [];
         if (isset($data['item_address']) && count($data['item_address'])) {
-            foreach ($data['item_address'] as $item_address) {
-                $sameAsBilling = $item_address['same_as_billing'] ?? 1;
-                if ($item_address['same_as_billing'] == 0) {
+            foreach ($data['item_address'] as $key => $item_address) {
+                $address = $item_address['shipping_address'] . ' ' . $item_address['shipping_address_1'] . ' ' . $item_address['shipping_city'] . ' ' . $item_address['shipping_state_name'] . ' ' . $item_address['shipping_zip'];
+                if ($item_address['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
+                    $sameAsBilling  = 0;
                     $deliveryCharge += $item_address['delivery_charge'];
                 } else {
-                    $deliveryCharge += $data['deleveryCast1'] ?? 0;
+                    $sameAsBilling = 1;
                 }
+
+                $duplicateAddresses[$key] = $address;
             }
         }
 
@@ -763,8 +767,8 @@ class FlowerBySubscriptionController extends Controller
 
     public function otherCheckoutPickupAddressByDB(Request $request)
     {
-        $tLat = $request->lat; // '33.6496252';
-        $tLng = $request->lng; // '-117.9190418';
+        $tLat       = $request->lat; // '33.6496252';
+        $tLng       = $request->lng; // '-117.9190418';
         $withinDist = 25; // how many miles to search within - default 25
 
         $output = ['html' => null];

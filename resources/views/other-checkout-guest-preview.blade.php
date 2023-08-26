@@ -195,44 +195,55 @@
                                     </h4>
                                 </div>
                                 <div class="card-body">
+                                    @php
+                                        $duplicateItemAddresses = [];
+                                    @endphp
                                     @forelse($data['item_address'] as $key => $item)
-                                        <h4 class="h4 text-center">Address For
-                                            - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
-                                        <table class="table table-hover table-bordered">
+                                        @php
+                                            $address = $item['shipping_address'] . ' ' . $item['shipping_address_1'] . ' ' . $item['shipping_city'] . ' ' . $item['shipping_state_name'] . ' ' . $item['shipping_zip'];
+                                        @endphp
+                                        @if($item['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
+                                            <h4 class="h4 text-center">Address For
+                                                - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
+                                            <table class="table table-hover table-bordered">
 
-                                            <tr>
-                                                <th>Full Name</th>
-                                                <td>{{ @$item['shipping_full_name'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Phone</th>
-                                                <td>{{ @$item['shipping_phone'] }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Address</th>
-                                                <td style="width: 365px;">
-                                                    {{ @$item['shipping_address'] }}
-                                                    {{ isset($item['shipping_address_1']) ?
-                                                        '#'.$item['shipping_address_1'] : ''}}
-                                                    </br>
-                                                    {{ @$item['shipping_city'] }}
-                                                    {{ @$item['shipping_state_name'] }}
-                                                    {{ @$item['shipping_zip'] }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Delivery Charge</th>
-                                                <td>
-                                                    ${{ @number_format(@$item['delivery_charge'], 2) }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Estimated Delivery</th>
-                                                <td>
-                                                    {{ @$item['delivery_date'] }}
-                                                </td>
-                                            </tr>
-                                        </table>
+                                                <tr>
+                                                    <th>Full Name</th>
+                                                    <td>{{ @$item['shipping_full_name'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Phone</th>
+                                                    <td>{{ @$item['shipping_phone'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Address</th>
+                                                    <td style="width: 365px;">
+                                                        {{ @$item['shipping_address'] }}
+                                                        {{ isset($item['shipping_address_1']) ?
+                                                            '#'.$item['shipping_address_1'] : ''}}
+                                                        </br>
+                                                        {{ @$item['shipping_city'] }}
+                                                        {{ @$item['shipping_state_name'] }}
+                                                        {{ @$item['shipping_zip'] }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Delivery Charge</th>
+                                                    <td>
+                                                        ${{ @number_format(@$item['delivery_charge'], 2) }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Estimated Delivery</th>
+                                                    <td>
+                                                        {{ @$item['delivery_date'] }}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        @endif
+                                        @php
+                                            $duplicateItemAddresses[$key] = $address;
+                                        @endphp
                                     @empty
                                         <table class="table table-hover table-bordered">
                                             <tr>

@@ -93,6 +93,34 @@
                                             ${{ number_format($order_total, 2) }}</td>
                                     </tr>
 
+                                    @if($orders->discount_charge)
+                                        <tr>
+                                            <td colspan="2">Discount Charge</td>
+                                            <td class="text-end">
+                                                ${{ number_format($orders->discount_charge, 2) }}</td>
+                                        </tr>
+                                    @endif
+
+                                    @if($orders->delivery_charge && count($order_items) > 0 && count($order_items) == 1)
+                                        <tr>
+                                            <td colspan="2">Delivery Charge</td>
+                                            <td class="text-end">
+                                                ${{ number_format($orders->delivery_charge, 2) }}</td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td colspan="2">Delivery Charges</td>
+                                            <td class="text-end">
+                                                ${{ number_format($orders->delivery_charge, 2) }}</td>
+                                        </tr>
+                                    @endif
+
+                                    <tr>
+                                        <td colspan="2">Tax</td>
+                                        <td class="text-end">
+                                            ${{ number_format($orders->tax_charge, 2) }}</td>
+                                    </tr>
+
                                     @if(isset($orders->discount_charge) && $orders->discount_charge>0)
                                         <tr>
                                             <td colspan="2">Discount</td>
@@ -180,11 +208,13 @@
                                         </address>
                                         @if($itemAddr->delivery_date)
                                             <p class="text-wrap font-weight-bold">
-                                                Estimated Delivery: {{ @date('m/d/Y', strtotime(@$itemAddr->delivery_date)) }}
+                                                Estimated
+                                                Delivery: {{ @date('m/d/Y', strtotime(@$itemAddr->delivery_date)) }}
                                             </p>
                                         @else
                                             <p class="text-wrap font-weight-bold">
-                                                Estimated Delivery: {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
+                                                Estimated
+                                                Delivery: {{ @date('m/d/Y', strtotime(@$orders->delivery_date)) }}
                                             </p>
                                         @endif
                                         <p class="text-wrap font-weight-bold">
