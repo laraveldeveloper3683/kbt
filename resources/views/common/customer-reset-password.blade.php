@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
 
 @section('content')
 <div class="page-wrapper">
@@ -20,14 +20,14 @@
         <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body" style="margin-left: 480px;">
                               @if(Session::has('success'))
                               <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('success') }}</p>
                                @endif
                                @if(Session::has('error'))
                                <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('error') }}</p>
                                 @endif
-                                <h4 class="card-title">Change Password</h4>
+                                <h4 class="card-title" style="margin-left: -24px;">Change Password</h4>
                                 <div class="tab-content br-n pn">
                                     <div id="navpills-1" class="tab-pane active">
                                         <div class="row">
@@ -48,15 +48,15 @@
                                                 <input type="password" name="password_confirmation" class="form-control" value="{{old('confirm_password')}}">
                                             </div>
                                             <br>
-                                            <div class="form-group">
+                                            <div class="form-group" style="    margin-left: -14px;">
                                                 <label class="form-label">Active</label>
-                                                    <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio11">Yes</label>
-                                                    <input type="radio" name="active" value="0" {{ isset($user) && ($user->active=="0")? "checked" : "" }} class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio22">No</label>
+                                                    <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" >
+                                                    <label class="form-check-label" for="customRadio11" style="margin-left: 20px;">Yes</label>
+                                                    <input type="radio" name="active" value="0" {{ isset($user) && ($user->active=="0")? "checked" : "" }} class="form-check-input">
+                                                    <label class="form-check-label" for="customRadio22" style="margin-left: 20px;">No</label>
                                             </div>
                                             <input type="hidden" name="pk_users" class="form-control" value="{{isset($user) && ($user->pk_users)?$user->pk_users:''}}">
-                                            <a href="/customer/back"><input class="btn btn-primary" type="button" value="Cancel"></a>
+                                            <a href="/customer/back" style="margin-left:-16px;"><input class="btn btn-primary" type="button" value="Cancel"></a>
                                             <input class="btn btn-primary" type="submit" value="{{isset($user) && ($user->pk_users)?'Update':'Submit'}}">
                                           </form>
                                         </div>

@@ -542,6 +542,8 @@ Route::post('/accountadmin/customers/submit', 'Accountadmin\CustomerController@s
 Route::get('/accountadmin/customers/edit/{id}', 'Accountadmin\CustomerController@edit')->name('accountadmin.customers.edit')->middleware(['auth', 'admin']);
 Route::post('/accountadmin/customers/update', 'Accountadmin\CustomerController@update')->name('accountadmin.customers.update')->middleware(['auth', 'admin']);
 Route::get('/accountadmin/customers/delete/{id}', 'Accountadmin\CustomerController@delete')->name('accountadmin.customers.delete')->middleware(['auth', 'admin']);
+Route::get('/accountadmin/customer/reset/{id}', 'HomeController@resetCustomer')->name('customer.reset.customer')->middleware(['auth', 'admin']);
+Route::post('/customer/reset-password/submit', 'HomeController@resetUpdate')->name('customer.reset.customer.update')->middleware(['auth', 'admin']);
 
 Route::any('/accountadmin/customers/address/add/{id}', 'Accountadmin\CustomerController@address_add')->name('accountadmin.customers.address_add')->middleware(['auth', 'admin']);
 Route::any('/accountadmin/customers/address/edit/{id}', 'Accountadmin\CustomerController@address_edit')->name('accountadmin.customers.address_edit')->middleware(['auth', 'admin']);

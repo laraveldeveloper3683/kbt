@@ -201,6 +201,9 @@
                                                                         value="Cancel"></a>
                                                                 <input class="btn btn-primary" type="submit"
                                                                        value="{{isset($customer) && ($customer->pk_customers)?'Update':'Submit'}}">
+                                                                <a href="/accountadmin/customer/reset/{{$customer->pk_customers}}"><input
+                                                                class="btn btn-primary" type="button"
+                                                                value="Reset Password"></a>
                                                             </div>
                                                         </div>
                                                     </div>
