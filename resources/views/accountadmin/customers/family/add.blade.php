@@ -48,11 +48,6 @@
                                                   <div class="col-md-6">
                                                       <div class="form-group">
                                                           <label for="title">RelationShip</label>
-                                                       <!--  <select class="form-control @error('relationship') is-invalid @enderror" name="relationship">
-                                                        //     @foreach($relationships as $relationship)
-                                                        //     <option value="{{$relationship->pk_customer_family_relation}}" {{isset($family) && ($family->pk_customer_family_relation == $relationship->pk_customer_family_relation )?'selected':''}}>{{$relationship->customer_family_relation}}</option>
-                                                        //     @endforeach
-                                                        //   </select>-->
                                                         <input type="text" name="relationship"
                                                                  class="form-control @error('relationship') is-invalid @enderror"
                                                                  value="{{isset($family) && ($family->relationship)?$family->relationship:old('relationship')}}">

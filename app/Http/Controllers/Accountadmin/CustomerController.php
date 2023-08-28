@@ -550,8 +550,7 @@ class CustomerController extends Controller
       $pk_customers = DB::table('kbt_customers')->where('pk_customers',$id)->first();
 
       $days = ImportantDay::all();
-      $relationships = CustomerFamilyRelation::all();
-      return view('accountadmin.customers.family.add',['days' => $days,'pk_customers'=>$pk_customers,'relationships'=>$relationships]);
+      return view('accountadmin.customers.family.add',['days' => $days,'pk_customers'=>$pk_customers,]);
     }
 
     public function family_store(Request $request){
@@ -595,8 +594,7 @@ class CustomerController extends Controller
     {
         $family = CustomerFamily::find($id);
         $days = ImportantDay::all();
-        $relationships = CustomerFamilyRelation::all();
-        return view('accountadmin.customers.family.add',['days' => $days,'family'=>$family,'relationships'=>$relationships]);
+        return view('accountadmin.customers.family.add',['days' => $days,'family'=>$family]);
     }
 
     public function family_delete(Request $request, $id = null)
