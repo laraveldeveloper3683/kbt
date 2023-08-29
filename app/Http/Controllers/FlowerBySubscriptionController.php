@@ -782,16 +782,13 @@ class FlowerBySubscriptionController extends Controller
             $stores = $stores->selectRaw(
                 'kbt_locations.*, ST_Distance_Sphere(point(kbt_locations.lng, kbt_locations.lat), point(?, ?)) * .000621371192 as calculated_distance',
                 [$tLng, $tLat]
-            )
-                // check investigators distance within calculated distance
-                ->whereRaw(
-                    'ST_Distance_Sphere(point(kbt_locations.lng, kbt_locations.lat), point(?, ?)) * .000621371192 <= ' . $withinDist,
-                    [$tLng, $tLat]
-                );
+            );
+            // get nearest 5 stores
+            $stores = $stores->orderBy('calculated_distance')->take(5);
 
             foreach ($stores->cursor() as $store) {
                 // check if calcDistance is not null and within 25 miles
-                if ($store->calculated_distance && $store->calculated_distance <= $withinDist) {
+                if ($store->calculated_distance) {
                     $distance = number_format($store->calculated_distance, 1) . ' mi';
                     // Get the store times
                     $locationTime = LocationTime::where('pk_locations', $store->pk_locations)->first();
@@ -808,16 +805,18 @@ class FlowerBySubscriptionController extends Controller
             </div>
             <div class="selectTimeItem">
                 <div class="row">';
+                    if ($locationTime) {
+                        $output['html'] .= '<div class="col-md-10">
+                    Day - ' . @$locationTime->day . ' , ' . @date('h:i A', @strtotime(@$locationTime->open_time)) . ' - ' . @date('h:i A', strtotime($locationTime->close_time)) . '
+                </div>';
+                    }
                     $output['html'] .= '
-                <div class="col-md-10">
-                    Day - ' . $locationTime->day . ' , ' . date('h:i A', strtotime($locationTime->open_time)) . ' - ' . date('h:i A', strtotime($locationTime->close_time)) . '
-                </div>
                 <div class="col-md-2">
-                    <input type="radio" required name="store_id" value="' . $locationTime->pk_location_times . '/' . $store->pk_locations . '"
+                    <input type="radio" required name="store_id" value="' . @$locationTime->pk_location_times . '/' . $store->pk_locations . '"
                     data-taxRate="' . $store->tax_rate . '" data-storeId="' . $store->pk_locations . '"
-                    data-locationTime="' . $locationTime->pk_location_times . '" class="pickup-store-checkbox"
+                    data-locationTime="' . @$locationTime->pk_location_times . '" class="pickup-store-checkbox"
                     id="pickup-store-checkbox-' . $store->pk_locations . '"
-                    data-distance="' . $distance . '" data-calcDistanc="' . number_format($store->calculated_distance, 1) . '"> Select
+                    data-distance="' . $distance . '" data-calcDistance="' . number_format($store->calculated_distance, 1) . '"> Select
                 </div>';
                     $output['html'] .= '</div></div></div>';
                 }
@@ -846,8 +845,9 @@ class FlowerBySubscriptionController extends Controller
         $withinDist = 25; // how many miles to search within - default 25
 
         if ($tLat && $tLng) {
+            // loop and get 5 nearest stores by google api distance matrix
             foreach ($stores as $store) {
-                // Get the tax rate
+                // get 5 nearest stores
                 $getDes      = "{$store->lat},{$store->lng}";
                 $getDes1     = "{$tLat},{$tLng}";
                 $shippingurl = "https://maps.googleapis.com/maps/api/distancematrix/json";
@@ -894,7 +894,7 @@ class FlowerBySubscriptionController extends Controller
                     data-taxRate="' . $store->tax_rate . '" data-storeId="' . $store->pk_locations . '"
                     data-locationTime="' . $locationTime->pk_location_times . '" class="pickup-store-checkbox"
                     id="pickup-store-checkbox-' . $store->pk_locations . '"
-                    data-distance="' . $distance . '" data-calcDistanc="' . $explodeDistance . '"> Select
+                    data-distance="' . $distance . '" data-calcDistance="' . $explodeDistance . '"> Select
                 </div>';
                     $output['html'] .= '</div></div></div>';
                 }

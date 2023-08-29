@@ -788,11 +788,9 @@
                     $('.pk_locations').val(pkLocation);
                 }
 
-                if (taxRate) {
-                    $('#tax_rate').val(taxRate);
-                    $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
-                    $('.taxRa').html('$' + taxRate);
-                }
+                $('#tax_rate').val(taxRate);
+                $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
+                $('.taxRa').html('$' + Number(taxRate).toFixed(2));
             });
 
             initPickupAddressIfOldData();
