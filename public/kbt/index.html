@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Kissed by Tulips</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
+    <meta name="description"
+        content="Luxury Flower Shop Located in Costa Mesa, CA that Specializes in Contemporary Floral Design" />
+
+
+    <style>
+        .loader-first {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #000;
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .loader-first p {
+            margin-top: 1em;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 28px;
+        }
+
+        @media (min-width: 767px) {
+            .loader-first div {
+                width: 150px;
+                height: 150px;
+                margin: 0 auto;
+            }
+        }
+
+        .alert-warnning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            font-size: 20px;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.5em;
+            font-weight: 700;
+            color: #fff;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .alert-warnning p {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            font-size: 18px;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+
+    <link rel="icon" href="assets/images/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="assets/css/vendors/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/vendors/bootstrap-select.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/vendors/swiper.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/vendors/fancybox.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/vendors/aos.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/vendors/animate.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
+</head>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B3T8R9N5Z5"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-B3T8R9N5Z5');
+</script>
+
+<body>
+
+    <div id="portrait-warnning" class="alert-warnning" style="display: none">
+        <p>For an optimal experience please<br> rotate your device to portrait mode</p>
+    </div>
+
+    <!--<div class="loader-first">
+    <div>
+        <img src="assets/images/logo.png" alt="Loader">
+    </div>
+</div>-->
+    <div class="top__bar">
+        <div class="container">
+            <div class="row m-0 align-items-center justify-content-between">
+                <div class="col-xl-3 col-lg-2 col-md-3 col-5 p-0">
+                    <a href="javascript:;" class="top__wrap">
+                        <div class="phone__logo">
+                            <img src="assets/images/phone.svg" alt="Phone">
+                        </div>
+                        <p>(949) 287 6622</p>
+                    </a>
+                </div>
+                <div class="col-xl-6 col-lg-7 col-md-6 col-0 p-0">
+                    <div class="top__center">
+                        <p>Luxury Flower Shop Located in Costa Mesa, CA that Specializes in Contemporary Floral Design
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-2 col-md-3 col-7 p-0">
+                    <a href="javascript:;" class="top__wrap last-child">
+                        <div class="email__logo">
+                            <img src="assets/images/email.svg" alt="Email">
+                        </div>
+                        <p>kissedbytulip@gmail.com</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header>
+        <div class="container">
+            <div class="row m-0 align-items-center justify-content-between">
+                <div class="col-xl col-lg col-md-0 p-0">
+                    <ul class="navigation">
+                        <li><a href="javascript:;">Home</a></li>
+                        <li><a href="javascript:;">Shop</a></li>
+                        <li><a href="javascript:;">our story</a></li>
+                        <li><a href="javascript:;">contact</a></li>
+                        <li><a href="javascript:;">Delivery</a></li>
+                    </ul>
+                </div>
+                <div class="col-xl col-lg col-md-4 col-5 p-0">
+                    <div class="brang__logo">
+                        <a href="index.html">
+                            <img src="assets/images/logo.svg" alt="Logo" />
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl col-lg p-0 col-md-4 col-4">
+                    <div class="head__icons">
+                        <div class="icon__image">
+                            <a href="javascript:;"><img src="assets/images/search.svg" alt="Search"></a>
+                        </div>
+                        <div class="icon__image">
+                            <a href="javascript:;"><img src="assets/images/account.svg" alt="Account"></a>
+                        </div>
+                        <div class="icon__image">
+                            <a href="javascript:;"><img src="assets/images/cart.svg" alt="Cart"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="toogle-wrap">
+                    <div class="toggle-menu"><a href="javascript:"><span></span><span></span><span></span><span></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="banner">
+            <div class="banner__slider">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="banner__slide">
+                                <div class="banner__content">
+                                    <h1>Summertime stunners</h1>
+                                    <p>Arrangements Featuring Sensational Summer Florals.</p>
+                                    <div class="banner__btn">
+                                        <a href="javascript:;">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="mask"></div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="banner__slide">
+                                <div class="banner__content">
+                                    <h1>Summertime stunners</h1>
+                                    <p>Arrangements Featuring Sensational Summer Florals.</p>
+                                    <div class="banner__btn">
+                                        <a href="javascript:;">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="mask"></div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="banner__slide">
+                                <div class="banner__content">
+                                    <h1>Summertime stunners</h1>
+                                    <p>Arrangements Featuring Sensational Summer Florals.</p>
+                                    <div class="banner__btn">
+                                        <a href="javascript:;">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="mask"></div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="banner__slide">
+                                <div class="banner__content">
+                                    <h1>Summertime stunners</h1>
+                                    <p>Arrangements Featuring Sensational Summer Florals.</p>
+                                    <div class="banner__btn">
+                                        <a href="javascript:;">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="mask"></div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="banner__slide">
+                                <div class="banner__content">
+                                    <h1>Summertime stunners</h1>
+                                    <p>Arrangements Featuring Sensational Summer Florals.</p>
+                                    <div class="banner__btn">
+                                        <a href="javascript:;">Shop Now</a>
+                                    </div>
+                                </div>
+                                <div class="mask"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="shop--section">
+            <div class="container">
+                <div class="row m-0 align-items-center justify-content-between">
+                    <div class="col-xl-3 col-lg-4 p-0">
+                        <div class="shop__content">
+                            <h4>Feature Collection</h4>
+                            <h2>Our Shop</h2>
+                            <p>Our selection of best selling bouquets by Kissed by Tulips. Send a beautiful bouquet
+                                today.</p>
+                            <div class="shop__btn">
+                                <a href="javascript:;">View all</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 col-lg-8 p-0">
+                        <div class="shop__slider">
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <a href="javascript:;" class="shop__box">
+                                            <div class="box__image">
+                                                <img src="assets/images/shop1.png" alt="Shop1">
+                                            </div>
+                                            <div class="box__bottom">
+                                                <h4>Pool side</h4>
+                                                <p>$125.00</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <a href="javascript:;" class="shop__box">
+                                            <div class="box__image">
+                                                <img src="assets/images/shop2.png" alt="Shop1">
+                                            </div>
+                                            <div class="box__bottom">
+                                                <h4>Be Kind</h4>
+                                                <p>$125.00</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <a href="javascript:;" class="shop__box">
+                                            <div class="box__image">
+                                                <img src="assets/images/shop3.png" alt="Shop1">
+                                            </div>
+                                            <div class="box__bottom">
+                                                <h4>Sherbet</h4>
+                                                <p>$75.00</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <a href="javascript:;" class="shop__box">
+                                            <div class="box__image">
+                                                <img src="assets/images/shop1.png" alt="Shop1">
+                                            </div>
+                                            <div class="box__bottom">
+                                                <h4>Pool side</h4>
+                                                <p>$125.00</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <a href="javascript:;" class="shop__box">
+                                            <div class="box__image">
+                                                <img src="assets/images/shop2.png" alt="Shop1">
+                                            </div>
+                                            <div class="box__bottom">
+                                                <h4>Be Kind</h4>
+                                                <p>$125.00</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <a href="javascript:;" class="shop__box">
+                                            <div class="box__image">
+                                                <img src="assets/images/shop3.png" alt="Shop1">
+                                            </div>
+                                            <div class="box__bottom">
+                                                <h4>Sherbet</h4>
+                                                <p>$75.00</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="shop__slider__controls">
+                                <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide">
+                                </div>
+                                <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tulips--section">
+            <div class="row row m-0 align-items-stretch justify-content-between">
+                <div class="col-xl-6 col-lg-6 col-md-12 p-0">
+                    <div class="tulips__image">
+                        <img src="assets/images/tulips.png" alt="Tulips">
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 p-0">
+                    <div class="tulips__content">
+                        <div class="tulips__main">
+                            <h2>Kissed by Tulips</h2>
+                            <ul>
+                                <li>1838 Newport Blvd. <span>Costa Mesa, CA 92627</span></li>
+                                <li>Monday Through Friday: <span>9:00am to 4:00pm</span></li>
+                                <li>Saturday & Sunday: <span>By Appointment Only</span></li>
+                                <li>Call <span>(949) 287 6622</span></li>
+                            </ul>
+                            <div class="tulips__btn">
+                                <a href="javascript:;">Get Direction</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pastels--section">
+            <div class="container">
+                <div class="row m-0 align-items-start justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-12 p-0">
+                        <div class="pastels__main">
+                            <div class="pastels__image">
+                                <img class="desk" src="assets/images/pastels1.png" alt="Pastels1">
+                                <img class="mob" src="assets/images/pastels2.png" alt="Pastels2">
+                            </div>
+                            <div class="pastels__content">
+                                <div class="pastels__left">
+                                    <h4>Fresh Florals</h4>
+                                    <h2>Neutrals</h2>
+                                    <p>All Showcase of Neutral Tonality.</p>
+                                </div>
+                                <div class="pastels__right">
+                                    <div class="shop__btn">
+                                        <a href="javascript:;">Shop now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-12 p-0">
+                        <div class="pastels__main last">
+                            <div class="pastels__content">
+                                <div class="pastels__left">
+                                    <h4>Fresh Florals</h4>
+                                    <h2>Pastels</h2>
+                                    <p>Dreamy Designs style with pastel blooms.</p>
+                                </div>
+                                <div class="pastels__right">
+                                    <div class="shop__btn">
+                                        <a href="javascript:;">Shop now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pastels__image left-child">
+                                <img class="desk" src="assets/images/pastels2.png" alt="Pastels2">
+                                <img class="mob" src="assets/images/pastels1.png" alt="Pastels1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about--section">
+            <div class="container">
+                <div class="row m-0">
+                    <div class="col-12 p-0">
+                        <div class="about__main">
+                            <div class="about__content">
+                                <div class="about__inner">
+                                    <h2>who we are?</h2>
+                                    <p>We are a women owned luxury floral shop that produces floral arrangements with a
+                                        fresh creative perspective. Every design is made thoughtfully with care. We are
+                                        committed to providing beautiful and quality arrangements.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="premium--section">
+            <div class="container">
+                <div class="row m-0 align-items-center justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-12 p-0">
+                        <div class="premium__image">
+                            <img src="assets/images/premium-image.png" alt="Premium">
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 p-0">
+                        <div class="premium__content">
+                            <h2>Premium stems only</h2>
+                            <p>Kissed by Tulips uses only premium stems in all our designs. We take care to source our
+                                florals from the best wholesalers in the industry.</p>
+                            <div class="premium__btn">
+                                <a href="javascript:;">Shop now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tropical--section">
+            <div class="container">
+                <div class="row m-0 align-items-center justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-12 p-0">
+                        <div class="pastels__main">
+                            <div class="pastels__content">
+                                <div class="pastels__left">
+                                    <h4>Fresh Florals</h4>
+                                    <h2>Tropicals</h2>
+                                    <p>Stylized arrangement that put tropical blooms and foliage center stage.</p>
+                                </div>
+                                <div class="pastels__right">
+                                    <div class="shop__btn">
+                                        <a href="javascript:;">Shop now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pastels__image right-child">
+                                <img class="desk" src="assets/images/tropical2.png" alt="Tropical2">
+                                <img class="mob" src="assets/images/tropical1.png" alt="Tropical1">
+                            </div>
+                            <div class="pastels__content">
+                                <div class="pastels__left">
+                                    <h4>FLORIST CHOICE</h4>
+                                    <h2 class="margin__no">Designer's Choice</h2>
+                                </div>
+                                <div class="pastels__right">
+                                    <div class="shop__btn">
+                                        <a href="javascript:;">Shop now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-12 p-0">
+                        <div class="pastels__main last">
+                            <div class="pastels__image">
+                                <img class="desk" src="assets/images/tropical1.png" alt="Tropical1">
+                                <img class="mob" src="assets/images/tropical3.png" alt="Tropical3">
+                            </div>
+                            <div class="pastels__content">
+                                <div class="pastels__left">
+                                    <h4>Fresh Florals</h4>
+                                    <h2>Roses</h2>
+                                    <p>Arrangements that highlight the classic beauty of roses.</p>
+                                </div>
+                                <div class="pastels__right">
+                                    <div class="shop__btn">
+                                        <a href="javascript:;">Shop now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pastels__image bottom-child">
+                                <img class="desk" src="assets/images/tropical3.png" alt="Tropical3">
+                                <img class="mob" src="assets/images/tropical2.png" alt="Tropical3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="events--section">
+            <div class="container">
+                <div class="row m-0">
+                    <div class="col-12 p-0">
+                        <div class="events__content">
+                            <h4>Additional Service</h4>
+                            <h2>Events</h2>
+                            <p>Kissed by Tulips uses only premium stems in all our designs. We take care to source our
+                                florals from the best wholesalers in the industry.</p>
+                            <div class="shop__btn">
+                                <a href="javascript:;">Shop now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonial--section">
+            <div class="container">
+                <div class="row m-0">
+                    <div class="col-12 p-0">
+                        <div class="testimonial__head">
+                            <h2>Don't take our word for it</h2>
+                        </div>
+                        <div class="testimonial__slider">
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <div class="testimonial__box">
+                                            <div class="testimonial__top">
+                                                <div class="client__image">
+                                                    <img src="assets/images/client1.svg" alt="Client1">
+                                                </div>
+                                                <h5><span>Don K.</span> Costa Messa,CA</h5>
+                                            </div>
+                                            <div class="star__image">
+                                                <img src="assets/images/star.svg" alt="Star">
+                                            </div>
+                                            <p>Great company and will do what ever necessary to please the customer.
+                                                Very fresh flowers, super ideas and friendly customer service. No need
+                                                to look further, Kissed By Tulips is the bomb.</p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial__box">
+                                            <div class="testimonial__top">
+                                                <div class="client__image">
+                                                    <img src="assets/images/client2.svg" alt="Client2">
+                                                </div>
+                                                <h5><span>Tracy V.</span> CA</h5>
+                                            </div>
+                                            <div class="star__image">
+                                                <img src="assets/images/star.svg" alt="Star">
+                                            </div>
+                                            <p>I'm giving 5 stars becuae they they went out <span>of they way to make it
+                                                    early, plus the</span> aragment was better than could be expected.
+                                                Thank You</p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial__box">
+                                            <div class="testimonial__top">
+                                                <div class="client__image">
+                                                    <img src="assets/images/client3.svg" alt="Client3">
+                                                </div>
+                                                <h5><span>Boonie G.</span> CA</h5>
+                                            </div>
+                                            <div class="star__image">
+                                                <img src="assets/images/star.svg" alt="Star">
+                                            </div>
+                                            <p>This florist is easy to work with and quick to complete orders. The
+                                                arrangement is as beautiful as anticipated and I highly recommend them!
+                                                Great customer and delivery services.</p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial__box">
+                                            <div class="testimonial__top">
+                                                <div class="client__image">
+                                                    <img src="assets/images/client1.svg" alt="Client1">
+                                                </div>
+                                                <h5><span>Don K.</span> Costa Messa,CA</h5>
+                                            </div>
+                                            <div class="star__image">
+                                                <img src="assets/images/star.svg" alt="Star">
+                                            </div>
+                                            <p>Great company and will do what ever necessary to please the customer.
+                                                Very fresh flowers, super ideas and friendly customer service. No need
+                                                to look further, Kissed By Tulips is the bomb.</p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial__box">
+                                            <div class="testimonial__top">
+                                                <div class="client__image">
+                                                    <img src="assets/images/client2.svg" alt="Client2">
+                                                </div>
+                                                <h5><span>Tracy V.</span> CA</h5>
+                                            </div>
+                                            <div class="star__image">
+                                                <img src="assets/images/star.svg" alt="Star">
+                                            </div>
+                                            <p>I'm giving 5 stars becuae they they went out <span>of they way to make it
+                                                    early, plus the</span> aragment was better than could be expected.
+                                                Thank You</p>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="testimonial__box">
+                                            <div class="testimonial__top">
+                                                <div class="client__image">
+                                                    <img src="assets/images/client3.svg" alt="Client3">
+                                                </div>
+                                                <h5><span>Boonie G.</span> CA</h5>
+                                            </div>
+                                            <div class="star__image">
+                                                <img src="assets/images/star.svg" alt="Star">
+                                            </div>
+                                            <p>This florist is easy to work with and quick to complete orders. The
+                                                arrangement is as beautiful as anticipated and I highly recommend them!
+                                                Great customer and delivery services.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial__slider__controls">
+                                <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide">
+                                </div>
+                                <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="signup--section">
+            <div class="container">
+                <div class="row m-0">
+                    <div class="col-12 p-0">
+                        <div class="signup__main">
+                            <h3>Sign up and save</h3>
+                            <p>Subscribe to get special offers, free giveaways, and once in a lifetime deals</p>
+                            <form>
+                                <div class="form-group">
+                                    <input required class="form-control" type="email" placeholder="Enter your email">
+                                    <button type="submit" class="signup__btn">Shop now</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="row m-0 align-items-start justify-content-between">
+                <div class="col-12 p-0">
+                    <div class="footer__top">
+                        <div class="footer__logo">
+                            <a href="index.html">
+                                <img src="assets/images/footer-logo.svg" alt="Footer Logo">
+                            </a>
+                        </div>
+                        <div class="footer__image">
+                            <img src="assets/images/footer-image.png" alt="Footer Image">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 p-0">
+                    <div class="footer__left">
+                        <h4>Visit us</h4>
+                        <p>1838 Newport Blvd. Costa Mesa, Ca 92627
+                            <span>Monday to Friday: 9:00am - 4:00pm</span>
+                            <span>Saturday & Sunday: By Appointment Only</span>
+                            (949) 287 6622
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 p-0">
+                    <div class="footer__center">
+                        <h4>Customer care</h4>
+                        <div class="footer__nav">
+                            <ul>
+                                <li><a href="javascript:;">Search</a></li>
+                                <li><a href="javascript:;">Contact</a></li>
+                                <li><a href="javascript:;">Privacy policy</a></li>
+                                <li><a href="javascript:;">Terms of service</a></li>
+                                <li><a href="javascript:;">Do not sell my personal information</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 p-0">
+                    <div class="footer__right">
+                        <h4>SIGN UP AND SAVE</h4>
+                        <p>Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
+                        <form>
+                            <div class="form-group">
+                                <input required class="form-control" type="email" placeholder="Enter your email">
+                                <button type="submit" class="signup__btn">Shop now</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="bottom__bar">
+        <div class="container">
+            <div class="row m-0 align-items-center justify-content-between">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-7 p-0">
+                    <div class="bottom__left">
+                        <p>© 2023 Kissed By Tulips</p>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-5 p-0">
+                    <div class="bottom__social">
+                        <div class="social__image">
+                            <a href="javascript:;"><img src="assets/images/facebook.svg" alt="Facebook"></a>
+                        </div>
+                        <div class="social__image">
+                            <a href="javascript:;"><img src="assets/images/twitter.svg" alt="Twitter"></a>
+                        </div>
+                        <div class="social__image">
+                            <a href="javascript:;"><img src="assets/images/instagram.svg" alt="Instagram"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="counter">
+    <a class="counter" href='https://thesiswritingservice.net/'>thesiswritingservice.net</a>
+    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=40f121f6a4c07b28bfa1b637af226baf6d4035a5'></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/927393/t/2"></script>
+</div>-->
+
+    <!-- Call on All Page -->
+    <script src="assets/js/vendors/a-jquery.js"></script>
+    <script src="assets/js/vendors/popper.min.js"></script>
+    <script src="assets/js/vendors/c-jquery.inview.min.js"></script>
+    <script src="assets/js/vendors/g-bootstrap.min.js"></script>
+    <script src="assets/js/vendors/b-css_browser_selector.js"></script>
+    <script src="assets/js/vendors/f-fancybox.js"></script>
+    <script src="assets/js/vendors/d-swiper.min.js"></script>
+    <script src="assets/js/vendors/aos.js"></script>
+
+    <!-- custom Javascript for UI -->
+    <script src="assets/js/custom.js"></script>
+    <script>
+        AOS.init({
+            offset: 10,
+        });
+    </script>
+</body>
+
+</html>

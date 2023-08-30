@@ -170,7 +170,7 @@ class LocationController extends Controller
             }
         }
 
-        $message = DB::table('kbt_acknowledgments')->where('pk_account', auth()->user()->pk_account)->first();
+        $message = "Record Updated successfully";
         session()->flash('success', $message);
         return redirect('/accountadmin/locations');
     }
