@@ -767,9 +767,8 @@ class FlowerBySubscriptionController extends Controller
 
     public function otherCheckoutPickupAddressByDB(Request $request)
     {
-        $tLat       = $request->lat; // '33.6496252';
-        $tLng       = $request->lng; // '-117.9190418';
-        $withinDist = 25; // how many miles to search within - default 25
+        $tLat = $request->lat; // '33.6496252';
+        $tLng = $request->lng; // '-117.9190418';
 
         $output = ['html' => null];
 
@@ -786,41 +785,7 @@ class FlowerBySubscriptionController extends Controller
             // get nearest 5 stores
             $stores = $stores->orderBy('calculated_distance')->take(5);
 
-            foreach ($stores->cursor() as $store) {
-                // check if calcDistance is not null and within 25 miles
-                if ($store->calculated_distance) {
-                    $distance = number_format($store->calculated_distance, 1) . ' mi';
-                    // Get the store times
-                    $locationTime = LocationTime::where('pk_locations', $store->pk_locations)
-                        ->where('day', date('l'))->first();
-                    // Set the store info and tax rate into HTML
-                    $output['html'] .= '
-        <div class="col-md-12 mb-3 store1" id="pickupStore-' . $store->pk_locations . '">
-            <div class="row">
-                <div class="col-md-12"><h6>' . $store->location_name . '</h6></div>
-                <div class="col-md-12"><p>' . $distance . '</p></div>
-                <div class="col-md-12">
-                    <p>' . $store->address . ' ,' . $store->address_1 . ' ,' . $store->city . ' ,' . $store->zip . ' ,' . $store->state_name . ' ,' . $store->country_name . '</p>
-                </div>
-            </div>
-            <div class="selectTimeItem">
-                <div class="row">';
-                    if ($locationTime) {
-                        $output['html'] .= '<div class="col-md-10">
-                    Day - ' . @$locationTime->day . ' , ' . @date('h:i A', @strtotime(@$locationTime->open_time)) . ' - ' . @date('h:i A', strtotime($locationTime->close_time)) . '
-                </div>';
-                    }
-                    $output['html'] .= '
-                <div class="col-md-2">
-                    <input type="radio" required name="store_id" value="' . @$locationTime->pk_location_times . '/' . $store->pk_locations . '"
-                    data-taxRate="' . $store->tax_rate . '" data-storeId="' . $store->pk_locations . '"
-                    data-locationTime="' . @$locationTime->pk_location_times . '" class="pickup-store-checkbox"
-                    id="pickup-store-checkbox-' . $store->pk_locations . '"
-                    data-distance="' . $distance . '" data-calcDistance="' . number_format($store->calculated_distance, 1) . '"> Select
-                </div>';
-                    $output['html'] .= '</div></div></div>';
-                }
-            }
+            $output['html'] = view('pickup_address_response', compact('stores'))->render();
         }
 
         if (!$output['html']) {
