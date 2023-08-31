@@ -48,12 +48,14 @@
                                         <th>Order No.</th>
                                         <td>{{ $orders->pk_orders }}</td>
                                     </tr>
-                                    <tr>
-                                        <th>Customer Name</th>
-                                        <td>
-                                            {{ @$orders->customer->customer_name }}
-                                        </td>
-                                    </tr>
+                                    @if($orders->customer && $orders->customer->customer_name)
+                                        <tr>
+                                            <th>Customer Name</th>
+                                            <td>
+                                                {{ @$orders->customer->customer_name }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <th>Billing Address</th>
                                         @if($customerAddress)
@@ -72,12 +74,16 @@
                                             <td>
                                                 <address>
                                                     <strong>{{ $account->location_name }}</strong><br>
-                                                    {{$account->address}} , {{$account->city}}
-                                                    , {{($account->state) ? $account->state->state_name.',' : ''}} <br/>
-                                                    {{($account->state) ? $account->country->country_name.',' : '' }}{{$account->zip}}
-                                                    <br/>
-                                                    <abbr title="Phone">P:</abbr> {!! $account->business_phone !!}
-                                                    <br>
+                                                    {{ $account->address . ' ,' . $account->address_1 . ' ,' .
+                                                $account->city . ' ,' . $account->zip . ' ,' .
+                                                @$account->state->state_code . ' ,' . 'USA' }}
+                                                    @if($locationTime)
+                                                        <p>
+                                                            {{ 'Day - ' . @$locationTime->day . ' , ' .
+                                                                @date('h:i A', @strtotime(@$locationTime->open_time)) . ' -
+                                                                ' . @date('h:i A', strtotime($locationTime->close_time)) }}
+                                                        </p>
+                                                    @endif
                                                     @if(@$orders->pickup_date)
                                                         <small class="text-muted">
                                                             Selected Pickup Date
@@ -112,27 +118,31 @@
                                             ${{ number_format($orderAmount, 2) }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Discount Charge</th>
-                                        <td class="text-right">
-                                            ${{ number_format($orders->discount_charge, 2) }}
-                                        </td>
-                                    </tr>
+                                    @if($orders->discount_charge)
+                                        <tr>
+                                            <th>Discount Charge</th>
+                                            <td class="text-right">
+                                                ${{ number_format($orders->discount_charge, 2) }}
+                                            </td>
+                                        </tr>
+                                    @endif
 
-                                    @if($orders->delivery_charge && count($items) > 0 && count($items) == 1)
-                                        <tr>
-                                            <th>Delivery Charge</th>
-                                            <td class="text-right">
-                                                ${{ number_format($orders->delivery_charge, 2) }}
-                                            </td>
-                                        </tr>
-                                    @else
-                                        <tr>
-                                            <th>Delivery Charges</th>
-                                            <td class="text-right">
-                                                ${{ number_format($orders->delivery_charge, 2) }}
-                                            </td>
-                                        </tr>
+                                    @if($orders->deliveryOption->delivery_or_pickup == 'Delivery')
+                                        @if($orders->delivery_charge && count($items) > 0 && count($items) == 1)
+                                            <tr>
+                                                <th>Delivery Charge</th>
+                                                <td class="text-right">
+                                                    ${{ number_format($orders->delivery_charge, 2) }}
+                                                </td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <th>Delivery Charges</th>
+                                                <td class="text-right">
+                                                    ${{ number_format($orders->delivery_charge, 2) }}
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endif
 
                                     <tr>
@@ -192,69 +202,77 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title text-center">
-                                    Shipping Address
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                @forelse($items as $item)
-                                    <h4 class="h4 text-center">Address - {{ $loop->index + 1 }}</h4>
-                                    <table class="table table-hover table-bordered">
+                    @if($orders->deliveryOption->delivery_or_pickup == 'Delivery')
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title text-center">
+                                        Shipping Address
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    @forelse($items as $item)
+                                        <h4 class="h4 text-center">Address - {{ $loop->index + 1 }}</h4>
+                                        <table class="table table-hover table-bordered">
 
-                                        <tr>
-                                            <th>Full Name</th>
-                                            <td>{{ @$item->shippingAddress->shipping_full_name }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Email</th>
-                                            <td>{{ @$item->shippingAddress->shipping_email }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Phone</th>
-                                            <td>{{ @$item->shippingAddress->shipping_phone }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Address</th>
-                                            <td style="width: 365px;">
-                                                {{ $item->shippingAddress->shipping_address }}
-                                                {{ isset($item->shippingAddress->shipping_address_1) ?
-                                                    '#'.$item->shippingAddress->shipping_address_1 : ''}}
-                                                </br>
-                                                {{ $item->shippingAddress->shipping_city }}
-                                                {{ $item->shippingAddress->state->state_name }}
-                                                {{ $item->shippingAddress->shipping_zip }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Delivery Charge</th>
-                                            <td>
-                                                ${{ number_format($item->shippingAddress->delivery_charge, 2) }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Estimated Delivery</th>
-                                            <td>
-                                                @if($item->shippingAddress->delivery_date)
-                                                    {{ @date('m/d/Y', strtotime(@$item->shippingAddress->delivery_date)) }}
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    </table>
-                                @empty
-                                    <table class="table table-hover table-bordered">
-                                        <tr>
-                                            <td>
-                                                No shipping address found!
-                                            </td>
-                                        </tr>
-                                    </table>
-                                @endforelse
+                                            <tr>
+                                                <th>Full Name</th>
+                                                <td>{{ @$item->shippingAddress->shipping_full_name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td>{{ @$item->shippingAddress->shipping_email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Phone</th>
+                                                <td>{{ @$item->shippingAddress->shipping_phone }}</td>
+                                            </tr>
+                                            @if($item->shippingAddress)
+                                                <tr>
+                                                    <th>Address</th>
+                                                    <td style="width: 365px;">
+                                                        {{ $item->shippingAddress->shipping_address }}
+                                                        {{ isset($item->shippingAddress->shipping_address_1) ?
+                                                            '#'.$item->shippingAddress->shipping_address_1 : ''}}
+                                                        </br>
+                                                        {{ $item->shippingAddress->shipping_city }}
+                                                        {{ $item->shippingAddress->state->state_name }}
+                                                        {{ $item->shippingAddress->shipping_zip }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if($item->shippingAddress && $item->shippingAddress->delivery_charge)
+                                                <tr>
+                                                    <th>Delivery Charge</th>
+                                                    <td>
+                                                        ${{ number_format($item->shippingAddress->delivery_charge, 2) }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if($item->shippingAddress && $item->shippingAddress->delivery_date)
+                                                <tr>
+                                                    <th>Estimated Delivery</th>
+                                                    <td>
+                                                        @if($item->shippingAddress->delivery_date)
+                                                            {{ @date('m/d/Y', strtotime(@$item->shippingAddress->delivery_date)) }}
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </table>
+                                    @empty
+                                        <table class="table table-hover table-bordered">
+                                            <tr>
+                                                <td>
+                                                    No shipping address found!
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="row mt-5">
                     <div class="col-md-12">

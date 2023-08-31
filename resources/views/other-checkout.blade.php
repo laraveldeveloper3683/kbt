@@ -381,7 +381,7 @@
                     <hr>
 
 
-                    <div class="billing full-address-div">
+                    <div class="billing">
 
                         <h3 class="mb-3">
                             <strong>
@@ -636,39 +636,38 @@
                         @endphp
                     </div>
 
-                    <div class="store full-address-div"
-                         style="{{ old('address_type', @$oldData['address_type']) == 'new_address' ? '' : 'display:none;' }}">
-
+                    <div class="store"
+                         style="{{ $oldDeliveryOption && $oldDeliveryOption->delivery_or_pickup == 'Store Pickup' ? '' : 'display:none;' }}">
                         <div class="loder"></div>
+
                         <div class="row mt-3 abcd">
-                        </div>
-                        <div
-                            style="{{ (!empty($get_address_type) and !empty(old('is_shipping', @$oldData['is_shipping']))) ? '' : 'display:none;' }}"
-                            class="shipping-address-div">
                         </div>
                     </div>
 
                     <hr class="mb-4">
 
-                    <input type="hidden" class="form-control amountTotal" id="amount" name="amount"
+                    <input type="hidden" class="amountTotal" id="amount" name="amount"
                            value="{{ old('amount', @$oldData['amount'] ?? $total) }}">
 
-                    <input type="hidden" class="form-control deleveryCast1" name="deleveryCast1"
+                    <input type="hidden" class="deleveryCast1" name="deleveryCast1"
                            value="{{ old('deleveryCast1', @$oldData['deleveryCast1'] ?? @$deliveryCharge) }}">
 
-                    <input type="hidden" class="form-control shippingCharge" id="tax_rate" name="shippingCharge"
+                    <input type="hidden" class="shippingCharge" id="tax_rate" name="shippingCharge"
                            value="{{ old('shippingCharge', @$oldData['shippingCharge']) }}">
 
-                    <input type="hidden" class="form-control discountCharge" name="discountCharge"
+                    <input type="hidden" class="discountCharge" name="discountCharge"
                            value="{{ old('discountCharge', @$oldData['discountCharge']) }}">
 
                     <input type="hidden" id="couponCode" name="couponCode"
                            value="{{ old('couponCode', @$oldData['couponCode']) }}">
 
-                    <input type="hidden" class="form-control pk_locations" name="pk_locations"
+                    <input type="hidden" class="pk_locations" name="pk_locations"
                            value="{{ old('pk_locations', @$oldData['pk_locations']) }}">
 
-                    <input type="hidden" class="form-control estimated_del" name="estimated_del"
+                    <input type="hidden" name="pk_location_times" id="pk_location_times"
+                           value="{{ old('pk_location_times', @$oldData['pk_location_times']) }}">
+
+                    <input type="hidden" class="estimated_del" name="estimated_del"
                            value="{{ old('estimated_del', @$oldData['estimated_del']) }}">
 
                     <button class="btn btn-primary btn-lg btn-block mb-5" type="submit">Continue to Review</button>
@@ -735,6 +734,7 @@
 
         const oldPickupZip = '{{ old('pickup_zip', @$oldData['pickup_zip']) }}';
         const oldPickupStoreId = '{{ old('pk_locations', @$oldData['pk_locations']) }}';
+        const oldPickupStoreTimeId = '{{ old('pk_location_times', @$oldData['pk_location_times']) }}';
 
         function getLatLngFromPickupZipCode(zipCode) {
             var geocoder = new google.maps.Geocoder();
@@ -775,9 +775,7 @@
                     lng     : $('#pickup_zip_lng').val(),
                 },
                 beforeSend: function () {
-                    $('.loder').html(`<div class="loader"></div>
-                    `);
-
+                    $('.loder').html(`<div class="loader"></div>`);
                 },
                 success   : function (data) {
                     console.log(data)
@@ -792,9 +790,14 @@
                         $(`#pickup-store-checkbox-${oldPickupStoreId}`).prop('checked', true);
                         $(`#pickup-store-checkbox-${oldPickupStoreId}`).trigger('change');
                     }
+
+                    if (oldPickupStoreTimeId) {
+                        $(`#pickup-store-time-checkbox-${oldPickupStoreTimeId}`).prop('checked', true);
+                        $(`#pickup-store-time-checkbox-${oldPickupStoreTimeId}`).trigger('change');
+                    }
                 },
                 complete  : function () {
-                    $('.loder').text("");
+                    $('.loder').html("");
                 },
                 error     : function (data) {
                     console.log('error -> ', data);
@@ -830,12 +833,24 @@
                 let pkLocation = item.data('storeid');
 
                 if (pkLocation) {
+                    $('.selectTimeItem').hide();
                     $('.pk_locations').val(pkLocation);
+                    $(`#selectTimeItem${pkLocation}`).show();
                 }
 
                 $('#tax_rate').val(taxRate);
                 $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
                 $('.taxRa').html('$' + Number(taxRate).toFixed(2));
+            });
+
+            $(document).on('change', '.pickup-store-time-checkbox', function () {
+                let item = $(this);
+                console.log('Store Time ID -> ', item.data('storetimeid'));
+                let pkLocationTime = item.data('storetimeid');
+
+                if (pkLocationTime) {
+                    $('#pk_location_times').val(pkLocationTime);
+                }
             });
 
             initPickupAddressIfOldData();
@@ -1196,7 +1211,7 @@
             }
 
             @if(isset($oldData['item_address']))
-                itemAddrInit();
+            itemAddrInit();
             @endif
 
             function fillInItemAddress(autocomplete, id) {

@@ -101,18 +101,20 @@
                                         </tr>
                                     @endif
 
-                                    @if($orders->delivery_charge && count($order_items) > 0 && count($order_items) == 1)
-                                        <tr>
-                                            <td colspan="2">Delivery Charge</td>
-                                            <td class="text-end">
-                                                ${{ number_format($orders->delivery_charge, 2) }}</td>
-                                        </tr>
-                                    @else
-                                        <tr>
-                                            <td colspan="2">Delivery Charges</td>
-                                            <td class="text-end">
-                                                ${{ number_format($orders->delivery_charge, 2) }}</td>
-                                        </tr>
+                                    @if($orders->deliveryOption->delivery_or_pickup == 'Delivery')
+                                        @if($orders->delivery_charge && count($order_items) > 0 && count($order_items) == 1)
+                                            <tr>
+                                                <td colspan="2">Delivery Charge</td>
+                                                <td class="text-end">
+                                                    ${{ number_format($orders->delivery_charge, 2) }}</td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td colspan="2">Delivery Charges</td>
+                                                <td class="text-end">
+                                                    ${{ number_format($orders->delivery_charge, 2) }}</td>
+                                            </tr>
+                                        @endif
                                     @endif
 
                                     <tr>
@@ -121,7 +123,7 @@
                                             ${{ number_format($orders->tax_charge, 2) }}</td>
                                     </tr>
 
-                                    @if(isset($orders->discount_charge) && $orders->discount_charge>0)
+                                    @if($orders->discount_charge)
                                         <tr>
                                             <td colspan="2">Discount</td>
                                             @if(isset($orders->coupon_discount_type) && ($orders->coupon_discount_type=='fixed'))
@@ -181,7 +183,7 @@
                     </div>
                     <div class="col-lg-4">
                         <!-- Customer Notes -->
-                        @if($orders->deliveryOption->delivery_or_pickup != 'Store Pickup')
+                        @if($orders->deliveryOption->delivery_or_pickup == 'Delivery')
                             <div class="card mb-4">
                                 <!-- Shipping information -->
                                 <div class="card-body">
@@ -226,6 +228,7 @@
                                 </div>
                             </div>
                         @endif
+
                         @if($orders->deliveryOption->delivery_or_pickup == 'Store Pickup' && $account)
                             <div class="card mb-4">
                                 <!-- Pickup Information -->
@@ -234,17 +237,21 @@
                                     <h3 class="h6">Address</h3>
                                     <address>
                                         <strong>{{ $account->location_name }}</strong><br>
-                                        {{$account->address}} , {{$account->city}}
-                                        , {{($account->state) ? $account->state->state_name.',' : ''}} <br/>
-                                        {{($account->state) ? $account->country->country_name.',' : '' }}{{$account->zip}}
-                                        <br/>
-                                        <abbr title="Phone">P:</abbr> {!! $account->business_phone !!}
-                                        <br>
+                                        {{ $account->address . ' ,' . $account->address_1 . ' ,' .
+                                                $account->city . ' ,' . $account->zip . ' ,' .
+                                                @$account->state->state_code . ' ,' . 'USA' }}
+                                        @if($locationTime)
+                                            <p>
+                                                {{ 'Day - ' . @$locationTime->day . ' , ' .
+                                                    @date('h:i A', @strtotime(@$locationTime->open_time)) . ' -
+                                                    ' . @date('h:i A', strtotime($locationTime->close_time)) }}
+                                            </p>
+                                        @endif
                                         @if(@$orders->pickup_date)
-                                            <small class="text-muted">
+                                            <p class="text-muted">
                                                 Selected Pickup Date
                                                 - {{ @date('m/d/Y', strtotime(@$orders->pickup_date)) }}
-                                            </small>
+                                            </p>
                                         @endif
                                     </address>
                                 </div>
@@ -257,7 +264,4 @@
 
 
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
 @endsection

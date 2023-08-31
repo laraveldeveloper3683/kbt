@@ -266,21 +266,30 @@
                                 </div>
                                 <div class="card-body">
                                     <div
-                                        style="background-color: #FFF;text-align: center;    margin: 0 0 20px 40px;padding-top: 10px;">
-                                        <p class="lead">{{$location->address}} , {{$location->city}}
-                                            , {{$location->zip}}</p>
-                                        <ul>
-                                            @if(isset($location->locationTime->pk_location_times))
-                                                <li class="list-group-item d-flex justify-content-between lh-condensed"
-                                                    style="border:unset;">{{$location->locationTime->day}}
-                                                    : {{$location->locationTime->open_time}}
-                                                    To {{$location->locationTime->close_time}}</li>
-                                            @endif
-                                        </ul>
+                                        style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px; padding-top: 10px;">
+                                        <h5>
+                                            {{ $location->location_name }}
+                                        </h5>
+                                        <p>
+                                            <strong>Address:</strong>
+                                            {{ $location->address . ' ,' . $location->address_1 . ' ,' .
+                                                $location->city . ' ,' . $location->zip . ' ,' .
+                                                @$location->state->state_code . ' ,' . 'USA' }}
+                                        </p>
+
+                                        @if($locationTime)
+                                            <p>
+                                                <strong>Time:</strong>
+                                                {{ 'Day - ' . @$locationTime->day . ' , ' .
+                                                    @date('h:i A', @strtotime(@$locationTime->open_time)) . ' -
+                                                    ' . @date('h:i A', strtotime($locationTime->close_time)) }}
+                                            </p>
+                                        @endif
+
                                         @if(isset($data['pickup_date']))
-                                            <small class="text-muted font-weight-bold">
+                                            <p class="text-muted font-weight-bold">
                                                 Selected Pickup Date - {{ @$data['pickup_date'] }}
-                                            </small>
+                                            </p>
                                         @endif
                                     </div>
                                 </div>

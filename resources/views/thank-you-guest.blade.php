@@ -19,17 +19,16 @@
                 <div class="col-md-6 offset-md-3 mb-4 text-left">
                     @if($order->deliveryOption->delivery_or_pickup == 'Store Pickup')
                         <div
-                            style="background-color: #FFF;text-align: center;    margin: 0 0 20px 40px;padding-top: 10px;">
-                            <!-- <h6><strong>Pickup Location</strong></h6> -->
+                            style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
+                            <h6><strong>Pickup Address</strong></h6>
                             <p class="lead">{{$store->address}} , {{$store->city}}, {{$store->zip}}</p>
-                            <ul>
-                                @if(isset($store->locationTime->pk_location_times))
-                                    <li class="list-group-item d-flex justify-content-between lh-condensed"
-                                        style="border:unset;">{{$store->locationTime->day}}
-                                        : {{$store->locationTime->open_time}}
-                                        To {{$store->locationTime->close_time}}</li>
-                                @endif
-                            </ul>
+                            @if($locationTime)
+                                <p>
+                                    {{ 'Day - ' . @$locationTime->day . ' , ' .
+                                        @date('h:i A', @strtotime(@$locationTime->open_time)) . ' -
+                                        ' . @date('h:i A', strtotime($locationTime->close_time)) }}
+                                </p>
+                            @endif
                             @if($order->pickup_date)
                                 <small class="text-muted">
                                     Selected Pickup Date - {{ @date('m/d/Y', strtotime(@$order->pickup_date)) }}

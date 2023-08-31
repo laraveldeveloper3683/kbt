@@ -230,12 +230,17 @@ class FlowerBySubscriptionController extends Controller
      */
     public function otherCheckOutPage()
     {
-        $deliveryOptions = DeliveryOrPickup::all();
-        $oldData         = session('oth_checkout_preview') ?? [];
+        $deliveryOptions   = DeliveryOrPickup::all();
+        $oldData           = session('oth_checkout_preview') ?? [];
+        $oldDeliveryOption = null;
+        if (isset($oldData['choise_details'])) {
+            $oldDeliveryOption = DeliveryOrPickup::where('pk_delivery_or_pickup', @$oldData['choise_details'])->first();
+        }
 
         $view = view('other-checkout-guest', compact(
             'deliveryOptions',
-            'oldData'
+            'oldData',
+            'oldDeliveryOption'
         ));
 
         if (auth()->check()) {
@@ -256,7 +261,8 @@ class FlowerBySubscriptionController extends Controller
                 'primaryAddress',
                 'billingAddress',
                 'primaryState',
-                'billingState'
+                'billingState',
+                'oldDeliveryOption'
             ));
         }
 
@@ -379,7 +385,8 @@ class FlowerBySubscriptionController extends Controller
             $data['deleveryCast1'] = $cartItems[$firstItemKey]['delivery_charge'] ?? null;
         }
 
-        $location = Location::where('pk_locations', $data['pk_locations'])->first();
+        $location     = Location::where('pk_locations', $data['pk_locations'])->first();
+        $locationTime = LocationTime::where('pk_location_times', $data['pk_location_times'])->first();
 
 
         $view = view('other-checkout-guest-preview', compact(
@@ -392,7 +399,8 @@ class FlowerBySubscriptionController extends Controller
             'cartItems',
             'deliveryCharge',
             'sameAsBilling',
-            'location'
+            'location',
+            'locationTime'
         ));
 
         if (auth()->check()) {
@@ -406,7 +414,8 @@ class FlowerBySubscriptionController extends Controller
                 'cartItems',
                 'deliveryCharge',
                 'sameAsBilling',
-                'location'
+                'location',
+                'locationTime'
             ));
         }
 
@@ -1098,7 +1107,8 @@ class FlowerBySubscriptionController extends Controller
             'pk_orders',
             'order',
             'store',
-            'account'
+            'account',
+            'locationTime'
         ));
 
         if (auth()->check()) {
@@ -1109,7 +1119,8 @@ class FlowerBySubscriptionController extends Controller
                 'pk_orders',
                 'order',
                 'store',
-                'account'
+                'account',
+                'locationTime'
             ));
         }
         return $page;

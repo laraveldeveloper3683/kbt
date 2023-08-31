@@ -53,51 +53,38 @@ class HomeController extends Controller
 
     public function my_order_details($id = null)
     {
-        //  echo "hello"; die;
         $pk_users = Auth::user()->pk_users;
 
-        /* $orders = DB::table('kbt_orders')
-         ->select('kbt_orders.*','kbt_order_status.order_status')
-         ->join('kbt_order_status','kbt_orders.pk_order_status','kbt_order_status.pk_order_status')
-         ->where('kbt_orders.pk_orders',$id)->where('kbt_orders.pk_users',$pk_users)->first();*/
         $orders = Order::where('pk_orders', $id)->where('pk_users', $pk_users)->with(
-                [
-                    'deliveryOption',
-                    'orderStatus',
-                    'customer',
-                ]
-            )->first();
-
+            [
+                'deliveryOption',
+                'orderStatus',
+                'customer',
+            ]
+        )->first();
 
         $order_items = $orders->order_items;
 
-
-        //echo '<pre>'; print_r($orders); die;
-        // echo '<pre>'; print_r($order_items); die;
-
-
-        if(empty($orders))
-        {
+        if (empty($orders)) {
             session()->flash('message', 'Order could not be found, please correct errors.');
             session()->flash('level', 'danger');
 
             return redirect('my-orders');
         }
 
-        $account = "";
-        if($orders->deliveryOption->delivery_or_pickup == 'Store Pickup')
-        {
+        $account      = null;
+        $locationTime = null;
+        if ($orders->deliveryOption->delivery_or_pickup == 'Store Pickup') {
             $locationTime = LocationTime::where('pk_location_times', $orders->pk_location_times)->first();
             // $location = Location::where('pk_locations',$locationTime->pk_locations)->first();
-            if($locationTime)
-            {
-                $account = Location::where('pk_locations', $locationTime->pk_locations)->with('locationTime')->first();
+            if ($locationTime) {
+                $account = Location::where('pk_locations', $locationTime->pk_locations)->first();
+            } else {
+                $account = Account::where('pk_account', $orders->pk_locations)->first();
             }
-            //echo "<pre>"; print_r($account); die;
-            // $account = Account::where('pk_account',$orders->pk_account)->with(['locationType','locationType.locationTime','country','state'])->first();
         }
 
-        return view('dashboard.customers.details', compact('orders', 'order_items', 'account'));
+        return view('dashboard.customers.details', compact('orders', 'order_items', 'account', 'locationTime'));
     }
 
     public function editProfile(Request $request)
@@ -114,9 +101,9 @@ class HomeController extends Controller
         // $user = DB::table('users')->where('pk_users',$user_id)->first();
         $validated        = $request->validate(
             [
-                'email' => 'required|email|max:255',
+                'email'      => 'required|email|max:255',
                 'first_name' => 'required',
-                'last_name' => 'required',
+                'last_name'  => 'required',
             ]
         );
         $user             = User::find($user_id);

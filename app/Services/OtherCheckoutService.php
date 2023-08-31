@@ -148,10 +148,16 @@ class OtherCheckoutService
                 $save_order['pk_locations'] = $request->pk_locations;
             }
 
+            if ($request->pk_location_times) {
+                $save_order['pk_location_times'] = $request->pk_location_times;
+            }
+
             if ($request->store_id) {
-                $store_time                      = explode("/", $request->store_id);
-                $save_order['pk_locations']      = $store_time[1];
-                $save_order['pk_location_times'] = $store_time[0];
+                $save_order['pk_locations'] = $request->store_id;
+            }
+
+            if ($request->store_time_id) {
+                $save_order['pk_location_times'] = $request->store_time_id;
             }
 
             if (isset($request->deleveryCast1)) {
@@ -699,10 +705,16 @@ class OtherCheckoutService
                 $save_order['pk_locations'] = $request->pk_locations;
             }
 
+            if ($request->pk_location_times) {
+                $save_order['pk_location_times'] = $request->pk_location_times;
+            }
+
             if ($request->store_id) {
-                $store_time                      = explode("/", $request->store_id);
-                $save_order['pk_locations']      = $store_time[1];
-                $save_order['pk_location_times'] = $store_time[0];
+                $save_order['pk_locations'] = $request->store_id;
+            }
+
+            if ($request->store_time_id) {
+                $save_order['pk_location_times'] = $request->store_time_id;
             }
 
             if (isset($request->deleveryCast1)) {

@@ -57,7 +57,6 @@
                                         <td onclick="window.location='{{ route('dashboard.myorderdetails', ['id' => $value->pk_orders]) }}'">{!! ucfirst($value->order_status) !!}</td>
                                         <td onclick="window.location='{{ route('dashboard.myorderdetails', ['id' => $value->pk_orders]) }}'">${!! number_format($value->total,2) !!}</td>
                                          <td style="text-align:center;">
-                                            <a href="{!! route('dashboard.myorderdetails.edit',array($value->pk_orders)) !!}"><button class="btn btn-success text-white">Edit</button></a>
                                              <a href="{!! route('dashboard.myorderdetails',array($value->pk_orders)) !!}"><button class="btn btn-success text-white">View</button></a> @if(isset($value->order_status) && ($value->order_status == 'new'))
              <a href="/order/cancel-order/{{$value->pk_orders}}" class="btn btn-primary">Cancel Order</a>
             @endif

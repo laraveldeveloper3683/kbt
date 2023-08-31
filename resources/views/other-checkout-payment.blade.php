@@ -312,8 +312,12 @@
                                value="{{ old('discountCharge', @$data['discountCharge']) }}">
                         <input type="hidden" name="coupon" value="{{ old('coupon', @$data['coupon']) }}">
                         <input type="hidden" name="store_id" value="{{ old('store_id', @$data['store_id']) }}">
+                        <input type="hidden" name="store_time_id"
+                               value="{{ old('store_time_id', @$data['store_time_id']) }}">
                         <input type="hidden" name="pk_locations"
                                value="{{ old('pk_locations', @$data['pk_locations']) }}">
+                        <input type="hidden" name="pk_location_times"
+                               value="{{ old('pk_location_times', @$data['pk_location_times']) }}">
                         <input type="hidden" name="estimated_del"
                                value="{{ old('estimated_del', @$data['estimated_del']) }}">
                         <input type="hidden" name="couponCode"
@@ -430,7 +434,7 @@
                 success : function (data) {
                     console.log("shippingCity -> ", data);
                     $('input[name="deleveryCast1"]').val(data.cost);
-                    $('input[name="pk_locations"]').val(data.pk_location);
+                    // $('input[name="pk_locations"]').val(data.pk_location);
                     $('input[name="estimated_del"]').val(data.Estimated_Delivery_Time);
                 }
             })
@@ -527,7 +531,7 @@
                     $('.amountTotal').val(to);
                     $('.deleveryCast1').val(de);
                     $('.shippingCharge').val(data.taxRate);
-                    $('.pk_locations').val(data.pk_location)
+                    // $('.pk_locations').val(data.pk_location)
 
                     if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
                         console.log(6);
