@@ -791,8 +791,8 @@ class FlowerBySubscriptionController extends Controller
                 if ($store->calculated_distance) {
                     $distance = number_format($store->calculated_distance, 1) . ' mi';
                     // Get the store times
-                    $locationTime = LocationTime::where('pk_locations', $store->pk_locations)->first();
-
+                    $locationTime = LocationTime::where('pk_locations', $store->pk_locations)
+                        ->where('day', date('l'))->first();
                     // Set the store info and tax rate into HTML
                     $output['html'] .= '
         <div class="col-md-12 mb-3 store1" id="pickupStore-' . $store->pk_locations . '">
