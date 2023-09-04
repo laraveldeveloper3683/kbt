@@ -98,10 +98,21 @@
                                     <h6 class="my-0" id="cart-item-name{{ $id }}">{{ $details['name'] }}</h6>
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
-                                <span class="text-muted">${{ $details['price'] * $details['quantity'] }}</span>
+                                <span class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                             </li>
                         @endforeach
                     @endif
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div class="subT">
+                            <h6 class="my-0">
+                                Subtotal
+                            </h6>
+                        </div>
+                        <span class="text-muted loade">
+                            ${{ number_format($total, 2) }}
+                        </span>
+                    </li>
 
                     @php
                         $itemAddresses = @$oldData['item_address'] ?? [];
@@ -196,14 +207,15 @@
                         @php
                             $discountedAmount = 0;
 
-                            $grandTotal = $total + $deliveryCharge + $taxRate;
+                            $taxRateAmount = ($total * $taxRate) / 100;
+                            $grandTotal = $total + $deliveryCharge + $taxRateAmount;
 
                             if (isset($oldData['discountCharge'])) {
                                 $couponCharge = explode(" ", @$oldData['discountCharge']);
 
                                 if ($couponCharge[1] === '%') {
                                     $discountedAmount             = $grandTotal * @$couponCharge[0] / 100;
-                                } elseif ($couponCharge[0] === '$') {
+                                } elseif ($coupon[0] === '$') {
                                     $discountedAmount             = $couponCharge[1];
                                 } else {
                                     $discountCharge               = $data['discountCharge'][0];
@@ -778,7 +790,6 @@
                     $('.loder').html(`<div class="loader"></div>`);
                 },
                 success   : function (data) {
-                    console.log(data)
                     $('.abcd').html(data.html);
                     $('.delivery-charge-item').remove();
                     $('.estimate_del').html('');
@@ -825,9 +836,7 @@
 
             $(document).on('change', '.pickup-store-checkbox', function () {
                 let item = $(this);
-
-                console.log('taxRate -> ', item.data('taxrate'));
-
+                let totalcast = parseFloat($('.totalCast').val());
                 let taxRate = item.data('taxrate');
 
                 let pkLocation = item.data('storeid');
@@ -838,9 +847,14 @@
                     $(`#selectTimeItem${pkLocation}`).show();
                 }
 
+
                 $('#tax_rate').val(taxRate);
                 $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
-                $('.taxRa').html('$' + Number(taxRate).toFixed(2));
+                $('.taxRa').html(Number(taxRate).toFixed(2) + '%');
+                let taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                let to = totalcast + Number(taxTotal);
+                $('.totalCast1').text('$' + to.toFixed(2));
+                $('.amountTotal').val(to);
             });
 
             $(document).on('change', '.pickup-store-time-checkbox', function () {
@@ -941,9 +955,11 @@
                             }
 
                             if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                                var to = totalcast + parseFloat(taxRate);
+                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                var to = totalcast + taxTotal;
                             } else {
-                                var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxRate);
+                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxTotal);
                             }
                             let cartItemName = $(`#cart-item-name${id}`).text();
                             let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
@@ -970,7 +986,7 @@
                             if (!$('#tax_rate').val()) {
                                 $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                                $('.taxRa').html('$' + response.taxRate);
+                                $('.taxRa').html(response.taxRate + '%');
                                 $('#tax_rate').val(response.taxRate);
                             }
                         }
@@ -1313,7 +1329,8 @@
                     $('#pickup-zip-div').show();
                     $('#pickup-zip').attr('required', 'required');
 
-                    let to = totalCast + Number(taxRate);
+                    let taxTotal = Number(taxRate) * Number(totalCast) / 100;
+                    let to = totalCast + Number(taxTotal);
                     $('.totalCast1').text('$' + to.toFixed(2));
                     $('.amountTotal').val(to);
                 }

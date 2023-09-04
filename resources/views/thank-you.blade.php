@@ -128,7 +128,7 @@
                                     <h6 class="my-0">Tax</h6>
 
                                 </div>
-                                <span class="text-muted">${{ $order->tax_charge }}</span>
+                                <span class="text-muted">{{ number_format($order->tax_charge, 2) }}%</span>
                             </li>
                         @endif
                         @if(isset($order->discount_charge))
@@ -154,7 +154,8 @@
 
                         @if($order->deliveryOption->delivery_or_pickup != 'Store Pickup')
                             @php
-                                $total += ($order->tax_charge + $order->delivery_charge);
+                                $taxTotal = $total * $order->tax_charge / 100;
+                                $total += ($taxTotal + $order->delivery_charge);
                             @endphp
                         @endif
 

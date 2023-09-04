@@ -141,6 +141,7 @@ class OtherCheckoutService
                 'pk_transactions'       => $pk_transactions,
                 'pk_customers'          => $pk_customer_id,
                 'pk_delivery_or_pickup' => $request->choise_details ?? 1,
+                'subtotal'              => $payment_total,
                 'total'                 => $request->amount,
             ];
 
@@ -320,13 +321,15 @@ class OtherCheckoutService
 
                 if ($deliveryOption->delivery_or_pickup == 'Delivery') {
                     $deliveryCharges = $deliveryCharges > 0 ? $deliveryCharges : $request->deleveryCast1;
-                    $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
+                    $taxTotal        = ($total * $request->shippingCharge) / 100;
+                    $total           += ($deliveryCharges + $taxTotal) - $save_order['discountCharge'];
                     $get_order->update([
                         'total'           => $total,
                         'delivery_charge' => $deliveryCharges
                     ]);
                 } else {
-                    $total += $request->shippingCharge - $save_order['discountCharge'];
+                    $taxTotal = ($total * $request->shippingCharge) / 100;
+                    $total    += $taxTotal - $save_order['discountCharge'];
                     $get_order->update([
                         'total'           => $total,
                         'delivery_charge' => null,
@@ -698,6 +701,7 @@ class OtherCheckoutService
                 'pk_transactions'       => $pk_transactions,
                 'pk_customers'          => $pk_customer_id,
                 'pk_delivery_or_pickup' => $request->choise_details ?? 1,
+                'subtotal'              => $payment_total,
                 'total'                 => $request->amount,
             ];
 
@@ -877,13 +881,15 @@ class OtherCheckoutService
 
                 if ($deliveryOption->delivery_or_pickup == 'Delivery') {
                     $deliveryCharges = $deliveryCharges > 0 ? $deliveryCharges : $request->deleveryCast1;
-                    $total           += ($deliveryCharges + $request->shippingCharge) - $save_order['discountCharge'];
+                    $taxTotal        = ($total * $request->shippingCharge) / 100;
+                    $total           += ($deliveryCharges + $taxTotal) - $save_order['discountCharge'];
                     $get_order->update([
                         'total'           => $total,
                         'delivery_charge' => $deliveryCharges
                     ]);
                 } else {
-                    $total += $request->shippingCharge - $save_order['discountCharge'];
+                    $taxTotal = ($total * $request->shippingCharge) / 100;
+                    $total    += $taxTotal - $save_order['discountCharge'];
                     $get_order->update([
                         'total'           => $total,
                         'delivery_charge' => null,

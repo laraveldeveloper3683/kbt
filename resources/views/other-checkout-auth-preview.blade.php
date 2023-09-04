@@ -141,7 +141,7 @@
                                     @endif
                                     <tr>
                                         <th colspan="2" class="text-right">Tax</th>
-                                        <td>${{ @$data['shippingCharge'] }}</td>
+                                        <td>{{ @$data['shippingCharge'] }}%</td>
                                     </tr>
                                     @if($discountedAmount > 0)
                                         <tr>
@@ -160,9 +160,11 @@
                                     @endif
                                     @php
                                         if ($deliveryOption->delivery_or_pickup == 'Delivery') {
-                                            $total += (@$deliveryCharge + @$data['shippingCharge']) - @$discountedAmount;
+                                            $taxTotal = ($total * @$data['shippingCharge']) / 100;
+                                            $total += (@$deliveryCharge + $taxTotal) - @$discountedAmount;
                                         } else {
-                                            $total += @$data['shippingCharge'] - @$discountedAmount;
+                                            $taxTotal = ($total * @$data['shippingCharge']) / 100;
+                                            $total += $taxTotal - @$discountedAmount;
                                         }
                                     @endphp
                                     <tr>
