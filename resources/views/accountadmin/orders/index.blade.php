@@ -97,7 +97,9 @@
                                                 <td>{{ $order->pk_orders }}</td>
                                                 <td>{{ date('m/d/Y', strtotime($order->created_at)) }}</td>
                                                 <td>{{ strtoupper($order->orderStatus->order_status) ?? 'NEW' }}</td>
-                                                <td>{{ @$order->customer->customer_name }}</td>
+                                                <td>
+                                                    <a href="/accountadmin/customers/{{@$order->customer->pk_customers}}/view">{{ @$order->customer->customer_name }}</a>
+                                                </td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
                                                 <td>{{ number_format($order->tax_charge, 2) }}%</td>
@@ -122,7 +124,7 @@
                                                 <td>{{ date('m/d/Y', strtotime($order->created_at)) }}</td>
                                                 <td>{{ strtoupper($order->orderStatus->order_status) ?? 'NEW' }}</td>
                                                 <td>
-                                                    <a href="/accountadmin/customer/{{@$order->customer->pk_customers}}">{{ @$order->customer->customer_name }}</a>
+                                                    <a href="/accountadmin/customers/{{@$order->customer->pk_customers}}/view">{{ @$order->customer->customer_name }}</a>
                                                 </td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>

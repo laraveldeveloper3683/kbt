@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Accountadmin;
 
 use App\CustomerAddres;
 use App\Helper\Helper;
-use App\Http\Middleware\Customer;
 use App\Location;
 use App\LocationTime;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Auth;
 use App\Order;
 use App\Sale;
 use App\OrderItem;
@@ -64,7 +62,6 @@ class OrderController extends Controller
         $fields  = $request->validate([
             'search' => ['required'],
         ]);
-        $account = Auth::user()->pk_account;
         $orders  = DB::table('kbt_orders')->where('email', 'LIKE', '%' . $fields["search"] . '%')->orWhere('customer_name', 'LIKE', '%' . $fields["search"] . '%')->orWhere('phone', 'LIKE', '%' . $fields["search"] . '%')->orWhere('arrangement_type', 'LIKE', '%' . $fields["search"] . '%')->get();
         // echo "<pre>"; print_r($orders); die;
         return view('accountadmin.orders.index', ['orders' => $orders, 'search' => $fields["search"]]);
@@ -89,7 +86,6 @@ class OrderController extends Controller
     public function orderByStatus(Request $request)
     {
         $order_status = DB::table('kbt_order_status')->get();
-        $account      = Auth::user()->pk_account;
 
         if (empty($request->pk_order_status)) {
             $orderStatusData       = Order::latest()->with([

@@ -540,6 +540,7 @@ Route::get('/accountadmin/customers', 'Accountadmin\CustomerController@index')->
 Route::get('/accountadmin/customers/add', 'Accountadmin\CustomerController@create')->name('accountadmin.customers.add')->middleware(['auth', 'admin']);
 Route::post('/accountadmin/customers/submit', 'Accountadmin\CustomerController@store')->name('accountadmin.customers.store')->middleware(['auth', 'admin']);
 Route::get('/accountadmin/customers/edit/{id}', 'Accountadmin\CustomerController@edit')->name('accountadmin.customers.edit')->middleware(['auth', 'admin']);
+Route::get('/accountadmin/customers/{id}/view', 'Accountadmin\CustomerController@view')->name('accountadmin.customers.view')->middleware(['auth', 'admin']);
 Route::post('/accountadmin/customers/update', 'Accountadmin\CustomerController@update')->name('accountadmin.customers.update')->middleware(['auth', 'admin']);
 Route::get('/accountadmin/customers/delete/{id}', 'Accountadmin\CustomerController@delete')->name('accountadmin.customers.delete')->middleware(['auth', 'admin']);
 Route::get('/accountadmin/customer/reset/{id}', 'HomeController@resetCustomer')->name('customer.reset.customer')->middleware(['auth', 'admin']);

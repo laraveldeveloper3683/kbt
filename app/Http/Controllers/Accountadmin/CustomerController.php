@@ -25,7 +25,6 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $account   = Auth::user()->pk_account;
         $customers = Customer::latest()->with(['address', 'customertype'])->get();
 
         return view('accountadmin.customers.index', compact('customers'));
@@ -47,9 +46,16 @@ class CustomerController extends Controller
     }
 
 
+    public function view($id)
+    {
+        $customer = Customer::find($id);
+
+        return view('accountadmin.customers.customer_details', compact('customer'));
+    }
+
     public function edit($id)
     {
-      $customer_id    = $id;
+        $customer_id    = $id;
         $pk_account     = Auth::user()->pk_account;
         $customer       = Customer::find($id);
         $customer_types = Customertype::all();
@@ -67,14 +73,14 @@ class CustomerController extends Controller
             ->leftjoin('kbt_department', 'kbt_customer_contacts.pk_department', 'kbt_department.pk_department')
             ->where('kbt_customer_contacts.pk_customers', $id)
             ->get();
-        $orders = Order::where('pk_customers', $id)->latest()->get();
-        $families       = DB::table('kbt_customer_family')
-            ->join('kbt_important_day','kbt_customer_family.pk_important_day','kbt_important_day.pk_important_day')
+        $orders           = Order::where('pk_customers', $id)->latest()->get();
+        $families         = DB::table('kbt_customer_family')
+            ->join('kbt_important_day', 'kbt_customer_family.pk_important_day', 'kbt_important_day.pk_important_day')
             ->where('pk_account', $pk_account)
             ->where('pk_customers', $id)
             ->get();
 
-            //echo "<pre>"; print_r($families); die;
+        //echo "<pre>"; print_r($families); die;
 
 
         $customer_address = $customer->address()->with(['state', 'country'])->get();
@@ -345,7 +351,7 @@ class CustomerController extends Controller
 
     public function commentStore(Request $request)
     {
-      //echo "<pre>"; print_r( $request->all()); die;
+        //echo "<pre>"; print_r( $request->all()); die;
         $request->validate([
             'comments' => 'required|max:200'
         ]);
@@ -374,10 +380,10 @@ class CustomerController extends Controller
             ->where('pk_customers', $request->pk_customers)
             ->get();
 
-        $tab      = "comment-edit";
+        $tab = "comment-edit";
 
-    //   return redirect('/accountadmin/customers/edit/'.$comment->id);
-      return redirect()->route('accountadmin.comments.customers.edit', [$request->pk_customers, $comment->pk_comment]);
+        //   return redirect('/accountadmin/customers/edit/'.$comment->id);
+        return redirect()->route('accountadmin.comments.customers.edit', [$request->pk_customers, $comment->pk_comment]);
 
         // return view('accountadmin.customers.add', compact(
         //     'tab',
@@ -394,7 +400,7 @@ class CustomerController extends Controller
         $customer_types = Customertype::where('pk_account', $pk_account)->get();
         $states         = State::where('pk_country', 1)->get();
         $countries      = Country::all();
-        $comments = Comment::where('pk_account', $pk_account)
+        $comments       = Comment::where('pk_account', $pk_account)
             ->where('pk_customers', '!=', 'NULL')
             ->where('pk_customers', $customer->pk_customers)
             ->get();
@@ -407,18 +413,19 @@ class CustomerController extends Controller
         return view('accountadmin.customers.add', ['tab' => $tab, 'comments' => $comments, 'pk_account' => $pk_account, 'customer_types' => $customer_types, 'states' => $states, 'countries' => $countries, 'customerUser' => $customerUser, 'editComment' => $editComment, 'customer' => $customer]);
     }
 
-    public function commentUpdate(Request $request){
-      $pk_account = Auth::user()->pk_account;
-      if (!empty($request->pk_comments)) {
-          $comment = Comment::find($request->pk_comments);
-          $comment->update([
-              'pk_account'   => $pk_account,
-              'comments'     => $request->comments,
-              'contact_name' => $request->contact_name,
-              'pk_customers' => $request->pk_customers,
-          ]);
-      }
-      return redirect()->route('accountadmin.customers.edit', $request->pk_customers);
+    public function commentUpdate(Request $request)
+    {
+        $pk_account = Auth::user()->pk_account;
+        if (!empty($request->pk_comments)) {
+            $comment = Comment::find($request->pk_comments);
+            $comment->update([
+                'pk_account'   => $pk_account,
+                'comments'     => $request->comments,
+                'contact_name' => $request->contact_name,
+                'pk_customers' => $request->pk_customers,
+            ]);
+        }
+        return redirect()->route('accountadmin.customers.edit', $request->pk_customers);
     }
 
 
@@ -467,10 +474,10 @@ class CustomerController extends Controller
     public function address_add(Request $request, $id = null)
     {
         $customerAddress = DB::table('kbt_address_type')->get();
-        $data = Customer::find($id);
+        $data            = Customer::find($id);
 
         if ($request->isMethod('post')) {
-          //echo "<pre>"; print_r($request->all()); die;
+            //echo "<pre>"; print_r($request->all()); die;
 
             $validator = CustomerAddres::validate($request->all());
             if ($validator->fails()) {
@@ -499,14 +506,14 @@ class CustomerController extends Controller
         }
 
 
-        return view('accountadmin.customers.addres_add', compact('data' ,'customerAddress'));
+        return view('accountadmin.customers.addres_add', compact('data', 'customerAddress'));
     }
 
 
     public function address_edit(Request $request, $id = null)
     {
 
-        $customer_address = CustomerAddres::with('state', 'country','addressType')->find($id);
+        $customer_address = CustomerAddres::with('state', 'country', 'addressType')->find($id);
         $customerAddress  = DB::table('kbt_address_type')->get();
 
         if ($request->isMethod('post')) {
@@ -519,14 +526,14 @@ class CustomerController extends Controller
 
             $customer_address->update([
                 'pk_address_type' => $request->pk_address_type,
-                'address'    => $request->address,
-                'address_1'  => $request->address_1,
-                'city'       => $request->city,
-                'pk_states'  => $request->pk_states ?? 1,
-                'pk_country' => $request->pk_country ?? 1,
-                'zip'        => $request->zip,
-                'lat'        => $request->lat,
-                'lng'        => $request->lng,
+                'address'         => $request->address,
+                'address_1'       => $request->address_1,
+                'city'            => $request->city,
+                'pk_states'       => $request->pk_states ?? 1,
+                'pk_country'      => $request->pk_country ?? 1,
+                'zip'             => $request->zip,
+                'lat'             => $request->lat,
+                'lng'             => $request->lng,
             ]);
 
             return redirect()->route('accountadmin.customers.edit', $customer_address->pk_customers)->with('message', 'Address has been updated successfully');
@@ -535,7 +542,7 @@ class CustomerController extends Controller
 
         $data = $customer_address->customer;
 
-        return view('accountadmin.customers.addres_add', compact('data', 'customer_address','customerAddress'));
+        return view('accountadmin.customers.addres_add', compact('data', 'customer_address', 'customerAddress'));
     }
 
 
@@ -546,62 +553,63 @@ class CustomerController extends Controller
         return redirect()->route('accountadmin.customers.edit', $data->pk_customers)->with('message', 'Address has been delete successfully');
     }
 
-    public function family_add(Request $request,$id){
-      $pk_customers = DB::table('kbt_customers')->where('pk_customers',$id)->first();
+    public function family_add(Request $request, $id)
+    {
+        $pk_customers = DB::table('kbt_customers')->where('pk_customers', $id)->first();
 
-      $days = ImportantDay::all();
-      return view('accountadmin.customers.family.add',['days' => $days,'pk_customers'=>$pk_customers,]);
+        $days = ImportantDay::all();
+        return view('accountadmin.customers.family.add', ['days' => $days, 'pk_customers' => $pk_customers,]);
     }
 
-    public function family_store(Request $request){
-      $messages = [
-          'max'      => 'The date should have in valid format',
+    public function family_store(Request $request)
+    {
+        $messages = [
+            'max' => 'The date should have in valid format',
         ];
-      $request->validate([
-          'name' => 'required|max:200',
-          'day'=>'required',
-          'date'=>'required|max:5',
-      ],$messages);
-    // echo "<pre>"; print_r($request->all()); die;
-      if(isset($request->pk_customer_family)){
-        $impDay =  CustomerFamily::find($request->pk_customer_family);
-        $impDay->pk_account  = auth()->user()->pk_account;
-        $impDay->pk_customers  = $request->pk_customers;
-        $impDay->customer_family  = $request->name;
-        $impDay->relationship = $request->relationship;
-        $impDay->pk_important_day = $request->day;
-        $impDay->phone = $request->phone;
-        $impDay->email = $request->email;
-        $impDay->date = $request->date;
-        $impDay->save();
-      }
-      else{
-      $impDay = new CustomerFamily;
-      $impDay->pk_account  = auth()->user()->pk_account;
-      $impDay->pk_customers  = $request->pk_customers;
-      $impDay->customer_family  = $request->name;
-      $impDay->relationship = $request->relationship;
-      $impDay->pk_important_day = $request->day;
-      $impDay->phone = $request->phone;
-      $impDay->email = $request->email;
-      $impDay->date = $request->date;
-      $impDay->save();
-       }
-      return redirect()->route('accountadmin.customers.edit',  $request->pk_customers)->with('message', 'Family has been save successfully');
+        $request->validate([
+            'name' => 'required|max:200',
+            'day'  => 'required',
+            'date' => 'required|max:5',
+        ], $messages);
+        // echo "<pre>"; print_r($request->all()); die;
+        if (isset($request->pk_customer_family)) {
+            $impDay                   = CustomerFamily::find($request->pk_customer_family);
+            $impDay->pk_account       = auth()->user()->pk_account;
+            $impDay->pk_customers     = $request->pk_customers;
+            $impDay->customer_family  = $request->name;
+            $impDay->relationship     = $request->relationship;
+            $impDay->pk_important_day = $request->day;
+            $impDay->phone            = $request->phone;
+            $impDay->email            = $request->email;
+            $impDay->date             = $request->date;
+            $impDay->save();
+        } else {
+            $impDay                   = new CustomerFamily;
+            $impDay->pk_account       = auth()->user()->pk_account;
+            $impDay->pk_customers     = $request->pk_customers;
+            $impDay->customer_family  = $request->name;
+            $impDay->relationship     = $request->relationship;
+            $impDay->pk_important_day = $request->day;
+            $impDay->phone            = $request->phone;
+            $impDay->email            = $request->email;
+            $impDay->date             = $request->date;
+            $impDay->save();
+        }
+        return redirect()->route('accountadmin.customers.edit', $request->pk_customers)->with('message', 'Family has been save successfully');
     }
 
     public function family_edit(Request $request, $id = null)
     {
         $family = CustomerFamily::find($id);
-        $days = ImportantDay::all();
-        return view('accountadmin.customers.family.add',['days' => $days,'family'=>$family]);
+        $days   = ImportantDay::all();
+        return view('accountadmin.customers.family.add', ['days' => $days, 'family' => $family]);
     }
 
     public function family_delete(Request $request, $id = null)
     {
-      //echo "<pre>"; print_r($id); die;
-        $data             = DB::table('kbt_customer_family')->where('pk_customer_family', $id)->first();
-        $family           = DB::table('kbt_customer_family')->where('pk_customer_family', $id)->delete();
+        //echo "<pre>"; print_r($id); die;
+        $data   = DB::table('kbt_customer_family')->where('pk_customer_family', $id)->first();
+        $family = DB::table('kbt_customer_family')->where('pk_customer_family', $id)->delete();
         return redirect()->route('accountadmin.customers.edit', $data->pk_customers)->with('message', 'Family has been delete successfully');
     }
 

@@ -70,7 +70,7 @@
                                             <td onclick="window.location='{{ route('accountadmin.customers.edit', ['id' => $customer->pk_customers]) }}'">
                                                 {{ @$customer->customertype->customer_type }}
                                             </td>
-                                          
+
                                             @php
                                                 $cusAddr = @$customer->address[0];
                                             @endphp
@@ -83,6 +83,10 @@
                                             <td style="text-align:center;">
                                                 <a href="/accountadmin/customers/edit/{{ $customer->pk_customers }}">
                                                     <button class="btn btn-danger text-white">Edit</button>
+                                                </a>
+                                                <a href="/accountadmin/customers/{{ $customer->pk_customers }}/view"
+                                                   class="btn btn-primary">
+                                                    View
                                                 </a>
                                                 <a href="javascript:"
                                                    onclick="form_alert('customers-{{$customer->pk_customers}}', '{{'want to delete '}}{{$customer->customer_name}} {{'Customer?'}}')">

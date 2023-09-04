@@ -303,8 +303,8 @@ class SalesController extends Controller
         $orderData = [];
         foreach ($orders as $order) {
             $orderData[] = [
-                'text' => $order->pk_orders . '. ' . @$order->customer->customer_name . ' (' . @$order->customer->office_phone . ' - ' . @$order->customer->email . ' )',
                 'id'   => $order->pk_orders,
+                'text' => $order->pk_orders . '. ' . @$order->customer->customer_name . ' (' . @$order->customer->office_phone . ' - ' . @$order->customer->email . ' )',
             ];
         }
         return response([
