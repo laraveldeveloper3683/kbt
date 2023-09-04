@@ -100,7 +100,7 @@
                                                 <td>{{ @$order->customer->customer_name }}</td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
-                                                <td>${{ number_format($order->tax_charge, 2) }}</td>
+                                                <td>{{ number_format($order->tax_charge, 2) }}%</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>
@@ -126,7 +126,7 @@
                                                 </td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
-                                                <td>${{ number_format($order->tax_rate, 2) }}</td>
+                                                <td>{{ number_format($order->tax_charge, 2) }}%</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>

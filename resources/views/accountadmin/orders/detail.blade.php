@@ -118,6 +118,12 @@
                                             ${{ number_format($orderAmount, 2) }}
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <th>Subtotal</th>
+                                        <td class="text-right">
+                                            ${{ number_format($orderAmount, 2) }}
+                                        </td>
+                                    </tr>
                                     @if($orders->discount_charge)
                                         <tr>
                                             <th>Discount Charge</th>
@@ -148,7 +154,7 @@
                                     <tr>
                                         <th>Tax</th>
                                         <td class="text-right">
-                                            ${{ number_format($orders->tax_charge, 2) }}
+                                            {{ number_format($orders->tax_charge, 2) }}%
                                         </td>
                                     </tr>
 

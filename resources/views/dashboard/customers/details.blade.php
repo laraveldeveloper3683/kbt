@@ -120,7 +120,7 @@
                                     <tr>
                                         <td colspan="2">Tax</td>
                                         <td class="text-end">
-                                            ${{ number_format($orders->tax_charge, 2) }}</td>
+                                            {{ number_format($orders->tax_charge, 2) }}%</td>
                                     </tr>
 
                                     @if($orders->discount_charge)
