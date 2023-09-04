@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <div class="row justify-content-center mb-4">
+            <div class="row justify-content-center mb-5">
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">
@@ -83,7 +83,7 @@
             </div>
 
             @if($customer->address->count())
-                <div class="row justify-content-center">
+                <div class="row justify-content-center mb-5">
                     <div class="{{ $customer->address->count() == 1 ? 'col-md-4' : 'col-md-12' }}">
                         <div class="card">
                             <div class="card-header">
