@@ -26,7 +26,7 @@
                             <option value="">Filter Order by Status</option>
                             @foreach ($order_status as $status)
                                 <option
-                                    value="{{ $status->pk_order_status }}">{{ ucfirst($status->order_status) }}</option>
+                                        value="{{ $status->pk_order_status }}">{{ ucfirst($status->order_status) }}</option>
                             @endforeach
                         </select>
                         <button type="submit" class="btn btn-secondary" value="Go"
@@ -103,7 +103,7 @@
                                                 <td>${{ number_format($order->tax_charge, 2) }}</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() ? date('m/d/Y', strtotime($order->estimated_del)) : '' }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>
                                                 <td style="width:450px;height:40px;">
                                                     @if ($order->pk_order_status == 3)
                                                         <a style="height: 60px;
@@ -114,21 +114,23 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-                                        @elseif(isset($orders) && count($orders))
+                                    @elseif(isset($orders) && count($orders))
                                         @foreach ($orders as $order)
                                             <tr onclick="window.location='/accountadmin/orders/{{ $order->pk_orders }}'"
                                                 style="cursor: pointer">
                                                 <td>{{ $order->pk_orders }}</td>
                                                 <td>{{ date('m/d/Y', strtotime($order->created_at)) }}</td>
                                                 <td>{{ strtoupper($order->orderStatus->order_status) ?? 'NEW' }}</td>
-                                                <td><a href="/accountadmin/customer/{{@$order->customer->pk_customers}}">{{ @$order->customer->customer_name }}</a></td>
+                                                <td>
+                                                    <a href="/accountadmin/customer/{{@$order->customer->pk_customers}}">{{ @$order->customer->customer_name }}</a>
+                                                </td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
                                                 <td>${{ number_format($order->tax_rate, 2) }}</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() ? date('m/d/Y', strtotime($order->estimated_del)) : '' }}</td>
-                                                <td >
+                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>
+                                                <td>
                                                     @if ($order->pk_order_status == 3)
                                                         <a style="height: 60px;
     width: 167px;"
