@@ -26,6 +26,7 @@ class OrderController extends Controller
             'customer',
             'location',
         ])->get();
+        //echo "<pre>"; print_r($orders); die;
 
         return view('accountadmin.orders.index', compact('orders', 'order_status'));
     }
@@ -91,25 +92,20 @@ class OrderController extends Controller
         $account      = Auth::user()->pk_account;
 
         if (empty($request->pk_order_status)) {
-            $orderStatusData = DB::table('kbt_orders as r')
-                ->select('r.customer_name AS customer_name', 'r.pk_orders as pk_orders', 'r.phone as phone', 'r.pk_order_status as pk_order_status', 'r.discountCharge as discountcharge',
-                    'r.state_name as state_name', 'r.country_name as country_name', 'r.email as email', 'r.zip as zip', 'r.total as total',
-                    'pd.arrangement_type', 'r.deleveryCast1 as deliverycost', 'r.shippingCharge as shippingcharge', 'r.created_at AS date', 'ordstatus.order_status as order_status')
-                ->leftjoin('kbt_arrangement_type as pd', function ($join) {
-                    $join->on('r.pk_arrangement_type', '=', 'pd.pk_arrangement_type');
-                })->join('kbt_order_status as ordstatus', 'r.pk_order_status', 'ordstatus.pk_order_status')
-                ->orderBy('pk_orders', 'DESC')->get();
+            $orderStatusData       = Order::latest()->with([
+                                               'orderStatus',
+                                               'customer',
+                                               'location',
+                                               ])->get();
         } else {
-            $orderStatusData = DB::table('kbt_orders as r')
-                ->select('r.customer_name AS customer_name', 'r.pk_orders as pk_orders', 'r.phone as phone', 'r.pk_order_status as pk_order_status', 'r.discountCharge as discountcharge',
-                    'r.state_name as state_name', 'r.country_name as country_name', 'r.email as email', 'r.zip as zip', 'r.total as total',
-                    'pd.arrangement_type', 'r.deleveryCast1 as deliverycost', 'r.shippingCharge as shippingcharge', 'r.created_at AS date', 'ordstatus.order_status as order_status')
-                ->leftjoin('kbt_arrangement_type as pd', function ($join) {
-                    $join->on('r.pk_arrangement_type', '=', 'pd.pk_arrangement_type');
-                })->join('kbt_order_status as ordstatus', 'r.pk_order_status', 'ordstatus.pk_order_status')
-                ->where('r.pk_order_status', $request->pk_order_status)->orderBy('pk_orders', 'DESC')->get();
-        }
-        //  echo "<pre>"; print_r($orderStatusData); die;
+            $orderStatusData        = Order::latest()->with([
+                                                'orderStatus',
+                                                'customer',
+                                                'location',
+                                                ])
+                                               ->where('pk_order_status', $request->pk_order_status)->orderBy('pk_orders', 'DESC')->get();
+       }
+
         return view('accountadmin.orders.index', ['orderStatusData' => $orderStatusData, 'order_status' => $order_status]);
     }
 

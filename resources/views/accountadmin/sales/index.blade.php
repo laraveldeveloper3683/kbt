@@ -75,8 +75,6 @@
                                         <th>Sale Number</th>
                                         <th>Sale Date</th>
                                         <th>Customer Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
                                         <th class="text-right">Subtotal</th>
                                         <th class="text-right">Shipping Charges</th>
                                         <th class="text-right">Tax Rate</th>
@@ -92,14 +90,6 @@
                                             <td>{{ $sale->pk_sales }}</td>
                                             <td>{{ date('m/d/Y', strtotime($sale->created_at)) }}</td>
                                             <td>{{ $sale->customer_name }}</td>
-                                            @if($sale->pk_order)
-                                                <td>{{ $sale->order->email ?? '' }}</td>
-                                                <td>{{ $sale->order->phone ?? '' }}</td>
-                                            @else
-                                                <td>{{ $sale->customer->email ?? '' }}</td>
-                                                <td>{{ $sale->customer->office_phone ?? '' }}</td>
-                                            @endif
-                                           
                                             <td class="text-right">${{ number_format($sale->subtotal, 2) }}</td>
                                             <td class="text-right">${{  number_format($sale->shippingcharge, 2) }}</td>
                                             <td class="text-right">${{ number_format($sale->tax_total, 2) }}</td>

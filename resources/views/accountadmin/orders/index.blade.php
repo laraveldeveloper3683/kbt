@@ -80,33 +80,55 @@
                                         <th style="width: 120px;">Date</th>
                                         <th>Order Status</th>
                                         <th>Customer Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>State</th>
-                                        <th>Delivery Charge</th>
+                                        <th>Subtotal</th>
+                                        <th>Shipping Charge</th>
+                                        <th>Tax Rate</th>
                                         <th>Discount</th>
-                                        <th>Total Order Amount</th>
+                                        <th>Amount</th>
                                         <th>Estimated Delivery</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @if (count($orders))
-                                        @foreach ($orders as $order)
+                                    @if (isset($orderStatusData) && count($orderStatusData))
+                                        @foreach ($orderStatusData as $order)
                                             <tr onclick="window.location='/accountadmin/orders/{{ $order->pk_orders }}'"
                                                 style="cursor: pointer">
                                                 <td>{{ $order->pk_orders }}</td>
                                                 <td>{{ date('m/d/Y', strtotime($order->created_at)) }}</td>
                                                 <td>{{ strtoupper($order->orderStatus->order_status) ?? 'NEW' }}</td>
                                                 <td>{{ @$order->customer->customer_name }}</td>
-                                                <td>{{ @$order->customer->email }}</td>
-                                                <td>{{ @$order->customer->office_phone }}</td>
-                                                <td>{{ @$order->location->state->state_code }}</td>
+                                                <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
+                                                <td>${{ number_format($order->tax_charge, 2) }}</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() ? date('m/d/Y', strtotime($order->estimated_del)) : '' }}</td>
                                                 <td style="width:450px;height:40px;">
+                                                    @if ($order->pk_order_status == 3)
+                                                        <a style="height: 60px;
+    width: 167px;"
+                                                           href="/accountadmin/orders/cancel/{{ $order->pk_orders }}"
+                                                           class="btn btn-primary">Cancel the Order </a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        @elseif(isset($orders) && count($orders))
+                                        @foreach ($orders as $order)
+                                            <tr onclick="window.location='/accountadmin/orders/{{ $order->pk_orders }}'"
+                                                style="cursor: pointer">
+                                                <td>{{ $order->pk_orders }}</td>
+                                                <td>{{ date('m/d/Y', strtotime($order->created_at)) }}</td>
+                                                <td>{{ strtoupper($order->orderStatus->order_status) ?? 'NEW' }}</td>
+                                                <td><a href="/accountadmin/customer/{{@$order->customer->pk_customers}}">{{ @$order->customer->customer_name }}</a></td>
+                                                <td>${{ number_format($order->subtotal, 2) }}</td>
+                                                <td>${{ number_format($order->delivery_charge, 2) }}</td>
+                                                <td>${{ number_format($order->tax_rate, 2) }}</td>
+                                                <td>${{ number_format($order->discount_charge, 2) }}</td>
+                                                <td>${{ number_format($order->total, 2) }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() ? date('m/d/Y', strtotime($order->estimated_del)) : '' }}</td>
+                                                <td >
                                                     @if ($order->pk_order_status == 3)
                                                         <a style="height: 60px;
     width: 167px;"

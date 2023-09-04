@@ -77,10 +77,6 @@ class SalesController extends Controller
     {
         $products   = Product::with('images')->get();
         $categories = ProductCategory::all();
-        // foreach($products as $product){
-        //   echo "<pre>"; print_r($product->images); die;
-        // }
-        //  echo "<pre>"; print_r($products->images); die;
         return view('accountadmin.sales.add', compact('products', 'categories'));
     }
 
