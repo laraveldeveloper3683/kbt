@@ -89,7 +89,15 @@
                                             style="cursor: pointer">
                                             <td>{{ $sale->pk_sales }}</td>
                                             <td>{{ date('m/d/Y', strtotime($sale->created_at)) }}</td>
-                                            <td>{{ $sale->customer_name }}</td>
+                                            <td>
+                                                @if($sale->pk_customers)
+                                                    <a href="/accountadmin/customers/{{@$sale->pk_customers}}/view">
+                                                        {{ $sale->customer_name }}
+                                                    </a>
+                                                @else
+                                                    {{ $sale->customer_name }}
+                                                @endif
+                                            </td>
                                             <td class="text-right">${{ number_format($sale->subtotal, 2) }}</td>
                                             <td class="text-right">${{  number_format($sale->shippingcharge, 2) }}</td>
                                             <td class="text-right">${{ number_format($sale->tax_total, 2) }}</td>
