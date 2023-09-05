@@ -98,7 +98,8 @@
                                     <h6 class="my-0" id="cart-item-name{{ $id }}">{{ $details['name'] }}</h6>
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
-                                <span class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
+                                <span
+                                    class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                             </li>
                         @endforeach
                     @endif
@@ -1215,15 +1216,104 @@
                 });
             }
 
-            function firstItemAddrInit2() {
-                const firstItemAddr = $('.item-addr').first();
-                let id = firstItemAddr.data('id');
-                let city = $(`#billing_city${id}`).val();
-                let address = $(`#billing_address${id}`).val();
-                if (city && address) {
-                    cartItemShipAddrCharges(address, city, id);
-                    fillAllItemAddrFromFirstItem();
+            var isBillingAddress = @json($billingAddress ? true : false);
+            if (isBillingAddress) {
+                function cartItemShipAddrCharges2(address, city, id) {
+                    $('.couponApply').val('');
+                    $('#couponCode').val('');
+                    $('.disc1').html('');
+                    $('.disc').html('');
+                    var totalcast = parseFloat($('.totalCast').val());
+                    $('.amountTotal').val(totalcast);
+                    var to = totalcast;
+                    $('.totalCast1').html('$' + to);
+                    $('.discountCharge').val('');
+
+                    $newAddress = address + ', ' + city;
+
+                    $.ajax({
+                        url     : "{{ url('other-checkout-ship-info') }}",
+                        type    : 'POST',
+                        dataType: 'json',
+                        data    : {
+                            '_token': '{{ csrf_token() }}',
+                            city    : city,
+                            address : address
+                        },
+                        success : function (response) {
+                            console.log('cartItemShipAddrCharges response -> ', response)
+                            var totalcast = parseFloat($('.totalCast').val());
+                            var taxRate = $('#tax_rate').val() || response.taxRate;
+
+                            var deliveryCharge = response.delivery_charge;
+
+                            $(`#delivery_charge${id}`).val(deliveryCharge);
+                            $(`#store_city${id}`).val(response.storeCity);
+                            $(`#store_name${id}`).val(response.storeName);
+                            $(`#estimated_del${id}`).val(response.estimated_delivery_time);
+
+                            const firstItemAddr = $('.item-addr').first();
+                            let firstItemId = firstItemAddr.data('id');
+
+                            if (id == firstItemId) {
+                                fillAllItemAddrFromFirstItem();
+                            }
+
+                            if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
+                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                var to = totalcast + taxTotal;
+                            } else {
+                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxTotal);
+                            }
+                            let cartItemName = $(`#cart-item-name${id}`).text();
+                            let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
+                                            id="delivery-charge-item${id}">
+                            <h6 class="my-0">
+                                Delivery Charge For <strong>${cartItemName}</strong>
+                                <br>
+                                <small>
+                                    delivering from ${response.storeCity},${response.storeName}
+                                </small>
+                                <br>
+                                <small id="estimat_del${id}"></small>
+                            </h6>
+
+                            <span class="text-muted"><span>$</span>${deliveryCharge}</span>
+                    </li>`;
+                            $('.totalCast1').text('$' + to.toFixed(2));
+                            $('.amountTotal').val(to);
+                            $(`#delivery-charge-item${id}`).remove();
+
+                            $(chargeHtml).insertBefore('#tax-rate-section');
+
+                            cartItemAddrIsSame();
+                            if (!$('#tax_rate').val()) {
+                                $('.taxR').html(`<h6 class="my-0">Tax
+                                    </h6>`);
+                                $('.taxRa').html(response.taxRate + '%');
+                                $('#tax_rate').val(response.taxRate);
+                            }
+                        }
+                    })
+
+                    duplicateAddresses.push($newAddress);
                 }
+
+                function firstItemAddrInit2() {
+                    const firstItemAddr = $('.item-addr').first();
+                    let id = firstItemAddr.data('id');
+                    console.log('firstItemAddrInit2 -> ', id)
+                    let city = $(`#billing_city${id}`).val();
+                    let address = $(`#billing_address${id}`).val();
+                    console.log('firstItemAddrInit2 -> ', city, address)
+                    console.log('firstItemAddrInit2 -> ', address)
+                    if (city && address) {
+                        cartItemShipAddrCharges2(address, city, id);
+                        fillAllItemAddrFromFirstItem();
+                    }
+                }
+                firstItemAddrInit2();
             }
 
             @if(isset($oldData['item_address']))
