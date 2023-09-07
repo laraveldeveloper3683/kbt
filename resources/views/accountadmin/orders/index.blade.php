@@ -26,7 +26,7 @@
                             <option value="">Filter Order by Status</option>
                             @foreach ($order_status as $status)
                                 <option
-                                        value="{{ $status->pk_order_status }}">{{ ucfirst($status->order_status) }}</option>
+                                    value="{{ $status->pk_order_status }}">{{ ucfirst($status->order_status) }}</option>
                             @endforeach
                         </select>
                         <button type="submit" class="btn btn-secondary" value="Go"
@@ -80,12 +80,13 @@
                                         <th style="width: 120px;">Date</th>
                                         <th>Order Status</th>
                                         <th>Customer Name</th>
+                                        <th>Delivery Option</th>
                                         <th>Subtotal</th>
                                         <th>Shipping Charge</th>
                                         <th>Tax Rate</th>
                                         <th>Discount</th>
                                         <th>Amount</th>
-                                        <th>Estimated Delivery</th>
+                                        {{--  <th>Estimated Delivery</th> --}}
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -100,12 +101,23 @@
                                                 <td>
                                                     <a href="/accountadmin/customers/{{@$order->pk_customers}}/view">{{ @$order->customer->customer_name }}</a>
                                                 </td>
+                                                <td>
+                                                    @if($order->deliveryOption)
+                                                        @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
+                                                            <span class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                        @else
+                                                            <span class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                        @endif
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
                                                 <td>{{ number_format($order->tax_charge, 2) }}%</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>
+                                                {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
                                                 <td style="width:450px;height:40px;">
                                                     @if ($order->pk_order_status == 3)
                                                         <a style="height: 60px;
@@ -126,12 +138,23 @@
                                                 <td>
                                                     <a href="/accountadmin/customers/{{@$order->pk_customers}}/view">{{ @$order->customer->customer_name }}</a>
                                                 </td>
+                                                <td>
+                                                    @if($order->deliveryOption)
+                                                        @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
+                                                            <span class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                        @else
+                                                            <span class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                        @endif
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </td>
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
                                                 <td>{{ number_format($order->tax_charge, 2) }}%</td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>
+                                                {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
                                                 <td>
                                                     @if ($order->pk_order_status == 3)
                                                         <a style="height: 60px;

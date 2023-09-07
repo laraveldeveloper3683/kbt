@@ -151,12 +151,14 @@
                                         @endif
                                     @endif
 
-                                    <tr>
-                                        <th>Tax</th>
-                                        <td class="text-right">
-                                            {{ number_format($orders->tax_charge, 2) }}%
-                                        </td>
-                                    </tr>
+                                    @if($orders->tax_charge)
+                                        <tr>
+                                            <th>Tax</th>
+                                            <td class="text-right">
+                                                {{ number_format($orders->tax_charge, 2) }}%
+                                            </td>
+                                        </tr>
+                                    @endif
 
                                     <tr>
                                         <th>Total</th>
@@ -309,6 +311,7 @@
                                             <th>Items</th>
                                             <th>Name</th>
                                             <th>Description</th>
+                                            <th>Card Message</th>
                                             <th>Quantity</th>
                                             <th>Price</th>
                                             <th>Total</th>
@@ -317,9 +320,10 @@
                                         <tbody>
                                         @forelse($items as $item)
                                             <tr>
-                                                <td>{{ $item->pk_order_items }}</td>
+                                                <td>{{ $loop->index + 1 }}</td>
                                                 <td>{{ $item->name }}</td>
-                                                <td>{{ $item->description }}</td>
+                                                <td>{{ $item->description ?? 'N/A' }}</td>
+                                                <td>{{ $item->card_message ?? 'N/A' }}</td>
                                                 <td class="text-right">{{ $item->quantity }}</td>
                                                 <td class="text-right">${{ number_format($item->price, 2) }}</td>
                                                 <td class="text-right">
@@ -329,16 +333,65 @@
                                         @empty
                                             <tr>
                                                 <td colspan="100%" class="text-center">
-                                                    No items found!
+                                                    No order items found!
                                                 </td>
                                             </tr>
                                         @endforelse
 
                                         <tr>
-                                            <td colspan="4"></td>
-                                            <td class="font-weight-bold">Grand Total</td>
+                                            <td colspan="5"></td>
+                                            <td class="font-weight-bold text-right">Subtotal</td>
                                             <td class="font-weight-bold text-right">
-                                                ${{ number_format($orders->total, 2) }}</td>
+                                                ${{ number_format($orderAmount, 2) }}
+                                            </td>
+                                        </tr>
+
+                                        @if($orders->discount_charge)
+                                            <tr>
+                                                <td colspan="5"></td>
+                                                <td class="font-weight-bold text-right">Discount Charge</td>
+                                                <td class="font-weight-bold text-right">
+                                                    ${{ number_format($orders->discount_charge, 2) }}
+                                                </td>
+                                            </tr>
+                                        @endif
+
+                                        @if($orders->deliveryOption->delivery_or_pickup == 'Delivery')
+                                            @if($orders->delivery_charge && count($items) > 0 && count($items) == 1)
+                                                <tr>
+                                                    <td colspan="5"></td>
+                                                    <td class="font-weight-bold text-right">Delivery Charge</td>
+                                                    <td class="font-weight-bold text-right">
+                                                        ${{ number_format($orders->delivery_charge, 2) }}
+                                                    </td>
+                                                </tr>
+                                            @else
+                                                <tr>
+                                                    <td colspan="5"></td>
+                                                    <td class="font-weight-bold text-right">Delivery Charges</td>
+                                                    <td class="font-weight-bold text-right">
+                                                        ${{ number_format($orders->delivery_charge, 2) }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        @endif
+
+                                        @if($orders->tax_charge)
+                                            <tr>
+                                                <td colspan="5"></td>
+                                                <td class="font-weight-bold text-right">Tax</td>
+                                                <td class="font-weight-bold text-right">
+                                                    {{ number_format($orders->tax_charge, 2) }}%
+                                                </td>
+                                            </tr>
+                                        @endif
+
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td class="font-weight-bold text-right">Grand Total</td>
+                                            <td class="font-weight-bold text-right">
+                                                ${{ number_format($orders->total, 2) }}
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

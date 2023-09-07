@@ -63,14 +63,14 @@ class HomeController extends Controller
             ]
         )->first();
 
-        $order_items = $orders->order_items;
-
-        if (empty($orders)) {
+        if (!$orders) {
             session()->flash('message', 'Order could not be found, please correct errors.');
             session()->flash('level', 'danger');
 
             return redirect('my-orders');
         }
+
+        $order_items = $orders->order_items;
 
         $account      = null;
         $locationTime = null;

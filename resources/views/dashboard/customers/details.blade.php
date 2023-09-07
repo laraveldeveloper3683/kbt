@@ -48,6 +48,14 @@
                                 </div>
                                 <table class="table table-borderless">
                                     <tbody>
+                                    <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Card Message</th>
+                                        <th>QTY</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
 
                                     @if(!empty($order_items))
                                         @php
@@ -79,6 +87,7 @@
                                                         </div>
                                                     </div>
                                                 </td>
+                                                <td>{{ $item_val->card_message }}</td>
                                                 <td>{!! $item_val->quantity !!}</td>
                                                 <td class="text-end">${!! number_format($item_val->price, 2) !!}</td>
                                             </tr>
@@ -88,14 +97,14 @@
                                     <tfoot>
 
                                     <tr>
-                                        <td colspan="2">Subtotal ( Including Extra Charges )</td>
+                                        <td colspan="3">Subtotal ( Including Extra Charges )</td>
                                         <td class="text-end">
                                             ${{ number_format($order_total, 2) }}</td>
                                     </tr>
 
                                     @if($orders->discount_charge)
                                         <tr>
-                                            <td colspan="2">Discount Charge</td>
+                                            <td colspan="3">Discount Charge</td>
                                             <td class="text-end">
                                                 ${{ number_format($orders->discount_charge, 2) }}</td>
                                         </tr>
@@ -104,13 +113,13 @@
                                     @if($orders->deliveryOption->delivery_or_pickup == 'Delivery')
                                         @if($orders->delivery_charge && count($order_items) > 0 && count($order_items) == 1)
                                             <tr>
-                                                <td colspan="2">Delivery Charge</td>
+                                                <td colspan="3">Delivery Charge</td>
                                                 <td class="text-end">
                                                     ${{ number_format($orders->delivery_charge, 2) }}</td>
                                             </tr>
                                         @else
                                             <tr>
-                                                <td colspan="2">Delivery Charges</td>
+                                                <td colspan="3">Delivery Charges</td>
                                                 <td class="text-end">
                                                     ${{ number_format($orders->delivery_charge, 2) }}</td>
                                             </tr>
@@ -118,14 +127,15 @@
                                     @endif
 
                                     <tr>
-                                        <td colspan="2">Tax</td>
+                                        <td colspan="3">Tax</td>
                                         <td class="text-end">
-                                            {{ number_format($orders->tax_charge, 2) }}%</td>
+                                            {{ number_format($orders->tax_charge, 2) }}%
+                                        </td>
                                     </tr>
 
                                     @if($orders->discount_charge)
                                         <tr>
-                                            <td colspan="2">Discount</td>
+                                            <td colspan="3">Discount</td>
                                             @if(isset($orders->coupon_discount_type) && ($orders->coupon_discount_type=='fixed'))
                                                 <td class="text-end">
                                                     -${!! number_format($orders->discount_charge,2) !!}</td>
@@ -139,7 +149,7 @@
                                     @endif
 
                                     <tr class="fw-bold">
-                                        <td colspan="2">TOTAL</td>
+                                        <td colspan="3">TOTAL</td>
                                         @if(isset($orders->discount_charge) && !empty($orders->discount_charge))
                                             <td class="text-end">
                                                 ${!! number_format($orders->total - $orders->discount_charge, 2) !!}</td>
