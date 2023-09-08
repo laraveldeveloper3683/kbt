@@ -19,7 +19,7 @@
                 <div class="col-md-6 offset-md-3 mb-4 text-left">
                     @if($order->deliveryOption->delivery_or_pickup == 'Store Pickup')
                         <div
-                                style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
+                            style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
                             <h6><strong>Pickup Address</strong></h6>
                             <p class="lead">{{$store->address}} , {{$store->city}}, {{$store->zip}}</p>
                             @if($locationTime)
@@ -38,7 +38,7 @@
                     @else
                         @foreach($order_items as $order_item)
                             <div
-                                    style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
+                                style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
                                 @php
                                     $itemAddr = $order_item->shippingAddress;
                                 @endphp
@@ -82,7 +82,7 @@
                                         <small class="text-muted">{{ $item_val->description }}</small>
                                     </div>
                                     <span
-                                            class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
+                                        class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
                                 </li>
 
                             @endforeach
@@ -93,10 +93,12 @@
                                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                                     <div>
                                         <h6 class="my-0">Delivery Charge</h6>
-                                        <small class="text-muted">
-                                            delivering from - {{ @$store->location_name }}
-                                            , {{ @$store->city }}
-                                        </small><br>
+                                        @if($store)
+                                            <small class="text-muted">
+                                                delivering from - {{ @$store->location_name }}
+                                                , {{ @$store->city }}
+                                            </small><br>
+                                        @endif
                                         @if($order->delivery_date)
                                             <small class="text-muted">
                                                 <strong>Estimated Delivery</strong>
@@ -122,13 +124,16 @@
                                 </li>
                             @endif
                         @endif
+                        @php
+                            $taxTotal = $total * $order->tax_charge / 100;
+                        @endphp
                         @if(isset($order->tax_charge))
                             <li class="list-group-item d-flex justify-content-between lh-condensed">
                                 <div>
                                     <h6 class="my-0">Tax</h6>
 
                                 </div>
-                                <span class="text-muted">{{ number_format($order->tax_charge, 2) }}%</span>
+                                <span class="text-muted">${{ number_format($taxTotal, 2) }}</span>
                             </li>
                         @endif
                         @if(isset($order->discount_charge))
@@ -154,7 +159,6 @@
 
                         @if($order->deliveryOption->delivery_or_pickup != 'Store Pickup')
                             @php
-                                $taxTotal = $total * $order->tax_charge / 100;
                                 $total += ($taxTotal + $order->delivery_charge);
                             @endphp
                         @endif

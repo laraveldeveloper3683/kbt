@@ -43,7 +43,7 @@
                                         <span class="me-3">{!! Helper::formatDate($orders->created_at) !!}</span>
                                         <span class="me-3">#{!! $orders->pk_orders !!}</span>
                                         <span
-                                            class="badge rounded-pill bg-info">{!! ucfirst($orders->orderStatus->order_status) !!}</span>
+                                                class="badge rounded-pill bg-info">{!! ucfirst($orders->orderStatus->order_status) !!}</span>
                                     </div>
                                 </div>
                                 <table class="table table-borderless">
@@ -126,10 +126,13 @@
                                         @endif
                                     @endif
 
+                                    @php
+                                        $tax_amount = ($order_total * $orders->tax_charge) / 100;
+                                    @endphp
                                     <tr>
                                         <td colspan="3">Tax</td>
                                         <td class="text-end">
-                                            {{ number_format($orders->tax_charge, 2) }}%
+                                            ${{ number_format($tax_amount, 2) }}
                                         </td>
                                     </tr>
 
@@ -170,7 +173,7 @@
                                         <h3 class="h6">Payment Method</h3>
                                         <p>Visa -1234 <br>
                                             Total: ${!! number_format($orders->total,2) !!} <span
-                                                class="badge bg-success rounded-pill">PAID</span></p>
+                                                    class="badge bg-success rounded-pill">PAID</span></p>
                                     </div>
                                     <div class="col-lg-6">
                                         <h3 class="h6">Billing address</h3>
@@ -201,7 +204,7 @@
                                     <strong>Order Id</strong>
                                     <span><a href="javascript:void(0)"
                                              class="text-decoration-underline">#{!! $orders->pk_orders !!}</a> <i
-                                            class="bi bi-box-arrow-up-right"></i> </span>
+                                                class="bi bi-box-arrow-up-right"></i> </span>
                                     <hr>
                                     <h3 class="h6">Address</h3>
                                     @foreach($order_items as $order_item)

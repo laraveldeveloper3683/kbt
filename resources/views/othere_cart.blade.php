@@ -95,7 +95,7 @@
                     <i class="fa fa-angle-left"></i> Continue Shopping
                 </a>
                 @if (Auth::id())
-                    <a href="{{ url('/other-checkout') }}" class="btn btn-success" id="checkout-href checkout-button">
+                    <a href="{{ url('/other-checkout') }}" class="btn btn-success" id="checkout-href">
                         Checkout
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -273,7 +273,17 @@
             $('#checkout-button').on('click', function (e) {
                 e.preventDefault();
 
+                console.log('checkout button clicked');
+
                 updateAllCartItems();
+            });
+
+            $('#checkout-href').on('click', function (e) {
+                e.preventDefault();
+
+                updateAllCartItems();
+
+                window.location.href = $(this).attr('href');
             });
         });
     </script>

@@ -79,7 +79,7 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Your Cart</span>
                     <span
-                        class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
+                            class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
                 </h4>
                 @php
                     $total = 0;
@@ -99,7 +99,7 @@
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
                                 <span
-                                    class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
+                                        class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                             </li>
                         @endforeach
                     @endif
@@ -169,6 +169,7 @@
                         id="tax-rate-section">
                         @php
                             $taxRate = old('shippingCharge', @$oldData['shippingCharge']);
+                            $taxTotal = $total * $taxRate / 100;
                         @endphp
                         <div class="taxR">
                             @if($taxRate)
@@ -179,7 +180,7 @@
                         </div>
                         <span class="text-muted taxRa loade">
                             @if($taxRate)
-                                ${{ $taxRate }}
+                                ${{ number_format($taxTotal, 2) }}
                             @endif
                         </span>
 
@@ -229,7 +230,7 @@
 
                         <span>Total (USD)</span>
                         <strong
-                            class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
+                                class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
                         <input type="hidden" value="{{ $total }}" class="totalCast">
                     </li>
                 </ul>
@@ -250,7 +251,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label
-                                for="first_name">
+                                    for="first_name">
                                 {{ $user_data->first_name . ' ' . $user_data->last_name }}
                                 {{ $user_data->email ? '(' . $user_data->email . ')' : '' }}
                             </label>
@@ -294,7 +295,7 @@
                     <div class="row">
                         @if(!$user_data->username)
                             <div
-                                class="mb-3 {{ !$user_data->phone && !$user_data->username ? 'col-md-6' : 'col-md-12' }}">
+                                    class="mb-3 {{ !$user_data->phone && !$user_data->username ? 'col-md-6' : 'col-md-12' }}">
                                 <label for="username">Username</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="username" name="username"
@@ -353,7 +354,7 @@
                                 <input type="radio" name="choise_details" class="choise-details"
                                        value="{{ $deliveryOption->pk_delivery_or_pickup }}"
                                        data-text="{{ $deliveryOption->delivery_or_pickup }}"
-                                    {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
+                                        {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
                             @endforeach
                         </div>
 
@@ -428,7 +429,7 @@
                                     <label for="checkbox{{ $id }}">
                                         <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
                                                data-id="{{ $id }}"
-                                            {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
+                                                {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
                                         Use same as First Item for this item
                                     </label>
                                 @endif
@@ -483,7 +484,7 @@
 
                                         <div class="col-md-4 mb-3">
                                             <label for="billing_address_1{{ $id }}">Address 2 <span
-                                                    class="text-muted">(Optional)</span></label>
+                                                        class="text-muted">(Optional)</span></label>
                                             <input type="text" class="form-control"
                                                    id="billing_address_1{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_address_1]"
@@ -721,7 +722,7 @@
                     if (data[1] == 'fixed') {
                         //$('.amountTotal').val(totalcast-data[0]);
                         var to = totalcast - data[0].toFixed(2);
-                        $('.totalCast1').html('$' + to);
+                        $('.totalCast1').html('$' + Number(to).toFixed(2));
                         $('.disc1').html(`<h6 class="my-0">Discount (-)
                                      </h6>`);
 
@@ -730,7 +731,7 @@
                     }
                     if (data[1] == 'percent') {
                         var to = totalcast - (totalcast * data[0] / 100).toFixed(2);
-                        $('.totalCast1').html('$' + to);
+                        $('.totalCast1').html('$' + Number(to).toFixed(2));
                         $('.disc1').html(`<h6 class="my-0">Discount (-)
                                       </h6>`);
 
@@ -848,13 +849,12 @@
                     $(`#selectTimeItem${pkLocation}`).show();
                 }
 
-
+                let taxTotal = Number(taxRate) * Number(totalcast) / 100;
                 $('#tax_rate').val(taxRate);
                 $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
-                $('.taxRa').html(Number(taxRate).toFixed(2) + '%');
-                let taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
                 let to = totalcast + Number(taxTotal);
-                $('.totalCast1').text('$' + to.toFixed(2));
+                $('.totalCast1').text('$' + Number(to).toFixed(2));
                 $('.amountTotal').val(to);
             });
 
@@ -921,7 +921,7 @@
                 var totalcast = parseFloat($('.totalCast').val());
                 $('.amountTotal').val(totalcast);
                 var to = totalcast;
-                $('.totalCast1').html('$' + to);
+                $('.totalCast1').html('$' + Number(to).toFixed(2));
                 $('.discountCharge').val('');
 
                 $newAddress = address + ', ' + city;
@@ -977,7 +977,7 @@
 
                             <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                            $('.totalCast1').text('$' + to);
+                            $('.totalCast1').text('$' + Number(to).toFixed(2));
                             $('.amountTotal').val(to);
                             $(`#delivery-charge-item${id}`).remove();
 
@@ -987,7 +987,7 @@
                             if (!$('#tax_rate').val()) {
                                 $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                                $('.taxRa').html(response.taxRate + '%');
+                                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
                                 $('#tax_rate').val(response.taxRate);
                             }
                         }
@@ -1226,7 +1226,7 @@
                     var totalcast = parseFloat($('.totalCast').val());
                     $('.amountTotal').val(totalcast);
                     var to = totalcast;
-                    $('.totalCast1').html('$' + to);
+                    $('.totalCast1').html('$' + Number(to).toFixed(2));
                     $('.discountCharge').val('');
 
                     $newAddress = address + ', ' + city;
@@ -1281,7 +1281,7 @@
 
                             <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                            $('.totalCast1').text('$' + to.toFixed(2));
+                            $('.totalCast1').text('$' + Number(to).toFixed(2));
                             $('.amountTotal').val(to);
                             $(`#delivery-charge-item${id}`).remove();
 
@@ -1291,7 +1291,7 @@
                             if (!$('#tax_rate').val()) {
                                 $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                                $('.taxRa').html(response.taxRate + '%');
+                                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
                                 $('#tax_rate').val(response.taxRate);
                             }
                         }
@@ -1313,6 +1313,7 @@
                         fillAllItemAddrFromFirstItem();
                     }
                 }
+
                 firstItemAddrInit2();
             }
 
@@ -1421,7 +1422,7 @@
 
                     let taxTotal = Number(taxRate) * Number(totalCast) / 100;
                     let to = totalCast + Number(taxTotal);
-                    $('.totalCast1').text('$' + to.toFixed(2));
+                    $('.totalCast1').text('$' + Number(to).toFixed(2));
                     $('.amountTotal').val(to);
                 }
             }

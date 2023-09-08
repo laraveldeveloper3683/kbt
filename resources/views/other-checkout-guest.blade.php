@@ -173,6 +173,7 @@
                         id="tax-rate-section">
                         @php
                             $taxRate = old('shippingCharge', @$oldData['shippingCharge']);
+                            $taxTotal = $total * $taxRate / 100;
                         @endphp
                         <div class="taxR">
                             @if($taxRate)
@@ -183,7 +184,7 @@
                         </div>
                         <span class="text-muted taxRa loade">
                             @if($taxRate)
-                                ${{ $taxRate }}
+                                ${{ number_format($taxTotal, 2) }}
                             @endif
                         </span>
 
@@ -678,7 +679,7 @@
                     if (data[1] == 'fixed') {
                         //$('.amountTotal').val(totalcast-data[0]);
                         var to = totalcast - data[0].toFixed(2);
-                        $('.totalCast1').html('$' + to);
+                        $('.totalCast1').html('$' + Number(to).toFixed(2));
                         $('.disc1').html(`<h6 class="my-0">Discount (-)
                                      </h6>`);
 
@@ -687,7 +688,7 @@
                     }
                     if (data[1] == 'percent') {
                         var to = totalcast - (totalcast * data[0] / 100).toFixed(2);
-                        $('.totalCast1').html('$' + to);
+                        $('.totalCast1').html('$' + Number(to).toFixed(2));
                         $('.disc1').html(`<h6 class="my-0">Discount (-)
                                       </h6>`);
 
@@ -806,12 +807,12 @@
                     $(`#selectTimeItem${pkLocation}`).show();
                 }
 
+                let taxTotal = Number(taxRate) * Number(totalcast) / 100;
                 $('#tax_rate').val(taxRate);
                 $('.taxR').html(`<h6 class="my-0">Tax</h6>`);
-                $('.taxRa').html(Number(taxRate).toFixed(2) + '%');
-                let taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
                 let to = totalcast + Number(taxTotal);
-                $('.totalCast1').text('$' + to.toFixed(2));
+                $('.totalCast1').text('$' + Number(to).toFixed(2));
                 $('.amountTotal').val(to);
             });
 
@@ -879,7 +880,7 @@
                 var totalcast = parseFloat($('.totalCast').val());
                 $('.amountTotal').val(totalcast);
                 var to = totalcast;
-                $('.totalCast1').html('$' + to);
+                $('.totalCast1').html('$' + Number(to).toFixed(2));
                 $('.discountCharge').val('');
 
                 $newAddress = address + ', ' + city;
@@ -935,7 +936,7 @@
 
                             <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                            $('.totalCast1').text('$' + to);
+                            $('.totalCast1').text('$' + Number(to).toFixed(2));
                             $('.amountTotal').val(to);
                             $(`#delivery-charge-item${id}`).remove();
 
@@ -945,7 +946,7 @@
                             if (!$('#tax_rate').val()) {
                                 $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                                $('.taxRa').html(response.taxRate + '%');
+                                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
                                 $('#tax_rate').val(response.taxRate);
                             }
                         }
@@ -1292,7 +1293,7 @@
 
                     let taxTotal = Number(taxRate) * Number(totalCast) / 100;
                     let to = totalCast + Number(taxTotal);
-                    $('.totalCast1').text('$' + to.toFixed(2));
+                    $('.totalCast1').text('$' + Number(to).toFixed(2));
                     $('.amountTotal').val(to);
                 }
             }

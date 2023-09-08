@@ -78,6 +78,7 @@
                                         <th class="text-right">Subtotal</th>
                                         <th class="text-right">Shipping Charges</th>
                                         <th class="text-right">Tax Rate</th>
+                                        <th class="text-right">Tax Amount</th>
                                         <th class="text-right">Discount</th>
                                         <th class="text-right">Amount</th>
                                         <th class="text-center">Is Paid</th>
@@ -100,7 +101,13 @@
                                             </td>
                                             <td class="text-right">${{ number_format($sale->subtotal, 2) }}</td>
                                             <td class="text-right">${{  number_format($sale->shippingcharge, 2) }}</td>
-                                            <td class="text-right">${{ number_format($sale->tax_total, 2) }}</td>
+                                            <td class="text-right">{{ number_format($sale->tax_total, 2) }}%</td>
+                                            <td class="text-right">
+                                                @php
+                                                    $taxAmount = ($sale->subtotal * $sale->tax_total) / 100;
+                                                @endphp
+                                                ${{ number_format($taxAmount, 2) }}
+                                            </td>
                                             <td class="text-right">${{ number_format($sale->discountCharge, 2) }}</td>
                                             <td class="text-right">${{ number_format($sale->total, 2) }}</td>
                                             <td class="text-center">

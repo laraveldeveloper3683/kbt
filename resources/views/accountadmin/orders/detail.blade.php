@@ -152,10 +152,11 @@
                                     @endif
 
                                     @if($orders->tax_charge)
+                                        @php($taxAmount = ($orderAmount * $orders->tax_charge) / 100)
                                         <tr>
                                             <th>Tax</th>
                                             <td class="text-right">
-                                                {{ number_format($orders->tax_charge, 2) }}%
+                                                ${{ number_format($taxAmount, 2) }}
                                             </td>
                                         </tr>
                                     @endif
@@ -377,11 +378,12 @@
                                         @endif
 
                                         @if($orders->tax_charge)
+                                            @php($taxAmount = ($orderAmount * $orders->tax_charge) / 100)
                                             <tr>
                                                 <td colspan="5"></td>
                                                 <td class="font-weight-bold text-right">Tax</td>
                                                 <td class="font-weight-bold text-right">
-                                                    {{ number_format($orders->tax_charge, 2) }}%
+                                                    ${{ number_format($taxAmount, 2) }}
                                                 </td>
                                             </tr>
                                         @endif

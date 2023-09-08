@@ -139,9 +139,19 @@
                                                 <td>${{ @number_format(@$deliveryCharge , 2)}}</td>
                                             </tr>
                                         @endif
+                                        @php
+                                            if ($deliveryOption->delivery_or_pickup == 'Delivery') {
+                                                $taxTotal = ($total * @$data['shippingCharge']) / 100;
+                                                $total += (@$deliveryCharge + $taxTotal) - @$discountedAmount;
+                                            } else {
+                                                $taxTotal = ($total * @$data['shippingCharge']) / 100;
+                                                $total += $taxTotal - @$discountedAmount;
+                                            }
+                                        @endphp
+
                                         <tr>
                                             <th colspan="2" class="text-right">Tax</th>
-                                            <td>{{ @$data['shippingCharge'] }}%</td>
+                                            <td>${{ @number_format(@$taxTotal, 2) }}</td>
                                         </tr>
                                         @if($discountedAmount > 0)
                                             <tr>
@@ -158,15 +168,7 @@
                                                 @endif
                                             </tr>
                                         @endif
-                                        @php
-                                            if ($deliveryOption->delivery_or_pickup == 'Delivery') {
-                                                $taxTotal = ($total * @$data['shippingCharge']) / 100;
-                                                $total += (@$deliveryCharge + $taxTotal) - @$discountedAmount;
-                                            } else {
-                                                $taxTotal = ($total * @$data['shippingCharge']) / 100;
-                                                $total += $taxTotal - @$discountedAmount;
-                                            }
-                                        @endphp
+
                                         <tr>
                                             <th colspan="2" class="text-right">Total</th>
                                             <th>${{ @number_format(@$total, 2) }}</th>

@@ -84,6 +84,7 @@
                                         <th>Subtotal</th>
                                         <th>Shipping Charge</th>
                                         <th>Tax Rate</th>
+                                        <th>Tax Amount</th>
                                         <th>Discount</th>
                                         <th>Amount</th>
                                         {{--  <th>Estimated Delivery</th> --}}
@@ -104,9 +105,11 @@
                                                 <td>
                                                     @if($order->deliveryOption)
                                                         @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
-                                                            <span class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                            <span
+                                                                class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @else
-                                                            <span class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                            <span
+                                                                class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @endif
                                                     @else
                                                         N/A
@@ -115,6 +118,12 @@
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
                                                 <td>{{ number_format($order->tax_charge, 2) }}%</td>
+                                                <td>
+                                                    @php
+                                                        $taxAmount = ($order->subtotal * $order->tax_charge) / 100;
+                                                    @endphp
+                                                    ${{ number_format($taxAmount, 2) }}
+                                                </td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
@@ -141,9 +150,11 @@
                                                 <td>
                                                     @if($order->deliveryOption)
                                                         @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
-                                                            <span class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                            <span
+                                                                class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @else
-                                                            <span class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                            <span
+                                                                class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @endif
                                                     @else
                                                         N/A
@@ -152,6 +163,12 @@
                                                 <td>${{ number_format($order->subtotal, 2) }}</td>
                                                 <td>${{ number_format($order->delivery_charge, 2) }}</td>
                                                 <td>{{ number_format($order->tax_charge, 2) }}%</td>
+                                                <td>
+                                                    @php
+                                                        $taxAmount = ($order->subtotal * $order->tax_charge) / 100;
+                                                    @endphp
+                                                    ${{ number_format($taxAmount, 2) }}
+                                                </td>
                                                 <td>${{ number_format($order->discount_charge, 2) }}</td>
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}

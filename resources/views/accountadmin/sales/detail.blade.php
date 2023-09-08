@@ -71,28 +71,28 @@
                                     </td>
                                 </tr>
 
-                                    <tr>
+                                <tr>
                                     <th>Billing Address</th>
                                     @if($sale->order)
-                                     <td style="width: 365px;">
-                                    {{ $sale->order->address }} {{ isset($sale->order->address_1) ?  '#'.$sale->order->address_1 : ''}} </br> {{ $sale->order->city }} {{ $sale->order->state_name }} {{ $sale->order->zip }}</td>
+                                        <td style="width: 365px;">
+                                            {{ $sale->order->address }} {{ isset($sale->order->address_1) ?  '#'.$sale->order->address_1 : ''}} </br> {{ $sale->order->city }} {{ $sale->order->state_name }} {{ $sale->order->zip }}</td>
                                     @endif
                                 </tr>
-                               
+
                                 @if( isset($sale->order) && ($sale->order->billaddress ==  $sale->order->address))
-                                <tr>
-                                <th>Shipping Address same as Billing</th>
-                                 <td> <input type="checkbox" checked value="Same as Billing Address"></td>
-                                 <tr>
+                                    <tr>
+                                        <th>Shipping Address same as Billing</th>
+                                        <td><input type="checkbox" checked value="Same as Billing Address"></td>
+                                    <tr>
                                 @else
-                                  <tr>
-                                    <th>Shipping Address</th>
-                                    @if($sale->order)
-                                     <td style="width: 365px;">
-                                        {{ $sale->order->billaddress }} {{ isset($sale->order->billaddress_1) ?  '#'.$sale->order->billaddress_1 : ''}} </br> {{ $sale->order->billcity }} {{ $sale->order->billstate_name }} {{ $sale->order->billzip }}
-                                      </td>
-                                    @endif
-                                </tr>
+                                    <tr>
+                                        <th>Shipping Address</th>
+                                        @if($sale->order)
+                                            <td style="width: 365px;">
+                                                {{ $sale->order->billaddress }} {{ isset($sale->order->billaddress_1) ?  '#'.$sale->order->billaddress_1 : ''}} </br> {{ $sale->order->billcity }} {{ $sale->order->billstate_name }} {{ $sale->order->billzip }}
+                                            </td>
+                                        @endif
+                                    </tr>
                                 @endif
                             </table>
                         </div>
@@ -102,34 +102,41 @@
                     <div class="card">
                         <div class="card-body">
                             <table class="table table-hover table-bordered">
-                               <tr>
-                               <th>Order Amount</th>
-                               @forelse($sale->saleItems as $item)
-                                <td class="text-right">
-                                    ${{ number_format($item->quantity * $item->price, 2) }}
-                                </td>
-                                @empty
-                                <td colspan="100%" class="text-right">
-                                    N/A
-                                </td>
-                                @endforelse
-                                </tr>
-                              <tr>
-                               <th>Discount Charge</th>
-                                <td class="text-right">${{ $sale->discountCharge }}</td>
-                              </tr>
-                               <tr>
-                               <th>Shipping Charge</th>
-                                <td class="text-right">N/A</td>
-                              </tr>
                                 <tr>
-                               <th>Tax</th>
-                                <td class="text-right">${{ $sale->tax_total }}</td>
-                              </tr>
-                              <tr>
-                               <th>Total</th>
-                                <td class="text-right">${{ $sale->total }}</td>
-                              </tr>
+                                    <th>Order Amount</th>
+                                    @forelse($sale->saleItems as $item)
+                                        <td class="text-right">
+                                            ${{ number_format($item->quantity * $item->price, 2) }}
+                                        </td>
+                                    @empty
+                                        <td colspan="100%" class="text-right">
+                                            N/A
+                                        </td>
+                                    @endforelse
+                                </tr>
+                                @if($sale->discountCharge)
+                                    <tr>
+                                        <th>Discount Charge</th>
+                                        <td class="text-right">${{ $sale->discountCharge }}</td>
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <th>Shipping Charge</th>
+                                    <td class="text-right">N/A</td>
+                                </tr>
+                                <tr>
+                                    <th>Tax</th>
+                                    <td class="text-right">
+                                        @php
+                                            $taxAmount = ($sale->subtotal * $sale->tax_total) / 100;
+                                        @endphp
+                                        ${{ number_format($taxAmount, 2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Total</th>
+                                    <td class="text-right">${{ $sale->total }}</td>
+                                </tr>
                             </table>
                         </div>
                     </div>
@@ -141,35 +148,37 @@
                                 <tr>
                                     <th>Name on Card</th>
                                     @if($sale->transaction)
-                                    <td class="text-center">{{ $sale->transaction->name_on_card }}</td>
+                                        <td class="text-center">{{ $sale->transaction->name_on_card }}</td>
                                     @endif
                                 </tr>
- 
+
                                 <tr>
                                     <th>Card Type</th>
                                     @if($sale->transaction)
-                                    <td class="text-center">{{ $sale->transaction->account_type }}</td>
+                                        <td class="text-center">{{ $sale->transaction->account_type }}</td>
                                     @endif
                                 </tr>
 
                                 <tr>
                                     <th>Currency</th>
                                     @if($sale->transaction)
-                                    <td class="text-center">{{ $sale->transaction->currency }}</td>
+                                        <td class="text-center">{{ $sale->transaction->currency }}</td>
                                     @endif
                                 </tr>
                             </table>
                         </div>
                     </div>
                 </div>
-             </div>
-             </br>
-             <div class="row"><div class="col-md-12"> <p class="text-center">
-                                <a href="{{ route('accountadmin.sales.index') }}" class="btn btn-primary">
-                                    Back
-                                </a>
-                            </p></div></div>
-             <div class="row">
+            </div>
+            </br>
+            <div class="row">
+                <div class="col-md-12"><p class="text-center">
+                        <a href="{{ route('accountadmin.sales.index') }}" class="btn btn-primary">
+                            Back
+                        </a>
+                    </p></div>
+            </div>
+            <div class="row">
                 <div class="col-md-12 mt-5">
                     <div class="card">
                         <div class="card-header">
