@@ -43,6 +43,7 @@ class VendorOrderRequestOrderController extends Controller
 
     public function edit($id)
     {
+       // echo "heelo"; die;
         $vendors     = DB::table('kbt_vendors')->get();
         $products    = DB::table('kbt_products')->get();
         $vendorOrder = PurchaseOrder::with('vendor', 'items', 'user')->where('pk_purchase_order', $id)->first();
