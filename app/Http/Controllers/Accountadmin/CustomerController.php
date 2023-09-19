@@ -42,7 +42,9 @@ class CustomerController extends Controller
 
         $customer = DB::table('kbt_customers')->where('pk_customers', $id)->first();
 
-        return view('accountadmin.customers.add', ['departments' => $departments, 'customer' => $customer, 'pk_account' => $pk_account, 'customer_types' => $customer_types, 'states' => $states, 'countries' => $countries]);
+        return view('accountadmin.customers.add', ['departments' => $departments, 'customer' => $customer,
+                                                   'pk_account'  => $pk_account, 'customer_types' => $customer_types,
+                                                   'states'      => $states, 'countries' => $countries]);
     }
 
 
@@ -122,8 +124,10 @@ class CustomerController extends Controller
         if ($request->login_enable) {
             $validated                  = $request->validate([
                 'customer_name' => 'required|max:50',
-                'username'      => 'required|max:50|unique:users',
+                'username'      => 'required|max:50|regex:/^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/i|unique:users',
                 'password'      => 'required|max:10|confirmed'
+            ], [
+                'username.regex' => 'The username format is invalid. It should not contain any space or special character!',
             ]);
             $customer                   = new Customer;
             $customer->pk_account       = $request->pk_account;
@@ -169,7 +173,7 @@ class CustomerController extends Controller
         if (isset($request->login_enable) && ($request->login_enable == 'on') && empty($request->username) && empty($request->password)) {
 
             $validated                   = $request->validate([
-                'username' => 'required|max:50|unique:users',
+                'username' => 'required|max:50|regex:/^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/i|unique:users',
                 'password' => 'required|max:10|confirmed'
             ]);
             $customer_user               = new User;
@@ -383,7 +387,8 @@ class CustomerController extends Controller
         $tab = "comment-edit";
 
         //   return redirect('/accountadmin/customers/edit/'.$comment->id);
-        return redirect()->route('accountadmin.comments.customers.edit', [$request->pk_customers, $comment->pk_comment]);
+        return redirect()->route('accountadmin.comments.customers.edit', [$request->pk_customers,
+                                                                          $comment->pk_comment]);
 
         // return view('accountadmin.customers.add', compact(
         //     'tab',
@@ -410,7 +415,11 @@ class CustomerController extends Controller
         $customer_types = Customertype::where('pk_account', $pk_account)->get();
         $tab            = "comment-edit";
 
-        return view('accountadmin.customers.add', ['tab' => $tab, 'comments' => $comments, 'pk_account' => $pk_account, 'customer_types' => $customer_types, 'states' => $states, 'countries' => $countries, 'customerUser' => $customerUser, 'editComment' => $editComment, 'customer' => $customer]);
+        return view('accountadmin.customers.add', ['tab'          => $tab, 'comments' => $comments,
+                                                   'pk_account'   => $pk_account, 'customer_types' => $customer_types,
+                                                   'states'       => $states, 'countries' => $countries,
+                                                   'customerUser' => $customerUser, 'editComment' => $editComment,
+                                                   'customer'     => $customer]);
     }
 
     public function commentUpdate(Request $request)

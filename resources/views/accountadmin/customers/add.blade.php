@@ -35,7 +35,8 @@
                             <li class="nav-item"><a
                                     class="nav-link {{isset($tab) && ($tab == 'comment-edit') ? '' : 'active'}}"
                                     data-bs-toggle="tab" href="#customerinfo" role="tab" aria-selected="true"><span
-                                        class="hidden-sm-up"></span> <span class="hidden-xs-down">Info</span></a></li>
+                                        class="hidden-sm-up"></span> <span class="hidden-xs-down">Info</span></a>
+                            </li>
                             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#addresstab" role="tab"
                                                     aria-selected="false"><span class="hidden-sm-up"></span> <span
                                         class="hidden-xs-down">Address</span></a></li>
@@ -49,7 +50,8 @@
                                     class="nav-link {{isset($tab) && ($tab == 'comment-edit') ? 'active' : ''}}"
                                     data-bs-toggle="tab" href="#comments" role="tab"
                                     aria-selected="{{isset($tab) && ($tab == 'comment-edit') ? 'true' : 'false'}}"><span
-                                        class="hidden-sm-up"></span> <span class="hidden-xs-down">Comments</span></a>
+                                        class="hidden-sm-up"></span> <span
+                                        class="hidden-xs-down">Comments</span></a>
                             </li>
 
                         </ul>
@@ -96,52 +98,53 @@
                                                                     @enderror
                                                                 </div>
                                                             </div>
-                                                          </div>
+                                                        </div>
 
-                                                            <div class="row" id="loginform">
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <label class="form-label">User Name</label>
-                                                                        <input type="text" name="username"
-                                                                               class="form-control @error('username') is-invalid @enderror"
-                                                                               value="{{isset($customerUser) && ($customerUser->username) ? $customerUser->username : old('username')}}">
-                                                                        @error('username')
-                                                                        <span class="invalid-feedback" role="alert">
+                                                        <div class="row" id="loginform">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">User Name</label>
+                                                                    <input type="text" name="username"
+                                                                           pattern="^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9_]+(?<![_.])$"
+                                                                           class="form-control @error('username') is-invalid @enderror"
+                                                                           value="{{isset($customerUser) && ($customerUser->username) ? $customerUser->username : old('username')}}">
+                                                                    @error('username')
+                                                                    <span class="invalid-feedback" role="alert">
                                                                                 <strong>{{ $message }}</strong>
                                                                             </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                            @if(!isset($customerUser->username))
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Password</label>
+                                                                        <input type="password" name="password"
+                                                                               class="form-control @error('password') is-invalid @enderror">
+                                                                        @error('password')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                      <strong>{{ $message }}</strong>
+                                                  </span>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
-                                                                @if(!isset($customerUser->username))
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                            <label class="form-label">Password</label>
-                                                                            <input type="password" name="password"
-                                                                                   class="form-control @error('password') is-invalid @enderror">
-                                                                            @error('password')
-                                                                            <span class="invalid-feedback" role="alert">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Confirm
+                                                                            Password</label>
+                                                                        <input type="password"
+                                                                               name="password_confirmation"
+                                                                               class="form-control @error('password_confirmation') is-invalid @enderror">
+                                                                        @error('password_confirmation')
+                                                                        <span class="invalid-feedback" role="alert">
                                                       <strong>{{ $message }}</strong>
                                                   </span>
-                                                                            @enderror
-                                                                        </div>
+                                                                        @enderror
                                                                     </div>
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                            <label class="form-label">Confirm
-                                                                                Password</label>
-                                                                            <input type="password"
-                                                                                   name="password_confirmation"
-                                                                                   class="form-control @error('password_confirmation') is-invalid @enderror">
-                                                                            @error('password_confirmation')
-                                                                            <span class="invalid-feedback" role="alert">
-                                                      <strong>{{ $message }}</strong>
-                                                  </span>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                            <div class="row">
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <div class="row">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Office Phone</label>
@@ -202,8 +205,8 @@
                                                                 <input class="btn btn-primary" type="submit"
                                                                        value="{{isset($customer) && ($customer->pk_customers)?'Update':'Submit'}}">
                                                                 <a href="/accountadmin/customer/reset/{{@$customer->pk_customers}}"><input
-                                                                class="btn btn-primary" type="button"
-                                                                value="Reset Password"></a>
+                                                                        class="btn btn-primary" type="button"
+                                                                        value="Reset Password"></a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -225,14 +228,16 @@
                                             <div class="card-body2">
                                                 <!-- <h6 class="card-subtitle">Export Customers to Copy, CSV, Excel, PDF & Print</h6> -->
                                                 <div class="table-responsive m-t-40">
-                                                    @if(isset($customer) && !empty($customer->pk_customers))
+                                                    @if(isset($customer) && !empty($customer->pk_customers) && count($customer_address) != 2)
                                                         <a href="/accountadmin/customers/address/add/{{$customer->pk_customers}}">
                                                             <button class="btn btn-danger text-white card-title"
                                                                     style="float: right;margin-right: 36px;margin-left: 20px;margin-top: 4px;">
                                                                 Add Address
                                                             </button>
                                                         </a>
-                                                    @else
+                                                    @endif
+
+                                                    @if(!isset($customer) || empty($customer->pk_customers))
                                                         <a href="javascript:void(0)">
                                                             <button class="btn btn-danger text-white card-title"
                                                                     style="float: right;margin-right: 36px;margin-top: 4px;">
@@ -245,8 +250,8 @@
                                                            cellspacing="0" width="100%">
                                                         <thead>
                                                         <tr>
-                                                            <th>Address</th>
                                                             <th>Address Type</th>
+                                                            <th>Address</th>
                                                             <th>Ste/Unit</th>
                                                             <th>City</th>
                                                             <th>State</th>
@@ -258,10 +263,10 @@
                                                             @foreach($customer_address as $addres_val)
                                                                 <tr>
                                                                     <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $addres_val->pk_customer_address]) }}'">
-                                                                        {{ @$addres_val->address }}
+                                                                        {{ @ucfirst(@$addres_val->addressType->address_type) }}
                                                                     </td>
                                                                     <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $addres_val->pk_customer_address]) }}'">
-                                                                        {{ @$addres_val->addressType->address_type }}
+                                                                        {{ @$addres_val->address }}
                                                                     </td>
                                                                     <td onclick="window.location='{{ route('accountadmin.customers.address_edit', ['id' => $addres_val->pk_customer_address]) }}'">
                                                                         {{ @$addres_val->address_1 }}
@@ -436,7 +441,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane p-20 {{isset($tab) && ($tab == 'comment-edit') ? 'active' : ''}}" id="comments" role="tabpanel">
+                            <div class="tab-pane p-20 {{isset($tab) && ($tab == 'comment-edit') ? 'active' : ''}}"
+                                 id="comments" role="tabpanel">
                                 @if(isset($customer) && isset($comments))
                                     <div class="row">
                                         <div class="col-12">
@@ -445,8 +451,9 @@
                                                 <div class="row">
                                                     <div class="col-sm-4 col-xs-12">
 
-                                                        <form action="{{isset($editComment) && ($editComment->comments) ? '/accountadmin/customers/comments/update' : '/accountadmin/customers/comments/store'}}"
-                                                              method="post">
+                                                        <form
+                                                            action="{{isset($editComment) && ($editComment->comments) ? '/accountadmin/customers/comments/update' : '/accountadmin/customers/comments/store'}}"
+                                                            method="post">
                                                             @csrf
                                                             <div class="form-group">
                                                                 <label for="comment" class="form-label">Comment</label>
@@ -566,7 +573,7 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB80hPTftX9xYXqy6_NcooDtW53kiIH3A&libraries=places&callback=initAutocomplete"
         async defer></script>
     <script src="/assets/address-auto-complete.js"></script>
-    <?php $tab = Session::get('tab'); ?>
+        <?php $tab = Session::get('tab'); ?>
     @if(isset($tab) && $tab == 'comment-edit')
         <script>
             $(document).ready(function () {
