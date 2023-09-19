@@ -74,7 +74,11 @@ class FloralArrangementController extends Controller
             ->get();
         $arrangementTypes    = $arrangementTypes->concat($arrangementTypesCus);
 
-        return view('floral-arrangement-details', ['flower' => $flower, 'aranPrice' => $aranPrice, 'colorFlowers' => $colorFlowers, 'vaseTypes' => $vaseTypes, 'colorFlowers' => $colorFlowers, 'styles' => $styles, 'arrangementTypes' => $arrangementTypes, 'flower_list' => $flower_list, 'category' => $category]);
+        return view('floral-arrangement-details', ['flower'           => $flower, 'aranPrice' => $aranPrice,
+                                                   'colorFlowers'     => $colorFlowers, 'vaseTypes' => $vaseTypes,
+                                                   'colorFlowers'     => $colorFlowers, 'styles' => $styles,
+                                                   'arrangementTypes' => $arrangementTypes,
+                                                   'flower_list'      => $flower_list, 'category' => $category]);
     }
 
     /**
@@ -133,10 +137,14 @@ class FloralArrangementController extends Controller
         // Get Cart HTML for Header
         $htmlCart = view('_header_cart')->render();
 
-        return response()->json([
-            'msg'  => 'Product added to cart successfully!',
-            'data' => $htmlCart
-        ]);
+        if ($request->ajax()) {
+            return response()->json([
+                'msg'  => 'Product added to cart successfully!',
+                'data' => $htmlCart
+            ]);
+        }
+
+        return redirect('/floral-arrangement');
     }
 
     public function category($category)
@@ -148,6 +156,7 @@ class FloralArrangementController extends Controller
             ->select("kbt_floral_arrangements.*", "kbt_floral_arrangements_images.path")
             ->groupBy('kbt_floral_arrangements.pk_floral_arrangements')
             ->where('kbt_floral_arrangements.pk_product_category', $categoryId)->get();
-        return view('floral-arrangement', ['flowers' => $flowers, 'products' => $products, 'categoryId' => $categoryId]);
+        return view('floral-arrangement', ['flowers'    => $flowers, 'products' => $products,
+                                           'categoryId' => $categoryId]);
     }
 }

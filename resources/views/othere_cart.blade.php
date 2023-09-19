@@ -15,11 +15,9 @@
     <table id="cart" class="table table-hover table-condensed" style="margin-top: 60px;margin-bottom:60px;">
         <thead>
         <tr>
-            <th style="width:30%">Item</th>
-            <th style="width:10%" class="text-center">Arrangement Type</th>
-            <th style="width:10%" class="text-center">Card Message</th>
-            <th style="width:10%" class="text-center">Price</th>
-            <th style="width:10%" class="text-center">Quantity</th>
+            <th style="width:40%">Item</th>
+            <th style="width:20%" class="text-center">Price</th>
+            <th style="width:20%" class="text-center">Quantity</th>
             <th style="width:10%" class="text-center">Subtotal</th>
             <th style="width:10%"></th>
         </tr>
@@ -52,15 +50,11 @@
                             <div class="col-sm-9">
                                 <h4 class="nomargin" class="item-name"
                                     data-name="{{ $details['name'] }}">{{ $details['name'] }}</h4>
+                                <p>{{ @$details['arrangementTypesName'] }}</p>
+                                <textarea name="card_message" class="card_message"
+                                          data-id="{{ $id }}">{{ @$details['card_message'] }}</textarea>
                             </div>
                         </div>
-                    </td>
-                    <td class="text-center" data-th="arrangementType">
-                        {{ @$details['arrangementTypesName'] }}
-                    </td>
-                    <td class="text-center" data-th="Message">
-                        <textarea name="card_message" class="card_message"
-                                  data-id="{{ $id }}">{{ @$details['card_message'] }}</textarea>
                     </td>
                     <td class="text-center" data-th="Price">${{ $details['price'] }}</td>
                     <td class="text-center" data-th="Quantity">
@@ -68,7 +62,8 @@
                                class="form-control quantity" data-id="{{ $id }}"/>
                     </td>
                     <td data-th="Subtotal" class="text-center">$<span
-                            class="product-subtotal">{{ $details['price'] * $details['quantity'] }}</span></td>
+                            class="product-subtotal">{{ number_format($details['price'] * $details['quantity'], 2)  }}</span>
+                    </td>
                     <td class="actions" data-th="">
 
                         <button class="btn btn-info btn-sm update-cart" data-id="{{ $id }}"
@@ -85,13 +80,13 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="3"></td>
+            <td colspan="1"></td>
             <td class="text-center" colspan="3"><strong>Total Quantity <span
                         class="cart-quantity">{{ $total_qty }}</span></strong></td>
         </tr>
         <tr>
             <td>
-                <a href="{{ url('/') }}" class="btn btn-warning">
+                <a href="{{ url('/') }}" class="btn btn-warning" id="continue-shopping-btn">
                     <i class="fa fa-angle-left"></i> Continue Shopping
                 </a>
                 @if (Auth::id())
@@ -107,9 +102,9 @@
                     </button>
                 @endif
             </td>
-            <td colspan="4" class="hidden-xs"></td>
+            <td colspan="2" class="hidden-xs"></td>
             <td class="hidden-xs text-center"><strong>Total $<span
-                        class="cart-total">{{ $total }}</span></strong></td>
+                        class="cart-total">{{ number_format($total, 2) }}</span></strong></td>
             <td class="hidden-xs"></td>
         </tr>
         </tfoot>
@@ -170,8 +165,8 @@
                     success : function (response) {
                         cart_item_btn_loading.hide();
                         $("#header-bar").html(response.data);
-                        cart_item_product_subtotal.text(response.subTotal);
-                        $('.cart-total').text(response.total);
+                        cart_item_product_subtotal.text(Number(response.subTotal).toFixed(2));
+                        $('.cart-total').text(Number(response.total).toFixed(2));
                         $('.cart-quantity').text(response.totalQty);
                     }
                 });
@@ -203,8 +198,7 @@
                         loading.hide();
                         $("span#status").html('<div class="alert alert-success">' + response.msg + '</div>');
                         $("#header-bar").html(response.data);
-                        product_subtotal.text(response.subTotal);
-                        cart_total.text(response.total);
+                        product_subtotal.text(Number(response.subTotal).toFixed(2));
                         cart_quantity.text(response.totalQty);
                     }
                 });
@@ -235,8 +229,8 @@
                     success : function (response) {
                         $("span#status").html('<div class="alert alert-success">' + response.msg + '</div>');
                         $("#header-bar").html(response.data);
-                        product_subtotal.text(response.subTotal);
-                        cart_total.text(response.total);
+                        product_subtotal.text(Number(response.subTotal).toFixed(2));
+                        cart_total.text(Number(response.total).toFixed(2));
                         cart_quantity.text(response.totalQty);
                         loading.hide();
                     }
@@ -263,7 +257,7 @@
                             $("span#status").html('<div class="alert alert-success">' + response.msg +
                                 '</div>');
                             $("#header-bar").html(response.data);
-                            cart_total.text(response.total);
+                            cart_total.text(Number(response.total).toFixed(2));
                             cart_quantity.text(response.totalQty);
                         }
                     });
@@ -279,6 +273,14 @@
             });
 
             $('#checkout-href').on('click', function (e) {
+                e.preventDefault();
+
+                updateAllCartItems();
+
+                window.location.href = $(this).attr('href');
+            });
+
+            $('#continue-shopping-btn').on('click', function (e) {
                 e.preventDefault();
 
                 updateAllCartItems();

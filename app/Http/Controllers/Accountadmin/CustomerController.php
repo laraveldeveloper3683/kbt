@@ -66,7 +66,6 @@ class CustomerController extends Controller
         $countries      = Country::all();
         $customerUser   = DB::table('users')->where('pk_customers', $id)->first();
 
-
         $comments         = Comment::where('pk_account', $pk_account)
             ->where('pk_customers', '!=', 'NULL')
             ->where('pk_customers', $id)
@@ -124,6 +123,7 @@ class CustomerController extends Controller
         if ($request->login_enable) {
             $validated                  = $request->validate([
                 'customer_name' => 'required|max:50',
+                'email'         => 'required|email|unique:users',
                 'username'      => 'required|max:50|regex:/^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/i|unique:users',
                 'password'      => 'required|max:10|confirmed'
             ], [
@@ -141,6 +141,7 @@ class CustomerController extends Controller
 
 
             $customer_user               = new User;
+            $customer_user->username     = $request->username;
             $customer_user->email        = $request->email;
             $customer_user->phone        = $request->office_phone;
             $customer_user->password     = Hash::make($request->password ?? 12345678);
