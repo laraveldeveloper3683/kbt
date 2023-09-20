@@ -45,7 +45,7 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
                                     <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#locationlist" role="tab" aria-selected="true"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Location</span></a> </li>
                                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#operationalhours" role="tab" aria-selected="false"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Operational Hours</span></a> </li>
                                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#calendarnew" role="tab" aria-selected="false"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Calendar</span></a> </li>
-                                </ul> 
+                                </ul>
 
                                 <form class="form-horizontal mt-4 " method="post" action="{{isset($getLocation) && ($getLocation->pk_locations) ? '/accountadmin/locations/update' : '/accountadmin/locations/submit'}}">
                                     @csrf
@@ -54,7 +54,7 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
 
                                         <div class="tab-pane p-20 active" id="locationlist" role="tabpanel">
                                             <div class="row">
-                                        
+
                                                 <div class="form-group">
                                                     <label for="location-types">Location Type</label>
                                                     <select class="form-select col-12" name="location_types" class="form-control @error('location_types') is-invalid @enderror">
@@ -224,28 +224,28 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
                                                 <input type="hidden" name="pk_account" class="form-control" value="{{isset($getLocation) && ($getLocation->pk_account) ? $getLocation->pk_account :''}}">
                                                 @else
                                                 <input type="hidden" name="pk_account" class="form-control" value="{{isset($account) && !empty($account) ? $account->pk_account:''}}">
-                                                @endif 
-                                            
+                                                @endif
+
                                             </div>
-                                        </div> 
+                                        </div>
 
                                         <div class="tab-pane p-20" id="operationalhours" role="tabpanel">
-                                            <div class="row">  
+                                            <div class="row">
 
                                                 <div class="table-responsive m-t-40">
                                                     <table class="display nowrap table table-hover table-striped "
                                                         cellspacing="0" width="100%">
                                                         <thead>
                                                             <tr>
-                                                                <th class="col-md-2 text-center">Day</th> 
-                                                                <th class="col-md-2 text-center">Open Time</th> 
-                                                                <th class="col-md-2 text-center">Close Time</th> 
-                                                                <th class="col-md-3 text-center">All Day</th> 
+                                                                <th class="col-md-2 text-center">Day</th>
+                                                                <th class="col-md-2 text-center">Open Time</th>
+                                                                <th class="col-md-2 text-center">Close Time</th>
+                                                                <th class="col-md-3 text-center">All Day</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody><?php
 
-                                                        
+
 
                                                         /*
                                                         $timestamp = strtotime('next Monday');
@@ -255,7 +255,7 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
                                                             $timestamp = strtotime('+1 day', $timestamp);
                                                         } */
                                                         //echo '<pre>'; print_r($days); die; ?>
-                                                        @foreach($weekOfdays as $key=>$value) <?php 
+                                                        @foreach($weekOfdays as $key=>$value) <?php
 
                                                             $get_setting_data = App\LocationTime::get_time_data($pk_locations,date('Y-m-d',strtotime($value['date'])));
                                                          //echo '<pre>'; print_r($get_setting_data); die; ?>
@@ -265,27 +265,27 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
                                                                     {!! date('l',strtotime($value['date'])) !!}
                                                                     <input type="hidden" name="start[]" class="form-control" value="{!! date('Y-m-d',strtotime($value['date'])) !!}">
                                                                     <input type="hidden" name="day[]" class="form-control" value="{!! date('l',strtotime($value['date'])) !!}">
-                                                                </td> 
+                                                                </td>
                                                                 <td class="text-center">
-                                                                        
+
                                                                     <div class="form-group">
                                                                         <div class="input-group date" id="id_startTime{!! $key !!}" data-target-input="nearest">
                                                                             <input value="{!! !empty($get_setting_data->open_time)?date('h:i A',strtotime($get_setting_data->open_time)):'' !!}" type="text" autocomplete="off" name="open_time[]" id="id_startTime{!! $key !!}" data-target="#id_startTime{!! $key !!}" data-toggle="datetimepicker" class="form-control datetimepicker-input class_startTime{!! $key !!}" data-target="#id_startTime{!! $key !!}"/>
                                                                         </div>
-                                                                    </div> 
-                                                                </td>  
+                                                                    </div>
+                                                                </td>
                                                                 <td class="text-center">
 
                                                                     <div class="form-group">
                                                                         <div class="input-group date" id="id_endTime{!! $key !!}" data-target-input="nearest">
                                                                             <input value="{!! !empty($get_setting_data->close_time)?date('h:i A',strtotime($get_setting_data->close_time)):'' !!}" type="text" autocomplete="off" name="close_time[]" id="id_endTime{!! $key !!}" data-target="#id_endTime{!! $key !!}" data-toggle="datetimepicker" class="form-control datetimepicker-input" data-target="#id_endTime{!! $key !!}"/>
-                                                                            
+
                                                                         </div>
-                                                                    </div> 
-                                                                </td>   
-                                                                <td class="text-center"> 
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-center">
                                                                     <input type="checkbox" {!! !empty($get_setting_data->all_day)?'checked':'' !!} value="1" name="all_day[{!! $key !!}]" class="form-check-input">
-                                                                </td> 
+                                                                </td>
                                                             </tr>
 
                                                             <script type="text/javascript">
@@ -306,9 +306,9 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
                                                                 $('#id_endTime{!! $key !!}').datetimepicker({
                                                                     format: 'LT'
                                                                     //useCurrent:false,
-                                                                }); 
+                                                                });
 
-                                                                 
+
                                                                 $('#id_startTime{!! $key !!}').on("change.datetimepicker", function (e) {
                                                                     if(e.date){
                                                                         $('#id_endTime{!! $key !!}').datetimepicker(e.date.add(60, 'm'));
@@ -321,38 +321,38 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
                                                             @endforeach
                                                         </tbody>
                                                     </table>
-                                                </div> 
-                                                
-                                            </div> 
+                                                </div>
 
-                                        </div> 
+                                            </div>
+
+                                        </div>
 
                                         <div class="tab-pane p-20 calendar-cls-a active" id="calendarnew" role="tabpanel">
-                                            <div class="row">  
+                                            <div class="row">
 
                                                 <div id="col-md-12">
                                                     <div id="calendar"></div>
-                                                </div> 
-                                                
-                                            </div> 
+                                                </div>
 
-                                        </div> 
-                                    </div> 
+                                            </div>
+
+                                        </div>
+                                    </div>
 
 
-                                    <div class="row">  
+                                    <div class="row">
                                         <div class="col-md-12 m-l-20">
                                             <a href="/accountadmin/locations/back"><input class="btn btn-primary" type="button" value="Cancel"></a>
                                             <input class="btn btn-primary" type="submit" value="Submit">
-                                        </div> 
-                                    </div> 
+                                        </div>
+                                    </div>
 
-                                </form> 
+                                </form>
 
-                            </div> 
-                                    
+                            </div>
 
-                           
+
+
 
                         </div>
                     </div>
@@ -367,16 +367,16 @@ $pk_locations = !empty($getLocation->pk_locations)?$getLocation->pk_locations:$s
 
 <script>
 
-$(window).on('load', function(){  
+$(window).on('load', function(){
     setTimeout(function() {
-        $('.calendar-cls-a').removeClass('active');  
+        $('.calendar-cls-a').removeClass('active');
     }, 2000);
-    
+
 });
- 
- 
+
+
 document.addEventListener('DOMContentLoaded', function() {
-    
+
 
   var calendarEl = document.getElementById('calendar');
 
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
     height: 650,
     //events: '{!! route('accountadmin.location-types.calendar',$pk_locations) !!}',
     events: function(info, successCallback, failureCallback) {
-        
+
         var pk_locations = '{!! $pk_locations !!}';
         var date = new Date(info.start);
         /*var dateFormat = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
             /*data: {
               "pk_locations": pk_locations, //dynamically gets the current value of trotineta each time a request is made
               "start": dateFormatdate, //pass start and end dates to your server to allow filtering by date
-              
+
             },*/
             success: function(data) {
                 successCallback(data);
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
     },
-    
+
     selectable: true,
     select: async function (start, end, allDay) {
       const { value: formValues } = await Swal.fire({
@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
         confirmButtonText: 'Submit',
         showCloseButton: true,
 		    showCancelButton: true,
-        html:        
+        html:
         '<div class="form-group"><label for="styles">Open Time</label><input type="time" id="opentime" name="opentime" class="form-control" value=""></div>' +
         '<div class="form-group"><label for="styles">Close Time</label><input type="time" id="closetime" name="closetime" class="form-control" value=""></div>' +
         '<div class="form-group"><label class="form-label">Active</label>' +
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
         '<label class="form-check-label" for="customRadio11">Open</label>' +
         /*'<input type="radio" name="activeval" id="customRadio22" value="0" class="form-check-input" style="margin-left: 20px;">' +
         '<label class="form-check-label" for="customRadio22">Close</label>' +*/
-        '</div>', 
+        '</div>',
         focusConfirm: false,
         preConfirm: () => {
           return [
@@ -467,10 +467,10 @@ document.addEventListener('DOMContentLoaded', function() {
       var clicked_event_date = info.event.start.toLocaleString("default", { year: "numeric" })+"-"+info.event.start.toLocaleString("default", { month: "2-digit" })+"-"+info.event.start.toLocaleString("default", { day: "2-digit" });
 
       //console.log(info.event);
-      
+
       // change the border color
       info.el.style.borderColor = 'red';
-      
+
       Swal.fire({
         title: info.event.day,
         icon: 'info',
@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function() {
             '<label class="form-check-label" for="customRadio11">Open</label>' +
             /*'<input type="radio" name="activeval" id="customRadio22" value="0" '+checked_val+' class="form-check-input" style="margin-left: 20px;">' +
             '<label class="form-check-label" for="customRadio22">Close</label>' +*/
-            '</div>',  
+            '</div>',
             focusConfirm: false,
             confirmButtonText: 'Submit',
             preConfirm: () => {
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   calendar.render();
 });
- 
+
 </script>
 
 <style>
@@ -576,6 +576,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB80hPTftX9xYXqy6_NcooDtW53kiIH3A&libraries=places&callback=initAutocomplete" async defer></script>
   <script src="/assets/address-auto-complete.js"></script>
 @endsection

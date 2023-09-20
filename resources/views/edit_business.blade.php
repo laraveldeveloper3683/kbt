@@ -2405,12 +2405,12 @@ $(document).ready(function(){
         // alert(id);
             var inputvalue = document.getElementById('searchMapInput_'+index1).value;
             if(inputvalue.length > 7) {
-                initMap(index1);
+                initAutocomplete(index1);
             } else {
             }
       });
   });
-function initMap(index1) {
+function initAutocomplete(index1) {
     var input = document.getElementById('searchMapInput_'+index1);
     //alert(index1);
       //var input = id;
@@ -2458,7 +2458,6 @@ function initMap(index1) {
     });
 }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVjRNkX_aKX-TJEOrmXL3sRcnbfBBViiM&libraries=places&callback=initMap"></script>
 <script>
  $(function() {
 $('.timepicker').timepicker({

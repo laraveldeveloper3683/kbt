@@ -590,7 +590,5 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
 
 
-
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB80hPTftX9xYXqy6_NcooDtW53kiIH3A&libraries=places&callback=initAutocomplete" async defer></script>
   <script src="/assets/address-auto-complete.js"></script>
 @endsection

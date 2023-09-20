@@ -210,7 +210,7 @@ class CustomerController extends Controller
         }
         if (isset($request->login_enable) && !empty($request->username) && empty($request->pk_users)) {
             $validated                  = $request->validate([
-                'username'         => 'required|max:50||unique:users',
+                'username'         => 'required|max:50|regex:/^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/i|unique:users',
                 'customer_name'    => 'required|max:50',
                 'pk_customer_type' => 'required',
             ]);
