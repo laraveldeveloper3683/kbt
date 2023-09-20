@@ -132,7 +132,7 @@
                                     </form>
 
                                       </div>
-
+                                     
                                     </div>
                                     <div id="navpills-2" class="tab-pane {{isset($account) && ($account->pk_account)?'active':''}}" style="display:none;">
                                       <div class="row">
@@ -211,7 +211,7 @@
                                       <a href=""><input class="btn btn-primary" type="submit" value="Submit"></a>
                                   </form>
                                       </div>
-
+                                      
                                     </div>
 
                                 </div>
@@ -222,6 +222,7 @@
     </div>
 </div>
 @section('js')
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB80hPTftX9xYXqy6_NcooDtW53kiIH3A&libraries=places&callback=initAutocomplete" async defer></script>
   <script src="/assets/address-auto-complete.js"></script>
 @endsection
 

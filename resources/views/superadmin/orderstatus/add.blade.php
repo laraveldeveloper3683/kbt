@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
 
 @section('content')
 <div class="page-wrapper">
@@ -21,10 +21,10 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">{{isset($order_status) && ($order_status->pk_order_status) ? 'Edit Order Status' : 'Create New Order Status'}}</h4>
+                                <h4 class="card-title" style="text-align:center;">{{isset($order_status) && ($order_status->pk_order_status) ? 'Edit Order Status' : 'Create New Order Status'}}</h4>
                                 <div class="tab-content br-n pn">
                                     <div id="navpills-1" class="tab-pane active">
-                                        <div class="row">
+                                        <div class="row" style="margin-left:580px;">
                                           @if(Session::has('message'))
                                             <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
                                           @endif
@@ -50,10 +50,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label">Active</label>
-                                                    <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio11">Yes</label>
-                                                    <input type="radio" name="active" value="0" {{ isset($order_status) && ($order_status->active=="0")? "checked" : "" }} class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio22">No</label>
+                                                    <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" >
+                                                    <label class="form-check-label" for="customRadio11" style="margin-left: 20px;">Yes</label>
+                                                    <input type="radio" name="active" value="0" {{ isset($order_status) && ($order_status->active=="0")? "checked" : "" }} class="form-check-input" >
+                                                    <label class="form-check-label" for="customRadio22" style="margin-left: 20px;">No</label>
                                             </div>
                                             <input type="hidden" name="pk_order_status" class="form-control" value="{{isset($order_status) && ($order_status->pk_order_status)?$order_status->pk_order_status:''}}">
                                             <a href="/superadmin/order-status/back"><input class="btn btn-primary" type="button" value="Cancel"></a>

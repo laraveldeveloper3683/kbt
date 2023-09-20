@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
 
 @section('content')
 <!-- Page wrapper  -->

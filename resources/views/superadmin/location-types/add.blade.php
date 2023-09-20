@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
 
 @section('content')
   
@@ -47,7 +47,7 @@
                                         <div class="tab-pane p-20 active" id="locationlist" role="tabpanel">
     
                                             <div class="row">   
-                                            
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="styles">Location Type</label>
                                                     <input type="text" name="location_types" class="form-control @error('location_types') is-invalid @enderror" value="{{ isset($locationtype) && ($locationtype->location_types) ?$locationtype->location_types: old('location_types')}}">
@@ -57,7 +57,8 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-
+                                                </div>
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="description">Description</label>
                                                     <input type="text" name="description" class="form-control @error('description') is-invalid @enderror" value="{{ isset($locationtype) && ($locationtype->description) ?$locationtype->description: old('description')}}">
@@ -67,14 +68,17 @@
                                                         </span>
                                                     @enderror
                                                 </div>
+                                            </div>
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="form-label">Active</label>
-                                                        <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" style="margin-left: 20px;">
-                                                        <label class="form-check-label" for="customRadio11">Yes</label>
-                                                        <input type="radio" name="active" value="0" {{ isset($locationtype) && ($locationtype->active=="0")? "checked" : "" }}  class="form-check-input" style="margin-left: 20px;">
-                                                        <label class="form-check-label" for="customRadio22">No</label>
+                                                        <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" >
+                                                        <label class="form-check-label" for="customRadio11" style="margin-left: 20px;">Yes</label>
+                                                        <input type="radio" name="active" value="0" {{ isset($locationtype) && ($locationtype->active=="0")? "checked" : "" }}  class="form-check-input" >
+                                                        <label class="form-check-label" for="customRadio22" style="margin-left: 20px;">No</label>
                                                 </div>  
                                                 <input type="hidden" name="pk_location_types" value="{{ isset($locationtype) && ($locationtype->pk_location_types) ?$locationtype->pk_location_types : ''}}" >
+                                            </div>
                                             </div>
                                         </div> 
 

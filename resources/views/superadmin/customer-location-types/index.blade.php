@@ -1,4 +1,5 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
+
 
 @section('content')
 
@@ -49,7 +50,6 @@
                                             <td>{!! ($value->active==1)?'Yes':'No' !!}</td>
                                             <td style="text-align:center;">
                                                 <a href="/superadmin/customer-location-types/edit/{!! $value->pk_customer_location_types !!}"><button class="btn btn-danger text-white">Edit</button></a>
-                                                <a href="/superadmin/customer-location-types/delete/{!! $value->pk_customer_location_types !!}"><button class="btn btn-danger text-white">Delete</button></a>
                                                 <a href="javascript:" onclick="form_alert('customer-location-types-{{$value->pk_customer_location_types}}', '{{'want to delete '}}{{$value->customer_location_types}} {{' customer location type?'}}')"><button class="btn btn-danger text-white">Delete</button></a>
                                                 <form action="{{route('customer.customer-location-types.delete',[$value->pk_customer_location_types])}}" method="get" id="customer-location-types-{{$value->pk_customer_location_types}}">
                                                 @csrf

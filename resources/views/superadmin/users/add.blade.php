@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
 
 @section('content')
 <div class="page-wrapper">
@@ -13,7 +13,7 @@
                         <li class="breadcrumb-item"><a href="/superadmin">Home</a></li>
                         <li class="breadcrumb-item active"><a href="/superadmin/users">User</a></li>
                     </ol>
-                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"><i class="fa fa-plus-circle"></i> {{isset($user) && ($user->pk_users) ? 'Edit User' : 'Create New User'}}</button>
+                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" ><i class="fa fa-plus-circle"></i> {{isset($user) && ($user->pk_users) ? 'Edit User' : 'Create New User'}}</button>
                 </div>
             </div>
         </div>
@@ -21,10 +21,10 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">{{isset($user) && ($user->pk_users) ? 'Edit User' : 'Create New User'}}</h4>
+                                <h4 class="card-title" style="text-align:center;">{{isset($user) && ($user->pk_users) ? 'Edit User' : 'Create New User'}}</h4>
                                 <div class="tab-content br-n pn">
                                     <div id="navpills-1" class="tab-pane active">
-                                        <div class="row">
+                                        <div class="row" style="margin-left:520px;">
                                           <form class="form-horizontal mt-4 " method="post" action="{{isset($user) && ($user->id) ? '/superadmin/users/edit/submit' : '/superadmin/users/submit'}}">
                                             @csrf
                                             <div class="form-group">
@@ -113,10 +113,10 @@
                                             @endif
                                             <div class="form-group">
                                                 <label class="form-label">Active</label>
-                                                    <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio11">Yes</label>
-                                                    <input type="radio" name="active" value="0" {{ isset($user) && ($user->active=="0")? "checked" : "" }} class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio22">No</label>
+                                                    <input type="radio" name="active"  value="1" checked="checked" class="form-check-input" ">
+                                                    <label class="form-check-label" for="customRadio11" style="margin-left: 20px;">Yes</label>
+                                                    <input type="radio" name="active" value="0" {{ isset($user) && ($user->active=="0")? "checked" : "" }} class="form-check-input" >
+                                                    <label class="form-check-label" for="customRadio22" style="margin-left: 20px;">No</label>
                                             </div>
 
                                             <input type="hidden" name="pk_users" class="form-control" value="{{isset($user) && ($user->pk_users)?$user->pk_users:''}}">

@@ -216,9 +216,7 @@
 
                     $("span#status").html('<div class="alert alert-success">Floral arrangement adding done successfully</div>');
                     $("#header-bar").html(response.data);
-                    // location.reload();
-                    // redirect to '/floral-arrangement'
-                    window.location.href = '{{ url('/floral-arrangement') }}';
+                    location.reload();
                 }
             });
 

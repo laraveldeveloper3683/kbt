@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
 
 @section('content')
 <div class="page-wrapper">
@@ -30,10 +30,10 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">{{isset($role) && ($role->pk_roles) ? 'Edit Role' : 'Create New Role'}}</h4>
+                                <h4 class="card-title" style="text-align:center;">{{isset($role) && ($role->pk_roles) ? 'Edit Role' : 'Create New Role'}}</h4>
                                 <div class="tab-content br-n pn">
                                     <div id="navpills-1" class="tab-pane active">
-                                        <div class="row">
+                                        <div class="row" style="margin-left:580px;">
                                           @if(Session::has('message'))
                                             <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
                                           @endif

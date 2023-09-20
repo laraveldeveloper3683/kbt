@@ -1,4 +1,5 @@
-@extends('layouts.dashboard')
+@extends('layouts.backend_new')
+
 
 @section('content')
 <div class="page-wrapper">
@@ -37,44 +38,6 @@
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="pk_product_sub_category">Location Type</label>
-                                                    <select class="form-select col-12 location-types @error('pk_location_types') is-invalid @enderror" name="pk_location_types">
-                                                        <option value="">Select Location Type</option>
-                                                        @if(!empty($location_types))
-                                                            @foreach($location_types as $key=>$value)
-                                                                <option value="{!! $key !!}" {!! isset($data) && ($data->pk_location_types == $key)? 'selected':'' !!}>{!! $value !!}</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
-                                                    @error('pk_location_types')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-
-                                            <!-- <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="pk_location_times">Location Time</label>
-                                                    <select class="form-select col-12 location-times-cls @error('pk_location_times') is-invalid @enderror" name="pk_location_times">
-                                                        <option value="">Select Location Time</option>
-                                                        @if(!empty($location_times))
-                                                            @foreach($location_times as $val)
-                                                                <option value="{!! $val->pk_location_times !!}" {{  isset($data) && ($data->pk_location_times == $val->pk_location_times)? 'selected':''}}>{!! $val->day.'- '.date('h:i A',strtotime($val->open_time)).' to '.date('h:i A',strtotime($val->close_time)) !!}</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
-                                                    @error('pk_location_times')
-                                                        <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $message }}</strong>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                            </div>  -->
-
-                                            <div class="col-md-6">
-                                                <div class="form-group">
                                                     <label for="styles">Customer Location Type</label>
                                                     <input type="text" name="customer_location_types" class="form-control @error('customer_location_types') is-invalid @enderror" value="{!! !empty($data->customer_location_types)?$data->customer_location_types:old('customer_location_types') !!}">
                                                     @error('customer_location_types')
@@ -103,10 +66,10 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="form-label">Active</label>
-                                                    <input type="radio" id="customRadio11" name="active"  value="1" checked="checked" class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio11">Yes</label>
-                                                    <input type="radio" id="customRadio22" name="active" value="0" {{ isset($data) && ($data->active=="0")? "checked" : "" }}  class="form-check-input" style="margin-left: 20px;">
-                                                    <label class="form-check-label" for="customRadio22">No</label>
+                                                    <input type="radio" id="customRadio11" name="active"  value="1" checked="checked" class="form-check-input">
+                                                    <label class="form-check-label" for="customRadio11" style="margin-left: 20px;">Yes</label>
+                                                    <input type="radio" id="customRadio22" name="active" value="0" {{ isset($data) && ($data->active=="0")? "checked" : "" }}  class="form-check-input" >
+                                                    <label class="form-check-label" for="customRadio22" style="margin-left: 20px;">No</label>
                                                 </div>
                                             </div>
                                         </div>
