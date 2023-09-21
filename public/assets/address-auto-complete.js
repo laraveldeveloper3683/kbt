@@ -60,6 +60,7 @@ function fillInAddress() {
         }
 
         if (componentForm[addressType]) {
+            // exclude street_number
             if (addressType !== 'street_number') {
                 var val = place.address_components[i][componentForm[addressType]];
                 console.log(addressType + " : " + val)
