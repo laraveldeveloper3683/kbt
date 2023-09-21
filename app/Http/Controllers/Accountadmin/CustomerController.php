@@ -380,14 +380,6 @@ class CustomerController extends Controller
             ]);
         }
 
-        $comments = Comment::where('pk_account', $pk_account)
-            ->where('pk_customers', '!=', 'NULL')
-            ->where('pk_customers', $request->pk_customers)
-            ->get();
-
-        $tab = "comment-edit";
-
-        //   return redirect('/accountadmin/customers/edit/'.$comment->id);
         return redirect()->route('accountadmin.comments.customers.edit', [$request->pk_customers,
                                                                           $comment->pk_comment]);
 
@@ -401,13 +393,12 @@ class CustomerController extends Controller
     public function commentEdit(Request $request, $customer_id, $id)
     {
         $pk_account = Auth::user()->pk_account;
-        $customer   = DB::table('kbt_customers')->where('pk_account', $pk_account)->where('pk_customers', $customer_id)->first();
+        $customer   = DB::table('kbt_customers')->where('pk_customers', $customer_id)->first();
         //echo "<pre>"; print_r($customer); die;
         $customer_types = Customertype::where('pk_account', $pk_account)->get();
         $states         = State::where('pk_country', 1)->get();
         $countries      = Country::all();
         $comments       = Comment::where('pk_account', $pk_account)
-            ->where('pk_customers', '!=', 'NULL')
             ->where('pk_customers', $customer->pk_customers)
             ->get();
         $editComment    = Comment::where('pk_account', $pk_account)->where('pk_comment', $id)->first();

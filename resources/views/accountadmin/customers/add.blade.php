@@ -14,7 +14,7 @@
                         </ol>
                         <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"
                                 style="margin-top: -34px;"><i
-                                class="fa fa-plus-circle"></i>{{isset($customer) && ($customer->pk_customers) ? 'Edit '.$customer->customer_name :'Create New Customer'}}
+                                    class="fa fa-plus-circle"></i>{{isset($customer) && ($customer->pk_customers) ? 'Edit '.$customer->customer_name :'Create New Customer'}}
                         </button>
                     </div>
                 </div>
@@ -33,25 +33,25 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs customtab" role="tablist">
                             <li class="nav-item"><a
-                                    class="nav-link {{isset($tab) && ($tab == 'comment-edit') ? '' : 'active'}}"
-                                    data-bs-toggle="tab" href="#customerinfo" role="tab" aria-selected="true"><span
-                                        class="hidden-sm-up"></span> <span class="hidden-xs-down">Info</span></a>
+                                        class="nav-link {{isset($tab) && ($tab == 'comment-edit') ? '' : 'active'}}"
+                                        data-bs-toggle="tab" href="#customerinfo" role="tab" aria-selected="true"><span
+                                            class="hidden-sm-up"></span> <span class="hidden-xs-down">Info</span></a>
                             </li>
                             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#addresstab" role="tab"
                                                     aria-selected="false"><span class="hidden-sm-up"></span> <span
-                                        class="hidden-xs-down">Address</span></a></li>
+                                            class="hidden-xs-down">Address</span></a></li>
                             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#familytab" role="tab"
                                                     aria-selected="false"><span class="hidden-sm-up"></span> <span
-                                        class="hidden-xs-down">Family</span></a></li>
+                                            class="hidden-xs-down">Family</span></a></li>
                             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#orders" role="tab"
                                                     aria-selected="false"><span class="hidden-sm-up"></span> <span
-                                        class="hidden-xs-down">Orders</span></a></li>
+                                            class="hidden-xs-down">Orders</span></a></li>
                             <li class="nav-item"><a
-                                    class="nav-link {{isset($tab) && ($tab == 'comment-edit') ? 'active' : ''}}"
-                                    data-bs-toggle="tab" href="#comments" role="tab"
-                                    aria-selected="{{isset($tab) && ($tab == 'comment-edit') ? 'true' : 'false'}}"><span
-                                        class="hidden-sm-up"></span> <span
-                                        class="hidden-xs-down">Comments</span></a>
+                                        class="nav-link {{isset($tab) && ($tab == 'comment-edit') ? 'active' : ''}}"
+                                        data-bs-toggle="tab" href="#comments" role="tab"
+                                        aria-selected="{{isset($tab) && ($tab == 'comment-edit') ? 'true' : 'false'}}"><span
+                                            class="hidden-sm-up"></span> <span
+                                            class="hidden-xs-down">Comments</span></a>
                             </li>
 
                         </ul>
@@ -200,14 +200,14 @@
                                                         <div class="form-actions">
                                                             <div class="card-body">
                                                                 <a href="/accountadmin/customers/back"><input
-                                                                        class="btn btn-primary" type="button"
-                                                                        value="Cancel"></a>
+                                                                            class="btn btn-primary" type="button"
+                                                                            value="Cancel"></a>
                                                                 <input class="btn btn-primary" type="submit"
                                                                        value="{{isset($customer) && ($customer->pk_customers)?'Update':'Submit'}}">
                                                                 @if(isset($customer) && $customer->pk_customers)
                                                                     <a href="/accountadmin/customer/reset/{{@$customer->pk_customers}}"><input
-                                                                            class="btn btn-primary" type="button"
-                                                                            value="Reset Password"></a>
+                                                                                class="btn btn-primary" type="button"
+                                                                                value="Reset Password"></a>
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -230,7 +230,7 @@
                                             <div class="card-body2">
                                                 <!-- <h6 class="card-subtitle">Export Customers to Copy, CSV, Excel, PDF & Print</h6> -->
                                                 <div class="table-responsive m-t-40">
-                                                    @if(isset($customer) && !empty($customer->pk_customers) && count($customer_address) != 2)
+                                                    @if(isset($customer) && !empty($customer->pk_customers) && isset($customer_address) && count($customer_address) != 2)
                                                         <a href="/accountadmin/customers/address/add/{{$customer->pk_customers}}">
                                                             <button class="btn btn-danger text-white card-title"
                                                                     style="float: right;margin-right: 36px;margin-left: 20px;margin-top: 4px;">
@@ -454,15 +454,15 @@
                                                     <div class="col-sm-4 col-xs-12">
 
                                                         <form
-                                                            action="{{isset($editComment) && ($editComment->comments) ? '/accountadmin/customers/comments/update' : '/accountadmin/customers/comments/store'}}"
-                                                            method="post">
+                                                                action="{{isset($editComment) && ($editComment->comments) ? '/accountadmin/customers/comments/update' : '/accountadmin/customers/comments/store'}}"
+                                                                method="post">
                                                             @csrf
                                                             <div class="form-group">
                                                                 <label for="comment" class="form-label">Comment</label>
                                                                 <textarea
-                                                                    class="form-control @error('comments') is-invalid @enderror"
-                                                                    rows="5"
-                                                                    name="comments">{{isset($editComment) && ($editComment->comments) ? $editComment->comments :''}}</textarea>
+                                                                        class="form-control @error('comments') is-invalid @enderror"
+                                                                        rows="5"
+                                                                        name="comments">{{isset($editComment) && ($editComment->comments) ? $editComment->comments :''}}</textarea>
                                                                 @error('comments')
                                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -482,8 +482,8 @@
                                                                    name="contact_name"
                                                                    value="{{auth()->user()->first_name}} {{auth()->user()->last_name}}">
                                                             <a href="/accountadmin/customers/back"><input
-                                                                    class="btn btn-primary" type="button"
-                                                                    value="Cancel"></a>
+                                                                        class="btn btn-primary" type="button"
+                                                                        value="Cancel"></a>
                                                             <input class="btn btn-primary" type="submit"
                                                                    value="{{isset($editComment) && ($editComment->comments) ? 'Update' :'Submit'}}">
                                                         </form>
@@ -523,13 +523,13 @@
                                                                         <td style="text-align:center;">
                                                                             <a href="/accountadmin/customers/comments/customers/{{$comment->pk_customers}}/edit/{{$comment->pk_comment}}">
                                                                                 <button
-                                                                                    class="btn btn-danger text-white">
+                                                                                        class="btn btn-danger text-white">
                                                                                     Edit
                                                                                 </button>
                                                                             </a>
                                                                             <a href="/accountadmin/customers/comments/delete/{{$comment->pk_comment}}">
                                                                                 <button
-                                                                                    class="btn btn-danger text-white">
+                                                                                        class="btn btn-danger text-white">
                                                                                     Delete
                                                                                 </button>
                                                                             </a>

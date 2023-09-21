@@ -109,7 +109,8 @@
                                                 ${{ number_format($taxAmount, 2) }}
                                             </td>
                                             <td class="text-right">${{ number_format($sale->discountCharge, 2) }}</td>
-                                            <td class="text-right">${{ number_format($sale->total, 2) }}</td>
+                                            <td class="text-right">
+                                                ${{ number_format($sale->subtotal + $taxAmount, 2) }}</td>
                                             <td class="text-center">
                                                 @if($sale->is_paid)
                                                     <span class="badge badge-success">Yes</span>

@@ -132,14 +132,15 @@
                                 Tax
                             </div>
                             <span class="text-muted taxRa loade">
-                                ${{ number_format($location->tax_rate, 2) }}
+                                {{ number_format($location->tax_rate, 2) }}%
                             </span>
                         </li>
                     @endif
 
                     @php
                         if ($location && $location->tax_rate) {
-                            $total = $total + $location->tax_rate;
+                            $taxAmount = ($total * $location->tax_rate) / 100;
+                            $total = $total + $taxAmount;
                         }
                     @endphp
                     <li class="list-group-item d-flex justify-content-between">

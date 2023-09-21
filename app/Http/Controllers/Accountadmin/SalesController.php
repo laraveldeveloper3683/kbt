@@ -133,13 +133,15 @@ class SalesController extends Controller
             $location = Location::where('pk_locations', $request->pk_locations)->first();
 
             $grandTotal = $cartTotal;
+            $taxAmount = 0;
             if ($location) {
-                $grandTotal = $grandTotal + $location->tax_rate;
+                $taxAmount = ($grandTotal * $location->tax_rate) / 100;
+                $grandTotal = $grandTotal + $taxAmount;
             }
 
             $res = $this->handlePaymentByGateway($request, $grandTotal);
             if ($res['msg_type'] == 'error_msg') {
-                session()->flash('error', $res['message_text'] . ', please correct errors!');
+                session()->flash('error', $res['message_text']);
                 return back()->withInput();
             }
 
@@ -229,8 +231,10 @@ class SalesController extends Controller
         $customer   = Customer::where('email', $order->email)->first();
         $saleType   = SaleType::where('sale_type', 'POS')->first();
         $orderTotal = $this->getOrderTotal($order);
+        $taxAmount = 0;
         $taxRate    = $order->location->tax_rate ?? 0;
-        $grandTotal = $orderTotal + $taxRate;
+        $taxAmount = ($orderTotal * $taxRate) / 100;
+        $grandTotal = $orderTotal + $taxAmount;
 
         $sale = Sale::create([
             'pk_orders'            => $order->pk_orders,
@@ -882,7 +886,7 @@ class SalesController extends Controller
             $message_text = 'There were some issues with the payment. Please try again later!';
             $msg_type     = "error_msg";
 
-            $tresponse = $response->getTransactionResponse();
+            /*$tresponse = $response->getTransactionResponse();
 
             if ($tresponse != null && $tresponse->getErrors() != null) {
                 $message_text = $tresponse->getErrors()[0]->getErrorText();
@@ -890,7 +894,7 @@ class SalesController extends Controller
             } else {
                 $message_text = $response->getMessages()->getMessage()[0]->getText();
                 $msg_type     = "error_msg";
-            }
+            }*/
         }
 
         return ['msg_type' => $msg_type, 'message_text' => $message_text, 'trans_id' => $trans_id];

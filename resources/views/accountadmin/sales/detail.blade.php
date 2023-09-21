@@ -104,8 +104,14 @@
                             <table class="table table-hover table-bordered">
                                 <tr>
                                     <th>Order Amount</th>
+                                    @php
+                                        $subtotal = 0;
+                                    @endphp
                                     @forelse($sale->saleItems as $item)
                                         <td class="text-right">
+                                            @php
+                                                $subtotal += $item->quantity * $item->price;
+                                            @endphp
                                             ${{ number_format($item->quantity * $item->price, 2) }}
                                         </td>
                                     @empty
@@ -128,14 +134,14 @@
                                     <th>Tax</th>
                                     <td class="text-right">
                                         @php
-                                            $taxAmount = ($sale->subtotal * $sale->tax_total) / 100;
+                                            $taxAmount = ($subtotal * $sale->tax_total) / 100;
                                         @endphp
                                         ${{ number_format($taxAmount, 2) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Total</th>
-                                    <td class="text-right">${{ $sale->total }}</td>
+                                    <td class="text-right">${{ number_format($subtotal + $taxAmount, 2) }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -222,7 +228,8 @@
                                     <tr>
                                         <td colspan="4"></td>
                                         <td class="font-weight-bold">Grand Total</td>
-                                        <td class="font-weight-bold text-right">${{ number_format($sale->total, 2) }}</td>
+                                        <td class="font-weight-bold text-right">
+                                            ${{ number_format($sale->subtotal, 2) }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
