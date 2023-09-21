@@ -11,109 +11,110 @@
 @section('title', 'Cart')
 
 @section('content')
-    <span id="status"></span>
-    <table id="cart" class="table table-hover table-condensed" style="margin-top: 60px;margin-bottom:60px;">
-        <thead>
-        <tr>
-            <th style="width:30%">Item</th>
-            <th style="width:10%" class="text-center">Arrangement Type</th>
-            <th style="width:10%" class="text-center">Card Message</th>
-            <th style="width:10%" class="text-center">Price</th>
-            <th style="width:10%" class="text-center">Quantity</th>
-            <th style="width:10%" class="text-center">Subtotal</th>
-            <th style="width:10%"></th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <span id="status"></span>
+                <table id="cart" class="table table-hover table-condensed" style="margin-top: 60px;margin-bottom:60px;">
+                    <thead>
+                    <tr>
+                        <th colspan="3">Item</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Subtotal</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-        <?php $total = 0;
-        $total_qty   = 0; ?>
+                    <?php $total = 0;
+                    $total_qty   = 0; ?>
 
-        @if (session('oth_cart'))
-            @foreach ((array) session('oth_cart') as $id => $details)
-                    <?php
-                    $total     += $details['price'] * $details['quantity'];
-                    $total_qty += $details['quantity'];
-                    ?>
+                    @if (session('oth_cart'))
+                        @foreach ((array) session('oth_cart') as $id => $details)
+                                <?php
+                                $total     += $details['price'] * $details['quantity'];
+                                $total_qty += $details['quantity'];
+                                ?>
 
-                <tr data-id="{{ $id }}" class="cart-items">
-                    <td data-th="Product">
-                        <div class="row">
-                            <div class="col-sm-3 hidden-xs"><?php
-                                                            if (empty($details['photo'])) { ?>
-                                <img alt="Item Photo" src="{!! asset('assets/images/flower/cart-empty.png') !!}"
-                                     width="80" height="80"
-                                     class="img-responsive"/><?php
-                                                             } else { ?>
-                                <img alt="Item Photo" src="flower-subscription/{{ $details['photo'] }}" width="80"
-                                     height="80" class="img-responsive"/><?php
-                                                                         } ?>
-                            </div>
-                            <div class="col-sm-9">
-                                <h4 class="nomargin" class="item-name"
-                                    data-name="{{ $details['name'] }}">{{ $details['name'] }}</h4>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-center" data-th="arrangementType">
-                        {{ @$details['arrangementTypesName'] }}
-                    </td>
-                    <td class="text-center" data-th="Message">
-                        <textarea name="card_message" class="card_message"
-                                  data-id="{{ $id }}">{{ @$details['card_message'] }}</textarea>
-                    </td>
-                    <td class="text-center" data-th="Price">${{ $details['price'] }}</td>
-                    <td class="text-center" data-th="Quantity">
-                        <input type="number" min="1" value="{{ $details['quantity'] }}"
-                               class="form-control quantity" data-id="{{ $id }}"/>
-                    </td>
-                    <td data-th="Subtotal" class="text-center">$<span
-                            class="product-subtotal">{{ $details['price'] * $details['quantity'] }}</span></td>
-                    <td class="actions" data-th="">
+                            <tr data-id="{{ $id }}" class="cart-items">
+                                <td data-th="Product" colspan="3">
+                                    <div class="row">
+                                        <div class="col-sm-3 hidden-xs"><?php
+                                                                        if (empty($details['photo'])) { ?>
+                                            <img alt="Item Photo" src="{!! asset('assets/images/flower/cart-empty.png') !!}"
+                                                 width="80" height="80"
+                                                 class="img-responsive"/><?php
+                                                                         } else { ?>
+                                            <img alt="Item Photo" src="flower-subscription/{{ $details['photo'] }}" width="80"
+                                                 height="80" class="img-responsive"/><?php
+                                                                                     } ?>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <h4 class="nomargin" class="item-name"
+                                                data-name="{{ $details['name'] }}">{{ $details['name'] }}</h4>
+                                            <p>
+                                                {{ @$details['arrangementTypesName'] }}
+                                            </p>
+                                            <textarea name="card_message" class="card_message"
+                                                      data-id="{{ $id }}">{{ @$details['card_message'] }}</textarea>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center" data-th="Price">${{ $details['price'] }}</td>
+                                <td class="text-center" data-th="Quantity" style="width: 150px;">
+                                    <input type="number" min="1" value="{{ $details['quantity'] }}"
+                                           class="form-control quantity" data-id="{{ $id }}"/>
+                                </td>
+                                <td data-th="Subtotal" class="text-center">$<span
+                                        class="product-subtotal">{{ $details['price'] * $details['quantity'] }}</span></td>
+                                <td class="actions text-center" data-th="">
+                                    <button class="btn btn-info btn-sm update-cart" data-id="{{ $id }}"
+                                            data-prev-qty="{{ $details['quantity'] }}"><i class="fa fa-refresh"></i></button>
+                                    <button class="btn btn-danger btn-sm remove-from-cart" data-id="{{ $id }}"><i
+                                            class="fa fa-trash-o"></i></button>
 
-                        <button class="btn btn-info btn-sm update-cart" data-id="{{ $id }}"
-                                data-prev-qty="{{ $details['quantity'] }}"><i class="fa fa-refresh"></i></button>
-                        <button class="btn btn-danger btn-sm remove-from-cart" data-id="{{ $id }}"><i
-                                class="fa fa-trash-o"></i></button>
+                                    <i class="fa fa-circle-o-notch fa-spin btn-loading" style="font-size:24px; display: none"></i>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
 
-                        <i class="fa fa-circle-o-notch fa-spin btn-loading" style="font-size:24px; display: none"></i>
-                    </td>
-                </tr>
-            @endforeach
-        @endif
-
-        </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="3"></td>
-            <td class="text-center" colspan="3"><strong>Total Quantity <span
-                        class="cart-quantity">{{ $total_qty }}</span></strong></td>
-        </tr>
-        <tr>
-            <td>
-                <a href="{{ url('/') }}" class="btn btn-warning">
-                    <i class="fa fa-angle-left"></i> Continue Shopping
-                </a>
-                @if (Auth::id())
-                    <a href="{{ url('/other-checkout') }}" class="btn btn-success" id="checkout-href">
-                        Checkout
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                @else
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#checkout"
-                            id="checkout-button">
-                        Checkout
-                        <i class="fa fa-angle-right"></i>
-                    </button>
-                @endif
-            </td>
-            <td colspan="4" class="hidden-xs"></td>
-            <td class="hidden-xs text-center"><strong>Total $<span
-                        class="cart-total">{{ $total }}</span></strong></td>
-            <td class="hidden-xs"></td>
-        </tr>
-        </tfoot>
-    </table>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-center" colspan="3"><strong>Total Quantity <span
+                                    class="cart-quantity">{{ $total_qty }}</span></strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <a href="{{ url('/') }}" class="btn btn-warning" id="continueShoppingBtn">
+                                <i class="fa fa-angle-left"></i> Continue Shopping
+                            </a>
+                            @if (Auth::id())
+                                <a href="{{ url('/other-checkout') }}" class="btn btn-success" id="checkout-href">
+                                    Checkout
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            @else
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#checkout"
+                                        id="checkout-button">
+                                    Checkout
+                                    <i class="fa fa-angle-right"></i>
+                                </button>
+                            @endif
+                        </td>
+                        <td class="hidden-xs text-center"><strong>Total $<span
+                                    class="cart-total">{{ $total }}</span></strong></td>
+                        <td></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <!-- The Modal -->
     <div class="modal" id="checkout">
@@ -279,6 +280,14 @@
             });
 
             $('#checkout-href').on('click', function (e) {
+                e.preventDefault();
+
+                updateAllCartItems();
+
+                window.location.href = $(this).attr('href');
+            });
+
+            $('#continueShoppingBtn').on('click', function (e) {
                 e.preventDefault();
 
                 updateAllCartItems();

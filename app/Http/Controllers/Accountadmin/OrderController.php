@@ -69,11 +69,24 @@ class OrderController extends Controller
 
     public function orderStatusUpdate(Request $request)
     {
-
         $order                  = Order::find($request->pk_prders);
-        $order->pk_order_status = $request->pk_order_status;
-        $order->cancel_reason   = $request->cancel_reason;
-        $order->save();
+        if ($order) {
+            $order->update([
+                'pk_order_status' => $request->pk_order_status,
+                'cancel_reason'   => $request->cancel_reason,
+            ]);
+        }
+
+        if ($request->has('card_messages') && count($request->card_messages)) {
+            foreach ($request->card_messages as $key => $value) {
+                $orderItem = OrderItem::find($key);
+                if ($orderItem) {
+                    $orderItem->update([
+                        'card_message' => $value,
+                    ]);
+                }
+            }
+        }
 
         $salecheck = Sale::where('pk_orders', $request->pk_orders)->first();
         if (!empty($salecheck)) {

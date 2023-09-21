@@ -241,6 +241,14 @@
                                                     {{ @$item['delivery_date'] }}
                                                 </td>
                                             </tr>
+                                            @if(isset($cartItems[$key]['card_message']))
+                                                <tr>
+                                                    <th>Card Message</th>
+                                                    <td>
+                                                        {{ @$cartItems[$key]['card_message'] }}
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         </table>
                                     @endif
                                     @php

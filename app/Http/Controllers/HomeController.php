@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\OrderItem;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
@@ -159,4 +160,22 @@ class HomeController extends Controller
         return redirect()->back();
     }
 
+
+    public function updateOrderDetails(Request $request, $id)
+    {
+        $order = Order::find($id);
+
+        if ($order && $order->order_items->count() && $request->has('card_messages') && count($request->card_messages)) {
+            foreach ($request->card_messages as $key => $value) {
+                $orderItem = OrderItem::find($key);
+                if ($orderItem) {
+                    $orderItem->update([
+                        'card_message' => $value,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->back()->with(['success' => 'Order updated successfully.']);
+    }
 }

@@ -255,7 +255,11 @@
                                                 <td>{{ $loop->index + 1 }}</td>
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->description ?? 'N/A' }}</td>
-                                                <td>{{ $item->card_message ?? 'N/A' }}</td>
+                                                <td>
+                                                    <textarea name="card_messages[{{ $item->pk_order_items }}]"
+                                                              id="card-message"
+                                                              class="form-control card-message" cols="2">{{ @$item->card_message }}</textarea>
+                                                </td>
                                                 <td class="text-right">{{ $item->quantity }}</td>
                                                 <td class="text-right">${{ number_format($item->price, 2) }}</td>
                                                 <td class="text-right">
