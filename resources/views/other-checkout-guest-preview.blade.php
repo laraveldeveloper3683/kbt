@@ -247,7 +247,9 @@
                                                     <tr>
                                                         <th>Card Message</th>
                                                         <td>
-                                                            {{ @$cartItems[$key]['card_message'] }}
+                                                            <textarea name="card_messages[{{ $key }}]" cols="2"
+                                                                      data-key="{{ $key }}"
+                                                                      class="form-control card-message">{{ @$cartItems[$key]['card_message'] }}</textarea>
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -312,4 +314,31 @@
             </div>
         </div>
     </form>
+
+
+    <script type="text/javascript">
+        function updateCardMessage(cardMessageInput) {
+            $.ajax({
+                url     : '{{ url('other-update-card-message') }}',
+                method  : "put",
+                data    : {
+                    _token      : '{{ csrf_token() }}',
+                    id          : cardMessageInput.data('key'),
+                    card_message: cardMessageInput.val()
+                },
+                dataType: "json",
+                success : function (response) {
+                    console.log('response', response);
+                    cardMessageInput.val(response.card_message);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('.card-message').on('change', function () {
+                let cardMessageInput = $(this);
+                updateCardMessage(cardMessageInput);
+            });
+        });
+    </script>
 @endsection

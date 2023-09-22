@@ -67,7 +67,8 @@ class FlowerBySubscriptionController extends Controller
         $flowerSubscriptions = DB::table('kbt_flower_subscription')
             ->join('kbt_frequency', 'kbt_flower_subscription.pk_frequency', 'kbt_frequency.pk_frequency')
             ->get();
-        return view('flower-by-subscription-cart', ['flowerSubscription' => $flowerSubscription, 'flowerSubscriptions' => $flowerSubscriptions]);
+        return view('flower-by-subscription-cart', ['flowerSubscription'  => $flowerSubscription,
+                                                    'flowerSubscriptions' => $flowerSubscriptions]);
     }
 
 
@@ -201,6 +202,25 @@ class FlowerBySubscriptionController extends Controller
         ]);
     }
 
+    public function updateCardMessage(Request $request)
+    {
+        $oth_cart = session()->get('oth_cart');
+
+        if (!isset($oth_cart[$request->id]["card_message"])) {
+            $oth_cart[$request->id]["card_message"] = $request->card_message ?? $oth_cart[$request->id]["card_message"];
+        }
+
+        $oth_cart[$request->id]["card_message"] = $request->card_message ?? $oth_cart[$request->id]["card_message"];
+
+        session()->put('oth_cart', $oth_cart);
+
+
+        return response()->json([
+            'msg'          => 'Cart message updated successfully',
+            'card_message' => $oth_cart[$request->id]["card_message"]
+        ]);
+    }
+
     public function remove(Request $request)
     {
         if ($request->id != '') {
@@ -216,7 +236,8 @@ class FlowerBySubscriptionController extends Controller
             $total = $this->getCartTotal();
             session()->forget('oth_checkout_preview');
             $htmlCart = view('_header_cart')->render();
-            return response()->json(['msg' => 'Product removed successfully', 'data' => $htmlCart, 'total' => $total, 'totalQty' => session()->get('oth_total_quantity')]);
+            return response()->json(['msg'   => 'Product removed successfully', 'data' => $htmlCart,
+                                     'total' => $total, 'totalQty' => session()->get('oth_total_quantity')]);
 
             //session()->flash('success', 'Product removed successfully');
         }
@@ -462,6 +483,16 @@ class FlowerBySubscriptionController extends Controller
         $data = array_merge($data, $request_data);
         session()->put('oth_checkout_preview', $data);
 
+        $cartData = session('oth_cart');
+
+        if ($request->has('card_messages') && count($request->card_messages)) {
+            foreach ($request->card_messages as $key => $card_message) {
+                $cartData[$key]['card_message'] = $card_message;
+            }
+        }
+
+        session()->put('oth_cart', $cartData);
+
         return redirect()->route('other-checkout-payment');
     }
 
@@ -701,7 +732,8 @@ class FlowerBySubscriptionController extends Controller
     public function other_checkoutss(Request $request)
     {
         $store   = Location::where('pk_account', 2)->latest()->first();
-        $output  = ['html' => null, 'Estimated_Delivery_Time' => 0, 'cost' => 0, 'storename' => null, 'kilomiter' => null, 'storeName' => null, 'taxRate' => 0, 'pk_location' => null];
+        $output  = ['html'      => null, 'Estimated_Delivery_Time' => 0, 'cost' => 0, 'storename' => null,
+                    'kilomiter' => null, 'storeName' => null, 'taxRate' => 0, 'pk_location' => null];
         $output2 = ['html' => null];
         $output1 = ['storename' => null, 'kilomiter' => null, 'storeName' => null, 'taxRate' => null];
 
