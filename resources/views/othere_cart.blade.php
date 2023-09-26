@@ -42,11 +42,13 @@
                                     <div class="row">
                                         <div class="col-sm-3 hidden-xs"><?php
                                                                         if (empty($details['photo'])) { ?>
-                                            <img alt="Item Photo" src="{!! asset('assets/images/flower/cart-empty.png') !!}"
+                                            <img alt="Item Photo"
+                                                 src="{!! asset('assets/images/flower/cart-empty.png') !!}"
                                                  width="80" height="80"
                                                  class="img-responsive"/><?php
                                                                          } else { ?>
-                                            <img alt="Item Photo" src="flower-subscription/{{ $details['photo'] }}" width="80"
+                                            <img alt="Item Photo" src="flower-subscription/{{ $details['photo'] }}"
+                                                 width="80"
                                                  height="80" class="img-responsive"/><?php
                                                                                      } ?>
                                         </div>
@@ -67,14 +69,17 @@
                                            class="form-control quantity" data-id="{{ $id }}"/>
                                 </td>
                                 <td data-th="Subtotal" class="text-center">$<span
-                                        class="product-subtotal">{{ $details['price'] * $details['quantity'] }}</span></td>
+                                        class="product-subtotal">{{ $details['price'] * $details['quantity'] }}</span>
+                                </td>
                                 <td class="actions text-center" data-th="">
                                     <button class="btn btn-info btn-sm update-cart" data-id="{{ $id }}"
-                                            data-prev-qty="{{ $details['quantity'] }}"><i class="fa fa-refresh"></i></button>
+                                            data-prev-qty="{{ $details['quantity'] }}"><i class="fa fa-refresh"></i>
+                                    </button>
                                     <button class="btn btn-danger btn-sm remove-from-cart" data-id="{{ $id }}"><i
                                             class="fa fa-trash-o"></i></button>
 
-                                    <i class="fa fa-circle-o-notch fa-spin btn-loading" style="font-size:24px; display: none"></i>
+                                    <i class="fa fa-circle-o-notch fa-spin btn-loading"
+                                       style="font-size:24px; display: none"></i>
                                 </td>
                             </tr>
                         @endforeach
@@ -99,7 +104,8 @@
                                     <i class="fa fa-angle-right"></i>
                                 </a>
                             @else
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#checkout"
+                                <button type="button" class="btn btn-success" data-toggle="modal"
+                                        data-target="#checkout"
                                         id="checkout-button">
                                     Checkout
                                     <i class="fa fa-angle-right"></i>
@@ -146,9 +152,9 @@
     </div>
 
     <script type="text/javascript">
-        function updateAllCartItems() {
+        async function updateAllCartItems() {
             let cart_items = $('.cart-items');
-            cart_items.each(function (index, item) {
+            await cart_items.each(async function (index, item) {
                 let cart_item = $(item);
                 let cart_item_id = cart_item.data('id');
                 let cart_item_card_message = cart_item.find('.card_message').val();
@@ -158,7 +164,7 @@
 
                 cart_item_btn_loading.show();
 
-                $.ajax({
+                await $.ajax({
                     url     : '{{ url('other-update-cart') }}',
                     method  : "patch",
                     data    : {
@@ -271,26 +277,26 @@
                 }
             });
 
-            $('#checkout-button').on('click', function (e) {
+            $('#checkout-button').on('click', async function (e) {
                 e.preventDefault();
 
                 console.log('checkout button clicked');
 
-                updateAllCartItems();
+                await updateAllCartItems();
             });
 
-            $('#checkout-href').on('click', function (e) {
+            $('#checkout-href').on('click', async function (e) {
                 e.preventDefault();
 
-                updateAllCartItems();
+                await updateAllCartItems();
 
                 window.location.href = $(this).attr('href');
             });
 
-            $('#continueShoppingBtn').on('click', function (e) {
+            $('#continueShoppingBtn').on('click', async function (e) {
                 e.preventDefault();
 
-                updateAllCartItems();
+                await updateAllCartItems();
 
                 window.location.href = $(this).attr('href');
             });
