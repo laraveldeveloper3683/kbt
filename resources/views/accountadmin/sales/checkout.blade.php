@@ -126,23 +126,24 @@
                         @endforeach
                     @endif
 
-                    @if($location && $location->tax_rate)
-                        <li class="list-group-item d-flex justify-content-between lh-condensed dlCast">
-                            <div class="taxR">
-                                Tax
-                            </div>
-                            <span class="text-muted taxRa loade">
-                                {{ number_format($location->tax_rate, 2) }}%
-                            </span>
-                        </li>
-                    @endif
-
                     @php
                         if ($location && $location->tax_rate) {
                             $taxAmount = ($total * $location->tax_rate) / 100;
                             $total = $total + $taxAmount;
                         }
                     @endphp
+                    @if($location && $location->tax_rate)
+                        <li class="list-group-item d-flex justify-content-between lh-condensed dlCast">
+                            <div class="taxR">
+                                Tax
+                            </div>
+                            <span class="text-muted taxRa loade">
+                                ${{ @number_format(@$taxAmount, 2) }}
+                            </span>
+                        </li>
+                    @endif
+
+
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total (USD)</span>
                         <strong class="totalCast1 loade">${{ number_format($total, 2) }}</strong>
