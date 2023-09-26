@@ -133,9 +133,9 @@ class SalesController extends Controller
             $location = Location::where('pk_locations', $request->pk_locations)->first();
 
             $grandTotal = $cartTotal;
-            $taxAmount = 0;
+            $taxAmount  = 0;
             if ($location) {
-                $taxAmount = ($grandTotal * $location->tax_rate) / 100;
+                $taxAmount  = ($grandTotal * $location->tax_rate) / 100;
                 $grandTotal = $grandTotal + $taxAmount;
             }
 
@@ -231,9 +231,9 @@ class SalesController extends Controller
         $customer   = Customer::where('email', $order->email)->first();
         $saleType   = SaleType::where('sale_type', 'POS')->first();
         $orderTotal = $this->getOrderTotal($order);
-        $taxAmount = 0;
+        $taxAmount  = 0;
         $taxRate    = $order->location->tax_rate ?? 0;
-        $taxAmount = ($orderTotal * $taxRate) / 100;
+        $taxAmount  = ($orderTotal * $taxRate) / 100;
         $grandTotal = $orderTotal + $taxAmount;
 
         $sale = Sale::create([
@@ -422,7 +422,9 @@ class SalesController extends Controller
             }
             //$allProducts = Product::where('pk_account',$loginUserID)->get();
         }
-        return view('accountadmin.sales.floral-arrangement', ['flowers' => $flowers, 'products' => $products, 'categoryId' => $categoryId, 'allProducts' => $allProducts]);
+        return view('accountadmin.sales.floral-arrangement', ['flowers'     => $flowers, 'products' => $products,
+                                                              'categoryId'  => $categoryId,
+                                                              'allProducts' => $allProducts]);
     }
 
     public function floralArrangementDetails($id)
@@ -566,7 +568,8 @@ class SalesController extends Controller
         $arrangementTypesName = !empty($arrangementTypes) ? $arrangementTypes->arrangement_type : '';
         $pk_arrangement_type  = !empty($request->arrangementType) ? $request->arrangementType : '';
 
-        $flower_bouquet_data = join(' - ', array_filter([$flower_name, $colorflower_name, $style_name, $arrangementTypesName]));
+        $flower_bouquet_data = join(' - ', array_filter([$flower_name, $colorflower_name, $style_name,
+                                                         $arrangementTypesName]));
         $flower_description  = !empty($flower->description) ? $flower->description : '';
 
         $quantity = !empty($request->quantity) ? $request->quantity : 1;
@@ -813,11 +816,11 @@ class SalesController extends Controller
             $customerAddress = new AnetAPI\CustomerAddressType();
             $customerAddress->setFirstName($cardName);
             $customerAddress->setLastName($cardName);
-            $customerAddress->setAddress($customer->address ?? '');
-            $customerAddress->setCity($customer->city ?? '');
-            $customerAddress->setState($customer->state_name ?? '');
-            $customerAddress->setZip($customer->zip ?? '');
-            $customerAddress->setCountry($customer->country_name ?? '');
+            $customerAddress->setAddress($customer->address[0]->address ?? '');
+            $customerAddress->setCity($customer->address[0]->city ?? '');
+            $customerAddress->setState($customer->address[0]->state->state_name ?? '');
+            $customerAddress->setZip($customer->address[0]->zip ?? '');
+            $customerAddress->setCountry($customer->address[0]->country->country_code ?? 'USA');
 
             // Set customer's data
             $customerData = new AnetAPI\CustomerDataType();
