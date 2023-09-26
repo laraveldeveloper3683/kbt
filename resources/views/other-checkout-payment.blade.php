@@ -577,10 +577,6 @@
 
                 if (addressType == 'street_number') {
                     new_address += place.address_components[i]['short_name'];
-
-                    if (type == 'billing') {
-                        $('#billing_address').val(new_address);
-                    }
                 }
 
                 if (addressType == 'route') {

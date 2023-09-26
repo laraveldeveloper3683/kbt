@@ -1206,7 +1206,6 @@
 
                     if (addressType == 'street_number') {
                         new_address += place.address_components[i]['short_name'];
-                        $(`#billing_address_1${id}`).val(new_address);
                     }
 
                     if (addressType == 'route') {
@@ -1307,8 +1306,12 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.pickup-date').datepicker();
-            $('.delivery-date').datepicker();
+            $('.pickup-date').datepicker({
+                minDate: new Date()
+            });
+            $('.delivery-date').datepicker({
+                minDate: new Date()
+            });
 
             $('.delivery-date').on('change', function () {
                 let date = $(this).val();
