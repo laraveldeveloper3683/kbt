@@ -290,7 +290,10 @@
 
                 await updateAllCartItems();
 
-                window.location.href = $(this).attr('href');
+                // add timeout to wait for the cart to be updated
+                setTimeout(function () {
+                    window.location.href = $('#checkout-href').attr('href');
+                }, 1000);
             });
 
             $('#continueShoppingBtn').on('click', async function (e) {
@@ -298,7 +301,10 @@
 
                 await updateAllCartItems();
 
-                window.location.href = $(this).attr('href');
+                // add timeout to wait for the cart to be updated
+                setTimeout(function () {
+                    window.location.href = $('#continueShoppingBtn').attr('href');
+                }, 1000);
             });
         });
     </script>
