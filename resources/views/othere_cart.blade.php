@@ -282,29 +282,99 @@
 
                 console.log('checkout button clicked');
 
-                await updateAllCartItems();
+                let cart_items = $('.cart-items');
+                let card_messages = {};
+                const loading = $('.btn-loading');
+                loading.show();
+                cart_items.each(function (index, item) {
+                    let cart_item = $(item);
+                    let cart_item_id = cart_item.data('id');
+                    card_messages[cart_item_id] = cart_item.find('.card_message').val();
+                });
+
+                try {
+                    await $.ajax({
+                        url     : '{{ url('other-update-card-messages') }}',
+                        method  : "PUT",
+                        data    : {
+                            _token       : '{{ csrf_token() }}',
+                            card_messages: card_messages,
+                        },
+                        dataType: "json",
+                    });
+                } catch (e) {
+                    console.log('error', e);
+                } finally {
+                    loading.hide();
+                }
             });
 
             $('#checkout-href').on('click', async function (e) {
                 e.preventDefault();
 
-                await updateAllCartItems();
+                let cart_items = $('.cart-items');
+                let card_messages = {};
+                const loading = $('.btn-loading');
+                loading.show();
+                cart_items.each(function (index, item) {
+                    let cart_item = $(item);
+                    let cart_item_id = cart_item.data('id');
+                    card_messages[cart_item_id] = cart_item.find('.card_message').val();
+                });
 
-                // add timeout to wait for the cart to be updated
-                setTimeout(function () {
-                    window.location.href = $('#checkout-href').attr('href');
-                }, 3000);
+                try {
+                    const res = await $.ajax({
+                        url     : '{{ url('other-update-card-messages') }}',
+                        method  : "PUT",
+                        data    : {
+                            _token       : '{{ csrf_token() }}',
+                            card_messages: card_messages,
+                        },
+                        dataType: "json",
+                    });
+
+                    if (res.success) {
+                        window.location.href = $('#checkout-href').attr('href');
+                    }
+                } catch (e) {
+                    console.log('error', e);
+                } finally {
+                    loading.hide();
+                }
             });
 
             $('#continueShoppingBtn').on('click', async function (e) {
                 e.preventDefault();
 
-                await updateAllCartItems();
+                let cart_items = $('.cart-items');
+                let card_messages = {};
+                const loading = $('.btn-loading');
+                loading.show();
+                cart_items.each(function (index, item) {
+                    let cart_item = $(item);
+                    let cart_item_id = cart_item.data('id');
+                    card_messages[cart_item_id] = cart_item.find('.card_message').val();
+                });
 
-                // add timeout to wait for the cart to be updated
-                setTimeout(function () {
-                    window.location.href = $('#continueShoppingBtn').attr('href');
-                }, 3000);
+                try {
+                    const res = await $.ajax({
+                        url     : '{{ url('other-update-card-messages') }}',
+                        method  : "PUT",
+                        data    : {
+                            _token       : '{{ csrf_token() }}',
+                            card_messages: card_messages,
+                        },
+                        dataType: "json",
+                    });
+
+                    if (res.success) {
+                        window.location.href = $('#continueShoppingBtn').attr('href');
+                    }
+                } catch (e) {
+                    console.log('error', e);
+                } finally {
+                    loading.hide();
+                }
             });
         });
     </script>

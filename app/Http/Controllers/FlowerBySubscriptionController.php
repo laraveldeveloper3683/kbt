@@ -221,6 +221,25 @@ class FlowerBySubscriptionController extends Controller
         ]);
     }
 
+    public function updateCardMessages(Request $request)
+    {
+        $oth_cart = session()->get('oth_cart');
+
+        if ($request->has('card_messages') && count($request->card_messages)) {
+            foreach ($request->card_messages as $key => $card_message) {
+                $oth_cart[$key]["card_message"] = $card_message;
+            }
+        }
+
+        session()->put('oth_cart', $oth_cart);
+
+
+        return response()->json([
+            'success' => true, // 'success' => 'Cart message updated successfully
+            'msg'     => 'Cart message updated successfully',
+        ]);
+    }
+
     public function remove(Request $request)
     {
         if ($request->id != '') {

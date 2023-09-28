@@ -74,6 +74,7 @@ Route::post('/other-add-to-cart', 'FlowerBySubscriptionController@addToCart');
 Route::get('other-cart', 'FlowerBySubscriptionController@cart');
 Route::patch('other-update-cart', 'FlowerBySubscriptionController@update');
 Route::put('other-update-card-message', 'FlowerBySubscriptionController@updateCardMessage');
+Route::put('other-update-card-messages', 'FlowerBySubscriptionController@updateCardMessages');
 Route::patch('other-cart-items-update', 'FlowerBySubscriptionController@updateAllCartItems');
 Route::delete('other-remove-from-cart', 'FlowerBySubscriptionController@remove');
 Route::get('other-checkout', 'FlowerBySubscriptionController@otherCheckOutPage')->name('other-checkout');
