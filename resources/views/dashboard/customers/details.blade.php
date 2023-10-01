@@ -238,6 +238,11 @@
                                                 <abbr title="Phone">P:</abbr> {!! $itemAddr->shipping_phone !!}
                                                 <br>
                                             </address>
+                                            @if(@$itemAddr->special_instructions)
+                                                <p class="text-wrap font-weight-bold">
+                                                    Estimated Delivery: {{ @$itemAddr->special_instructions }}
+                                                </p>
+                                            @endif
                                             @if($itemAddr->delivery_date)
                                                 <p class="text-wrap font-weight-bold">
                                                     Estimated

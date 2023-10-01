@@ -47,6 +47,12 @@
                                     {{ $itemAddr->shipping_address }} , {{ $itemAddr->shipping_city }}
                                     , {{ $itemAddr->shipping_zip }}
                                 </p>
+                                @if($itemAddr->special_instructions)
+                                    <p class="text-center font-weight-bold">
+                                        Special Instructions:
+                                        {{ $itemAddr->special_instructions }}
+                                    </p>
+                                @endif
                                 @if($itemAddr->delivery_charge)
                                     @if($itemAddr->same_as_billing)
                                         <p class="text-center font-weight-bold">
@@ -198,7 +204,7 @@
 
                 <hr>
                 <p class="lead">
-                    <a class="btn btn-success btn-sm" href="{!! route('dashboard.myorderdetails',$pk_orders) !!}"
+                    <a class="btn btn-success btn-sm" href="{!! route('dashboard.myorderdetails', $pk_orders) !!}"
                        role="button">Track Order</a>
                 </p>
 

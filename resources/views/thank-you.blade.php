@@ -19,7 +19,7 @@
                 <div class="col-md-6 offset-md-3 mb-4 text-left">
                     @if($order->deliveryOption->delivery_or_pickup == 'Store Pickup')
                         <div
-                                style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
+                            style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
                             <h6><strong>Pickup Address</strong></h6>
                             <p class="lead">{{$store->address}} , {{$store->city}}, {{$store->zip}}</p>
                             @if($locationTime)
@@ -38,7 +38,7 @@
                     @else
                         @foreach($order_items as $order_item)
                             <div
-                                    style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
+                                style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
                                 @php
                                     $itemAddr = $order_item->shippingAddress;
                                 @endphp
@@ -47,6 +47,12 @@
                                     {{ $itemAddr->shipping_address }} , {{ $itemAddr->shipping_city }}
                                     , {{ $itemAddr->shipping_zip }}
                                 </p>
+                                @if($itemAddr->special_instructions)
+                                    <p class="text-center font-weight-bold">
+                                        Special Instructions:
+                                        {{ $itemAddr->special_instructions }}
+                                    </p>
+                                @endif
                                 @if($itemAddr->delivery_charge)
                                     @if($itemAddr->same_as_billing)
                                         <p class="text-center font-weight-bold">
@@ -92,7 +98,7 @@
                                         <small class="text-muted">{{ $item_val->description }}</small>
                                     </div>
                                     <span
-                                            class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
+                                        class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
                                 </li>
 
                             @endforeach

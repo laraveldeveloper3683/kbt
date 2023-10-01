@@ -231,6 +231,12 @@
                                                     {{ @$item['shipping_zip'] }}
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <th>Special Instructions</th>
+                                                <td>
+                                                    {{ @$item['special_instructions'] }}
+                                                </td>
+                                            </tr>
                                             @if($item['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
                                                 <tr>
                                                     <th>Delivery Charge</th>
@@ -336,10 +342,10 @@
     <script type="text/javascript">
         function updateCardMessage(cardMessageInput) {
             $.ajax({
-                url     : '{{ url('other-update-card-message') }}',
-                method  : "put",
-                data    : {
-                    _token      : '{{ csrf_token() }}',
+                url   : '{{ url('other-update-card-message') }}',
+                method: "put",
+                data  : {
+                    _token: '{{ csrf_token() }}',
                     id          : cardMessageInput.data('key'),
                     card_message: cardMessageInput.val()
                 },

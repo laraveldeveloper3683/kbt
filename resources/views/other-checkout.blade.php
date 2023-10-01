@@ -577,6 +577,25 @@
 
                                         <div class="col-md-12">
                                             <div class="form-group mt-4">
+                                                <label for="special-instructions{{ $id }}" class="form-label">
+                                                    Special Instructions
+                                                </label>
+                                                <textarea name="item_address[{{ $id }}][special_instructions]"
+                                                          id="item_address[{{ $id }}][special_instructions]"
+                                                          placeholder="Enter special instructions" class="form-control"
+                                                          id="special-instructions{{ $id }}">{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.special_instructions')) ?
+                                                        old('item_address.'.$id.'.special_instructions') : @$addressItems[$id]['special_instructions'] }}</textarea>
+                                                @error('item_address.'.$id.'.special_instructions')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group mt-4">
                                                 <label for="delivery-date{{ $id }}" class="form-label">
                                                     Select Delivery Date
                                                 </label>
