@@ -204,57 +204,74 @@
                                     @endphp
                                     @forelse($data['item_address'] as $key => $item)
                                         @php
-                                            $address = $item['shipping_address'] . ' ' . $item['shipping_address_1'] . ' ' . $item['shipping_city'] . ' ' . $item['shipping_state_name'] . ' ' . $item['shipping_zip'];
+                                            $address = $item['shipping_address'] . ' ' . $item['shipping_address_1'] . ' ' . $item['shipping_city'] . ' ' . $item['shipping_state_name'] . ' ' . $item['shipping_zip'] . ' ' . $item['delivery_date'];
                                         @endphp
-                                        @if($item['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
-                                            <h4 class="h4 text-center">Address For
-                                                - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
-                                            <table class="table table-hover table-bordered">
 
-                                                <tr>
-                                                    <th>Full Name</th>
-                                                    <td>{{ @$item['shipping_full_name'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Phone</th>
-                                                    <td>{{ @$item['shipping_phone'] }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Address</th>
-                                                    <td style="width: 365px;">
-                                                        {{ @$item['shipping_address'] }}
-                                                        {{ isset($item['shipping_address_1']) ?
-                                                            '#'.$item['shipping_address_1'] : ''}}
-                                                        </br>
-                                                        {{ @$item['shipping_city'] }}
-                                                        {{ @$item['shipping_state_name'] }}
-                                                        {{ @$item['shipping_zip'] }}
-                                                    </td>
-                                                </tr>
+                                        <h4 class="h4 text-center">Address For
+                                            - {{ isset($cartItems[$key]['name']) ? $cartItems[$key]['name'] : $loop->index + 1 }}</h4>
+                                        <table class="table table-hover table-bordered">
+
+                                            <tr>
+                                                <th>Full Name</th>
+                                                <td>{{ @$item['shipping_full_name'] }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Phone</th>
+                                                <td>{{ @$item['shipping_phone'] }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Address</th>
+                                                <td style="width: 365px;">
+                                                    {{ @$item['shipping_address'] }}
+                                                    {{ isset($item['shipping_address_1']) ?
+                                                        '#'.$item['shipping_address_1'] : ''}}
+                                                    </br>
+                                                    {{ @$item['shipping_city'] }}
+                                                    {{ @$item['shipping_state_name'] }}
+                                                    {{ @$item['shipping_zip'] }}
+                                                </td>
+                                            </tr>
+                                            @if($item['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
                                                 <tr>
                                                     <th>Delivery Charge</th>
                                                     <td>
                                                         ${{ @number_format(@$item['delivery_charge'], 2) }}
                                                     </td>
                                                 </tr>
+                                            @else
+                                                <tr>
+                                                    <th>Delivery Charge</th>
+                                                    <td>
+                                                        Same as other item
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if($item['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
                                                 <tr>
                                                     <th>Estimated Delivery</th>
                                                     <td>
                                                         {{ @$item['delivery_date'] }}
                                                     </td>
                                                 </tr>
-                                                @if(isset($cartItems[$key]['card_message']))
-                                                    <tr>
-                                                        <th>Card Message</th>
-                                                        <td>
+                                            @else
+                                                <tr>
+                                                    <th>Estimated Delivery</th>
+                                                    <td>
+                                                        Same as other item
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if(isset($cartItems[$key]['card_message']))
+                                                <tr>
+                                                    <th>Card Message</th>
+                                                    <td>
                                                             <textarea name="card_messages[{{ $key }}]" cols="2"
                                                                       data-key="{{ $key }}"
                                                                       class="form-control card-message">{{ @$cartItems[$key]['card_message'] }}</textarea>
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            </table>
-                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </table>
                                         @php
                                             $duplicateItemAddresses[$key] = $address;
                                         @endphp

@@ -346,9 +346,9 @@ Route::get('/my-orders', 'HomeController@my_order')->name('dashboard.myorders')-
 // Route::post('/customer/vendor-order-request/update', 'HomeController@vendorOrderRequestUpdate')->middleware('customer');
 // Route::get('/customer/vendor-order-request/view/{id}', 'HomeController@vendorOrderRequestShow')->middleware('customer');
 // Route::get('/customer/vendor-order-request/delete/{id}', 'HomeController@vendorOrderRequestDelete')->name('customer.vendor-order-request.delete')->middleware('customer');
-Route::get('/order-details/{id}', 'HomeController@my_order_details')->name('dashboard.myorderdetails')->middleware('customer');
+Route::get('/order-details/{id}', 'HomeController@my_order_details')->name('dashboard.myorderdetails');
 Route::get('/order/cancel-order/{id}', 'HomeController@cancelOrder')->name('dashboard.cancel_order')->middleware('customer');
-Route::post('/order/update-details/{id}', 'HomeController@updateOrderDetails')->name('dashboard.order-update-details')->middleware('customer');
+Route::post('/order/update-details/{id}', 'HomeController@updateOrderDetails')->name('dashboard.order-update-details');
 Route::get('/order-details/edit/{id}', 'HomeController@edit_my_order_details')->name('dashboard.myorderdetails.edit')->middleware('customer');
 
 

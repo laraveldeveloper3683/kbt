@@ -29,7 +29,12 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', [
+            'except' => [
+                'my_order_details',
+                'updateOrderDetails'
+            ],
+        ]);
     }
 
     /**
@@ -54,15 +59,11 @@ class HomeController extends Controller
 
     public function my_order_details($id = null)
     {
-        $pk_users = Auth::user()->pk_users;
-
-        $orders = Order::where('pk_orders', $id)->where('pk_users', $pk_users)->with(
-            [
-                'deliveryOption',
-                'orderStatus',
-                'customer',
-            ]
-        )->first();
+        $orders = Order::where('pk_orders', $id)->with([
+            'deliveryOption',
+            'orderStatus',
+            'customer',
+        ])->first();
 
         if (!$orders) {
             session()->flash('message', 'Order could not be found, please correct errors.');

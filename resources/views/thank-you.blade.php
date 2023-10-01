@@ -48,20 +48,30 @@
                                     , {{ $itemAddr->shipping_zip }}
                                 </p>
                                 @if($itemAddr->delivery_charge)
-                                    <p class="text-center font-weight-bold">
-                                        Delivery Charge:
-                                        ${{ number_format($itemAddr->delivery_charge, 2) }}
-                                    </p>
+                                    @if($itemAddr->same_as_billing)
+                                        <p class="text-center font-weight-bold">
+                                            Delivery Charge: Same as other item
+                                        </p>
+                                    @else
+                                        <p class="text-center font-weight-bold">
+                                            Delivery Charge:
+                                            ${{ number_format($itemAddr->delivery_charge, 2) }}
+                                        </p>
+                                    @endif
                                 @else
                                     <p class="text-center font-weight-bold">
                                         Delivery Charge:
                                         ${{ number_format($order->delivery_charge, 2) }}
                                     </p>
                                 @endif
-                                @if($itemAddr->delivery_date)
+                                @if($itemAddr->delivery_date && !$itemAddr->same_as_billing)
                                     <p class="text-center font-weight-bold">
                                         Estimated Delivery:
                                         {{ date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
+                                    </p>
+                                @else
+                                    <p class="text-center font-weight-bold">
+                                        Estimated Delivery: Same as other item
                                     </p>
                                 @endif
                             </div>

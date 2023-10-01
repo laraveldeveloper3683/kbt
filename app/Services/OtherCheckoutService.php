@@ -247,10 +247,12 @@ class OtherCheckoutService
                                 $itemAddr    = $itemAddress[$key] ?? null;
                                 $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_address_1'] . ' ' .
                                     $itemAddr['shipping_city'] . ' ' . $itemAddr['shipping_state_name'] . ' ' .
-                                    $itemAddr['shipping_zip'];
+                                    $itemAddr['shipping_zip'] . ' ' . $itemAddr['delivery_date'];
 
                                 if ($itemAddress[$key]['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
                                     $deliveryCharges += $itemAddress[$key]['delivery_charge'];
+                                } else {
+                                    $itemAddress[$key]['same_as_billing'] = 1;
                                 }
 
                                 // Shipping address create for order items
@@ -807,10 +809,12 @@ class OtherCheckoutService
                                 $itemAddr    = $itemAddress[$key] ?? null;
                                 $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_address_1'] . ' ' .
                                     $itemAddr['shipping_city'] . ' ' . $itemAddr['shipping_state_name'] . ' ' .
-                                    $itemAddr['shipping_zip'];
+                                    $itemAddr['shipping_zip'] . ' ' . $itemAddr['delivery_date'];
 
                                 if ($itemAddress[$key]['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
                                     $deliveryCharges += $itemAddress[$key]['delivery_charge'];
+                                } else {
+                                    $itemAddress[$key]['same_as_billing'] = 1;
                                 }
 
                                 $cusAddr            = @$user_data->customer->address[0];
