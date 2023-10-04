@@ -245,8 +245,8 @@ class OtherCheckoutService
                             if (isset($request->item_address) && count($request->item_address)) {
                                 $itemAddress = $request->item_address;
                                 $itemAddr    = $itemAddress[$key] ?? null;
-                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_address_1'] . ' ' .
-                                    $itemAddr['shipping_city'] . ' ' . $itemAddr['shipping_state_name'] . ' ' .
+                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_city'] . ' ' .
+                                    $itemAddr['shipping_state_name'] . ' ' .
                                     $itemAddr['shipping_zip'] . ' ' . $itemAddr['delivery_date'];
 
                                 if ($itemAddress[$key]['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
@@ -808,8 +808,8 @@ class OtherCheckoutService
                             if (isset($request->item_address) && count($request->item_address)) {
                                 $itemAddress = $request->item_address;
                                 $itemAddr    = $itemAddress[$key] ?? null;
-                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_address_1'] . ' ' .
-                                    $itemAddr['shipping_city'] . ' ' . $itemAddr['shipping_state_name'] . ' ' .
+                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_city'] . ' ' .
+                                    $itemAddr['shipping_state_name'] . ' ' .
                                     $itemAddr['shipping_zip'] . ' ' . $itemAddr['delivery_date'];
 
                                 if ($itemAddress[$key]['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {

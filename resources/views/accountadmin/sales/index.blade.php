@@ -82,6 +82,7 @@
                                         <th class="text-right">Discount</th>
                                         <th class="text-right">Amount</th>
                                         <th class="text-center">Is Paid</th>
+                                        <th class="text-center">Payment Method</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -116,6 +117,15 @@
                                                     <span class="badge badge-success">Yes</span>
                                                 @else
                                                     <span class="badge badge-danger">No</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($sale->payment_method == 'cod')
+                                                    Cash On Delivery
+                                                @elseif($sale->payment_method == 'gift_card')
+                                                    Gift Card
+                                                @else
+                                                    Card
                                                 @endif
                                             </td>
                                         </tr>

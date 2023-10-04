@@ -125,7 +125,7 @@
                         $duplicateItemAddresses = [];
 
                         foreach ($itemAddresses as $key => $itemAddress) {
-                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
+                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
                             if ($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses)) {
                                 $deliveryCharge += $itemAddress['delivery_charge'];
                             }
@@ -142,7 +142,7 @@
                         @endphp
                         @foreach(@$itemAddresses as $ik => $itemAddress)
                             @php
-                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
+                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
                             @endphp
 
                             @if($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
@@ -887,9 +887,10 @@
                     let id = $(this).data('id');
                     let address = $(`#billing_address${id}`).val();
                     let city = $(`#billing_city${id}`).val();
+                    let state = $(`#billing_state_name${id}`).val();
                     let zip = $(`#shipping_zip${id}`).val();
                     let date = $(`#delivery-date${id}`).val();
-                    let newAddress = address + ', ' + city + ', ' + zip + ', ' + date;
+                    let newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
                     duplicateAddresses.push(newAddress);
                 });
             }
@@ -909,8 +910,9 @@
 
                 let zip = $(`#shipping_zip${id}`).val();
                 let date = $(`#delivery-date${id}`).val();
+                let state = $(`#billing_state_name${id}`).val();
 
-                $newAddress = address + ', ' + city + ', ' + zip + ', ' + date;
+                $newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
 
                 if (!duplicateAddresses.includes($newAddress)) {
                     $.ajax({

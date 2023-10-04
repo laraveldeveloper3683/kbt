@@ -31,7 +31,7 @@
             <!-- ============================================================== -->
             <!-- Start Page Content -->
             <!-- ============================================================== -->
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
@@ -67,6 +67,30 @@
                                     <td>
                                         @if($sale->arrangementType)
                                             {{ $sale->arrangementType->arrangement_type }}
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Payment Method</th>
+                                    <td>
+                                        @if($sale->payment_method == 'cod')
+                                            Cash On Delivery
+                                        @elseif($sale->payment_method == 'gift_card')
+                                            Gift Card
+                                        @else
+                                            Card
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Is Paid</th>
+                                    <td>
+                                        @if($sale->is_paid)
+                                            <span class="badge badge-success">Yes</span>
+                                        @else
+                                            <span class="badge badge-danger">No</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -147,34 +171,36 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table table-hover table-bordered">
-                                <tr>
-                                    <th>Name on Card</th>
-                                    @if($sale->transaction)
-                                        <td class="text-center">{{ $sale->transaction->name_on_card }}</td>
-                                    @endif
-                                </tr>
+                @if($sale->transaction)
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-hover table-bordered">
+                                    <tr>
+                                        <th>Name on Card</th>
+                                        @if($sale->transaction)
+                                            <td class="text-center">{{ $sale->transaction->name_on_card }}</td>
+                                        @endif
+                                    </tr>
 
-                                <tr>
-                                    <th>Card Type</th>
-                                    @if($sale->transaction)
-                                        <td class="text-center">{{ $sale->transaction->account_type }}</td>
-                                    @endif
-                                </tr>
+                                    <tr>
+                                        <th>Card Type</th>
+                                        @if($sale->transaction)
+                                            <td class="text-center">{{ $sale->transaction->account_type }}</td>
+                                        @endif
+                                    </tr>
 
-                                <tr>
-                                    <th>Currency</th>
-                                    @if($sale->transaction)
-                                        <td class="text-center">{{ $sale->transaction->currency }}</td>
-                                    @endif
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <th>Currency</th>
+                                        @if($sale->transaction)
+                                            <td class="text-center">{{ $sale->transaction->currency }}</td>
+                                        @endif
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
             </br>
             <div class="row">

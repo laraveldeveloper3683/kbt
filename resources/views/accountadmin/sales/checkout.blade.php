@@ -177,12 +177,23 @@
                         </select>
                     </div>
 
+                    <hr class="mb-4">
                     <!-- User Details End -->
 
+                    <div class="form-group">
+                        <label for="pay-by" class="text-center">
+                            Pay By
+                        </label>
+                        <select name="pay_by" id="pay-by" class="form-control">
+                            <option value="cod">Cash On Delivery</option>
+                            <option value="gift_card">Gift Card</option>
+                            <option value="card">Card</option>
+                        </select>
+                    </div>
 
-                    <hr class="mb-4">
+                    <hr class="mb-4 payment-info">
 
-                    <div class="row">
+                    <div class="row payment-info">
                         <div class="col-md-6 mb-3">
                             <label for="cc-name">Name on card</label>
                             <input type="text" id="cc_name" name="cc_name" class="form-control"
@@ -206,7 +217,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row payment-info">
 
                         <div class="col-md-3 mb-3">
                             @php
@@ -279,6 +290,17 @@
                 allowClear   : true,
                 closeOnSelect: true,
             });
+
+            $('#pay-by').on('change', function () {
+                let payBy = $(this).val();
+                if (payBy === 'card') {
+                    $('.payment-info').show();
+                } else {
+                    $('.payment-info').hide();
+                }
+            });
+
+            $('#pay-by').trigger('change');
         });
     </script>
 @endsection

@@ -36,11 +36,15 @@
                             @endif
                         </div>
                     @else
+                        @php
+                            $duplicateItemAddresses = [];
+                        @endphp
                         @foreach($order_items as $order_item)
                             <div
                                 style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
                                 @php
                                     $itemAddr = $order_item->shippingAddress;
+                                    $address = $itemAddr->shipping_address . ' ' . $itemAddr->shipping_city . ' ' . $itemAddr->state->state_code . ' ' . $itemAddr->shipping_zip;
                                 @endphp
                                 <p class="text-wrap">
                                     For {{ $order_item->name }} :
@@ -54,14 +58,14 @@
                                     </p>
                                 @endif
                                 @if($itemAddr->delivery_charge)
-                                    @if($itemAddr->same_as_billing)
-                                        <p class="text-center font-weight-bold">
-                                            Delivery Charge: Same as other item
-                                        </p>
-                                    @else
+                                    @if(!$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                         <p class="text-center font-weight-bold">
                                             Delivery Charge:
                                             ${{ number_format($itemAddr->delivery_charge, 2) }}
+                                        </p>
+                                    @else
+                                        <p class="text-center font-weight-bold">
+                                            Delivery Charge: Same as other item
                                         </p>
                                     @endif
                                 @else
@@ -70,7 +74,7 @@
                                         ${{ number_format($order->delivery_charge, 2) }}
                                     </p>
                                 @endif
-                                @if($itemAddr->delivery_date && !$itemAddr->same_as_billing)
+                                @if($itemAddr->delivery_date && !$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                     <p class="text-center font-weight-bold">
                                         Estimated Delivery:
                                         {{ date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
@@ -81,6 +85,10 @@
                                     </p>
                                 @endif
                             </div>
+
+                            @php
+                                $duplicateItemAddresses[] = $address;
+                            @endphp
                         @endforeach
                     @endif
                     <?php $total = 0; $total_qty = 0; ?>

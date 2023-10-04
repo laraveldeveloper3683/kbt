@@ -206,7 +206,7 @@
                                     @endphp
                                     @forelse($data['item_address'] as $key => $item)
                                         @php
-                                            $address = $item['shipping_address'] . ' ' . $item['shipping_address_1'] . ' ' . $item['shipping_city'] . ' ' . $item['shipping_state_name'] . ' ' . $item['shipping_zip'] . ' ' . $item['delivery_date'];
+                                            $address = $item['shipping_address'] . ' ' . $item['shipping_city'] . ' ' . $item['shipping_state_name'] . ' ' . $item['shipping_zip'] . ' ' . $item['delivery_date'];
                                         @endphp
 
                                         <h4 class="h4 text-center">Address For
