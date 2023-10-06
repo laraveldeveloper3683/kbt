@@ -184,11 +184,16 @@
                         <label for="pay-by" class="text-center">
                             Pay By
                         </label>
-                        <select name="pay_by" id="pay-by" class="form-control">
-                            <option value="cod">Cash On Delivery</option>
+                        <select name="pay_by" id="pay-by" class="form-control" required>
+                            <option value="cash">Cash</option>
                             <option value="gift_card">Gift Card</option>
                             <option value="card">Card</option>
                         </select>
+                        @error('pay_by')
+                        <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                        @enderror
                     </div>
 
                     <hr class="mb-4 payment-info">

@@ -120,8 +120,8 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                @if($sale->payment_method == 'cod')
-                                                    Cash On Delivery
+                                                @if($sale->payment_method == 'cash')
+                                                    Cash
                                                 @elseif($sale->payment_method == 'gift_card')
                                                     Gift Card
                                                 @else

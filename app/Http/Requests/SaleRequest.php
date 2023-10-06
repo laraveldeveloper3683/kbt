@@ -24,6 +24,7 @@ class SaleRequest extends FormRequest
     public function rules()
     {
         return [
+            'pay_by'       => 'bail|required|string|in:cash,card,gift_card',
             'cc_name'      => 'required_if:pay_by,==,card',
             'cc_number'    => 'required_if:pay_by,==,card',
             'expiry_month' => 'required_if:pay_by,==,card',
