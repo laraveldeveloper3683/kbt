@@ -16,6 +16,8 @@
                 <h1 class="display-3 text-{{ @$thankYou['messageType'] }}">{{ @$thankYou['message'] }}</h1>
                 <p class="lead"><strong>{{ @$createOrder['message'] }}</strong></p>
 
+                <p class="lead"><strong>Order I'd {{ $order->pk_orders }}</strong></p>
+
                 <div class="col-md-6 offset-md-3 mb-4 text-left">
                     @if($order->deliveryOption->delivery_or_pickup == 'Store Pickup')
                         <div
