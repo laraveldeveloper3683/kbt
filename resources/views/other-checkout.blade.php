@@ -932,7 +932,9 @@
             });
         }
 
-        initDuplicateAddresses();
+        // initDuplicateAddresses();
+
+        console.log('duplicateAddresses -> ', duplicateAddresses);
 
         $(document).ready(function () {
             function cartItemShipAddrCharges(address, city, id) {
@@ -1017,9 +1019,11 @@
                             }
                         }
                     })
+                } else {
+                    duplicateAddresses.push($newAddress);
                 }
 
-                duplicateAddresses.push($newAddress);
+
             }
 
             function cartItemAddrIsSame() {
@@ -1254,45 +1258,49 @@
                     $('.totalCast1').html('$' + Number(to).toFixed(2));
                     $('.discountCharge').val('');
 
-                    $newAddress = address + ', ' + city;
+                    let zip = $(`#shipping_zip${id}`).val();
+                    let date = $(`#delivery-date${id}`).val();
+                    let state = $(`#billing_state_name${id}`).val();
+                    $newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
 
-                    $.ajax({
-                        url     : "{{ url('other-checkout-ship-info') }}",
-                        type    : 'POST',
-                        dataType: 'json',
-                        data    : {
-                            '_token': '{{ csrf_token() }}',
-                            city    : city,
-                            address : address
-                        },
-                        success : function (response) {
-                            console.log('cartItemShipAddrCharges response -> ', response)
-                            var totalcast = parseFloat($('.totalCast').val());
-                            var taxRate = $('#tax_rate').val() || response.taxRate;
+                    if (!duplicateAddresses.includes($newAddress)) {
+                        $.ajax({
+                            url     : "{{ url('other-checkout-ship-info') }}",
+                            type    : 'POST',
+                            dataType: 'json',
+                            data    : {
+                                '_token': '{{ csrf_token() }}',
+                                city    : city,
+                                address : address
+                            },
+                            success : function (response) {
+                                console.log('cartItemShipAddrCharges response -> ', response)
+                                var totalcast = parseFloat($('.totalCast').val());
+                                var taxRate = $('#tax_rate').val() || response.taxRate;
 
-                            var deliveryCharge = response.delivery_charge;
+                                var deliveryCharge = response.delivery_charge;
 
-                            $(`#delivery_charge${id}`).val(deliveryCharge);
-                            $(`#store_city${id}`).val(response.storeCity);
-                            $(`#store_name${id}`).val(response.storeName);
-                            $(`#estimated_del${id}`).val(response.estimated_delivery_time);
+                                $(`#delivery_charge${id}`).val(deliveryCharge);
+                                $(`#store_city${id}`).val(response.storeCity);
+                                $(`#store_name${id}`).val(response.storeName);
+                                $(`#estimated_del${id}`).val(response.estimated_delivery_time);
 
-                            const firstItemAddr = $('.item-addr').first();
-                            let firstItemId = firstItemAddr.data('id');
+                                const firstItemAddr = $('.item-addr').first();
+                                let firstItemId = firstItemAddr.data('id');
 
-                            if (id == firstItemId) {
-                                fillAllItemAddrFromFirstItem();
-                            }
+                                if (id == firstItemId) {
+                                    fillAllItemAddrFromFirstItem();
+                                }
 
-                            if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
-                                var to = totalcast + taxTotal;
-                            } else {
-                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
-                                var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxTotal);
-                            }
-                            let cartItemName = $(`#cart-item-name${id}`).text();
-                            let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
+                                if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
+                                    var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                    var to = totalcast + taxTotal;
+                                } else {
+                                    var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                    var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxTotal);
+                                }
+                                let cartItemName = $(`#cart-item-name${id}`).text();
+                                let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
                                             id="delivery-charge-item${id}">
                             <h6 class="my-0">
                                 Delivery Charge For <strong>${cartItemName}</strong>
@@ -1306,23 +1314,25 @@
 
                             <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                            $('.totalCast1').text('$' + Number(to).toFixed(2));
-                            $('.amountTotal').val(to);
-                            $(`#delivery-charge-item${id}`).remove();
+                                $('.totalCast1').text('$' + Number(to).toFixed(2));
+                                $('.amountTotal').val(to);
+                                $(`#delivery-charge-item${id}`).remove();
 
-                            $(chargeHtml).insertBefore('#tax-rate-section');
+                                $(chargeHtml).insertBefore('#tax-rate-section');
 
-                            cartItemAddrIsSame();
-                            if (!$('#tax_rate').val()) {
-                                $('.taxR').html(`<h6 class="my-0">Tax
+                                cartItemAddrIsSame();
+                                if (!$('#tax_rate').val()) {
+                                    $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
-                                $('#tax_rate').val(response.taxRate);
+                                    $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
+                                    $('#tax_rate').val(response.taxRate);
+                                }
                             }
-                        }
-                    })
+                        })
+                    } else {
+                        duplicateAddresses.push($newAddress);
+                    }
 
-                    duplicateAddresses.push($newAddress);
                 }
 
                 function firstItemAddrInit2() {

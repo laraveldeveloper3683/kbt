@@ -244,7 +244,7 @@
                                                 <tr>
                                                     <th>Delivery Charge</th>
                                                     <td>
-                                                        Same as other item
+                                                        Same as first item
                                                     </td>
                                                 </tr>
                                             @endif
@@ -259,7 +259,7 @@
                                                 <tr>
                                                     <th>Estimated Delivery</th>
                                                     <td>
-                                                        Same as other item
+                                                        Same as first item
                                                     </td>
                                                 </tr>
                                             @endif

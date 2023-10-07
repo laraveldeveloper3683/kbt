@@ -46,7 +46,7 @@
                                 style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
                                 @php
                                     $itemAddr = $order_item->shippingAddress;
-                                    $address = $itemAddr->shipping_address . ' ' . $itemAddr->shipping_city . ' ' . $itemAddr->state->state_code . ' ' . $itemAddr->shipping_zip;
+                                    $address = $itemAddr->shipping_address . ' ' . $itemAddr->shipping_city . ' ' . $itemAddr->state->state_code . ' ' . $itemAddr->shipping_zip . ' ' . $itemAddr->delivery_date;
                                 @endphp
                                 <p class="text-wrap">
                                     For {{ $order_item->name }} :
@@ -59,23 +59,17 @@
                                         {{ $itemAddr->special_instructions }}
                                     </p>
                                 @endif
-                                @if($itemAddr->delivery_charge)
-                                    @if(!$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
-                                        <p class="text-center font-weight-bold">
-                                            Delivery Charge:
-                                            ${{ number_format($itemAddr->delivery_charge, 2) }}
-                                        </p>
-                                    @else
-                                        <p class="text-center font-weight-bold">
-                                            Delivery Charge: Same as other item
-                                        </p>
-                                    @endif
-                                @else
+                                @if(!$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                     <p class="text-center font-weight-bold">
                                         Delivery Charge:
-                                        ${{ number_format($order->delivery_charge, 2) }}
+                                        ${{ number_format($itemAddr->delivery_charge, 2) }}
+                                    </p>
+                                @else
+                                    <p class="text-center font-weight-bold">
+                                        Delivery Charge: Same as first item
                                     </p>
                                 @endif
+
                                 @if($itemAddr->delivery_date && !$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                     <p class="text-center font-weight-bold">
                                         Estimated Delivery:
@@ -83,7 +77,7 @@
                                     </p>
                                 @else
                                     <p class="text-center font-weight-bold">
-                                        Estimated Delivery: Same as other item
+                                        Estimated Delivery: Same as first item
                                     </p>
                                 @endif
                             </div>

@@ -399,16 +399,12 @@ class FlowerBySubscriptionController extends Controller
         $cartItems = session('oth_cart');
 
         $deliveryCharge     = 0;
-        $sameAsBilling      = 0;
         $duplicateAddresses = [];
         if (isset($data['item_address']) && count($data['item_address'])) {
             foreach ($data['item_address'] as $key => $item_address) {
-                $address = $item_address['shipping_address'] . ' ' . $item_address['shipping_address_1'] . ' ' . $item_address['shipping_city'] . ' ' . $item_address['shipping_state_name'] . ' ' . $item_address['shipping_zip'];
+                $address = $item_address['shipping_address'] . ' ' . $item_address['shipping_city'] . ' ' . $item_address['shipping_state_name'] . ' ' . $item_address['shipping_zip'] . ' ' . $item_address['delivery_date'];
                 if ($item_address['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
-                    $sameAsBilling  = 0;
                     $deliveryCharge += $item_address['delivery_charge'];
-                } else {
-                    $sameAsBilling = 1;
                 }
 
                 $duplicateAddresses[$key] = $address;
@@ -438,7 +434,6 @@ class FlowerBySubscriptionController extends Controller
             'deliveryOption',
             'cartItems',
             'deliveryCharge',
-            'sameAsBilling',
             'location',
             'locationTime'
         ));
@@ -453,7 +448,6 @@ class FlowerBySubscriptionController extends Controller
                 'deliveryOption',
                 'cartItems',
                 'deliveryCharge',
-                'sameAsBilling',
                 'location',
                 'locationTime'
             ));
@@ -1151,7 +1145,7 @@ class FlowerBySubscriptionController extends Controller
                 ->with(['locationType', 'locationType.locationTime'])->first();
         }
 
-        $order_items = $order->order_items;
+        $order_items = $order->order_items()->latest()->with('shippingAddress')->get();
 
         $page = view('thank-you-guest', compact(
             'order_items',

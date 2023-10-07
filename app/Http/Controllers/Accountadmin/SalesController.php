@@ -162,7 +162,7 @@ class SalesController extends Controller
                 'pk_locations'        => $location->pk_locations ?? null,
                 'pk_location_times'   => LocationTime::where('pk_locations', $location->pk_locations)
                         ->first()->pk_location_times ?? null,
-                'is_paid'             => $request->pay_by == 'card' ? true : false,
+                'is_paid'             => true,
                 'payment_method'      => $request->pay_by,
                 'created_by'          => Auth::id(),
                 'updated_by'          => Auth::id(),

@@ -897,15 +897,13 @@
 
             initDuplicateAddresses();
 
+            console.log('duplicateAddresses -> ', duplicateAddresses);
+
             function cartItemShipAddrCharges(address, city, id) {
                 $('.couponApply').val('');
                 $('#couponCode').val('');
                 $('.disc1').html('');
                 $('.disc').html('');
-                var totalcast = parseFloat($('.totalCast').val());
-                $('.amountTotal').val(totalcast);
-                var to = totalcast;
-                $('.totalCast1').html('$' + Number(to).toFixed(2));
                 $('.discountCharge').val('');
 
                 let zip = $(`#shipping_zip${id}`).val();
