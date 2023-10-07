@@ -1145,7 +1145,7 @@ class FlowerBySubscriptionController extends Controller
                 ->with(['locationType', 'locationType.locationTime'])->first();
         }
 
-        $order_items = $order->order_items()->latest()->with('shippingAddress')->get();
+        $order_items = $order->order_items()->with('shippingAddress')->get();
 
         $page = view('thank-you-guest', compact(
             'order_items',

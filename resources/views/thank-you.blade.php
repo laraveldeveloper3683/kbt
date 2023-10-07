@@ -70,7 +70,7 @@
                                     </p>
                                 @endif
 
-                                @if($itemAddr->delivery_date && !$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
+                                @if(!$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                     <p class="text-center font-weight-bold">
                                         Estimated Delivery:
                                         {{ date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
