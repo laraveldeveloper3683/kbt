@@ -25,4 +25,16 @@ class Customer extends Model
     {
         return $this->hasMany(CustomerAddres::class, 'pk_customers', 'pk_customers');
     }
+
+    public function primaryAddress()
+    {
+        return $this->hasOne(CustomerAddres::class, 'pk_customers', 'pk_customers')
+            ->where('pk_address_type', 1);
+    }
+
+    public function billingAddress()
+    {
+        return $this->hasOne(CustomerAddres::class, 'pk_customers', 'pk_customers')
+            ->where('pk_address_type', 2);
+    }
 }

@@ -1069,6 +1069,7 @@
                 let firstZip = $(`#shipping_zip${firstItemId}`).val();
                 let firstDelDate = $(`#delivery-date${firstItemId}`).val();
                 let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+                let firstSpecialDesc = $(`#special-instructions${firstItemId}`).val();
 
 
                 let billFullName = $(`#shipping_full_name${id}`);
@@ -1080,6 +1081,7 @@
                 let billingZip = $(`#shipping_zip${id}`);
                 let billingDelDate = $(`#delivery-date${id}`);
                 let billingDelCharge = $(`#delivery_charge${id}`);
+                let billingSpecialDesc = $(`#special-instructions${id}`);
 
                 if (!isChecked) {
                     let itemAutocomplete = new google.maps.places.Autocomplete(
@@ -1111,6 +1113,7 @@
                     billingZip.val('');
                     billingDelDate.val('');
                     billingDelCharge.val('');
+                    billingSpecialDesc.val('');
                 } else {
                     $(`#delivery_charge${id}`).val(0);
                     $(`#delivery-charge-item${id}`).remove();
@@ -1126,6 +1129,7 @@
                     billingZip.val(firstZip);
                     billingDelDate.val(firstDelDate);
                     billingDelCharge.val(firstDelCharge);
+                    billingSpecialDesc.val(firstSpecialDesc);
                 }
                 cartItemAddrIsSame();
             });
@@ -1173,6 +1177,10 @@
                 $(`#delivery_charge${id}`).on('change', function () {
                     fillAllItemAddrFromFirstItem();
                 });
+
+                $(`#special-instructions${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
             }
 
             firstItemAddrInit();
@@ -1189,22 +1197,22 @@
                 let firstZip = $(`#shipping_zip${firstItemId}`).val();
                 let firstDelDate = $(`#delivery-date${firstItemId}`).val();
                 let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+                let firstSpecialDesc = $(`#special-instructions${firstItemId}`).val();
 
                 // select all item-addr without first item
                 $('.item-addr').each(function () {
                     let itemId = $(this).data('id');
                     let isSameChecked = $(`#checkbox${itemId}`).is(':checked');
-                    if (!isSameChecked && itemId != firstItemId) {
-                        $(`#shipping_full_name${itemId}`).val(firstAddrName);
-                        $(`#shipping_phone${itemId}`).val(firstAddrPhone);
-                        $(`#billing_address${itemId}`).val(firstAddr);
-                        $(`#billing_address_1${itemId}`).val(firstAddr1);
-                        $(`#billing_city${itemId}`).val(firstCity);
-                        $(`#billing_state_name${itemId}`).val(firstState);
-                        $(`#shipping_zip${itemId}`).val(firstZip);
-                        $(`#delivery-date${itemId}`).val(firstDelDate);
-                        $(`#delivery_charge${itemId}`).val(firstDelCharge);
-                    }
+                    $(`#shipping_full_name${itemId}`).val(firstAddrName);
+                    $(`#shipping_phone${itemId}`).val(firstAddrPhone);
+                    $(`#billing_address${itemId}`).val(firstAddr);
+                    $(`#billing_address_1${itemId}`).val(firstAddr1);
+                    $(`#billing_city${itemId}`).val(firstCity);
+                    $(`#billing_state_name${itemId}`).val(firstState);
+                    $(`#shipping_zip${itemId}`).val(firstZip);
+                    $(`#delivery-date${itemId}`).val(firstDelDate);
+                    $(`#delivery_charge${itemId}`).val(firstDelCharge);
+                    $(`#special-instructions${itemId}`).val(firstSpecialDesc);
                 });
 
             }
