@@ -99,7 +99,7 @@
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
                                                 <td style="width:450px;height:40px;">
-                                                    @if ($order->pk_order_status == 3)
+                                                    @if (!in_array($order->pk_order_status, [3, 5, 6]))
                                                         <a style="height: 60px;
     width: 167px;"
                                                            href="/accountadmin/orders/cancel/{{ $order->pk_orders }}"
@@ -144,7 +144,7 @@
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
                                                 <td>
-                                                    @if ($order->pk_order_status == 3)
+                                                    @if (!in_array($order->pk_order_status, [3, 5, 6]))
                                                         <a style="height: 60px;
     width: 167px;"
                                                            href="/accountadmin/orders/cancel/{{ $order->pk_orders }}"

@@ -196,7 +196,10 @@
                                         <td><select name="pk_order_status" id="pk_order_status">
                                                 @foreach($orderStatus as $status)
                                                     <option
-                                                        value="{{$status->pk_order_status}}" {{($orders->pk_order_status == $status->pk_order_status) ? 'selected':''}}>{{$status->order_status}}</option>
+                                                            value="{{$status->pk_order_status}}"
+                                                            {{($orders->pk_order_status == $status->pk_order_status) ? 'selected':''}}>
+                                                        {{ ucfirst($status->order_status) }}
+                                                    </option>
                                                 @endforeach
                                             </select></td>
 
@@ -258,7 +261,9 @@
                                                 <td>
                                                     <textarea name="card_messages[{{ $item->pk_order_items }}]"
                                                               id="card-message"
-                                                              class="form-control card-message" cols="2">{{ @$item->card_message }}</textarea>
+                                                              {{ $orders->pk_order_status == 1 ? '' : 'disabled' }}
+                                                              class="form-control card-message"
+                                                              cols="2">{{ @$item->card_message }}</textarea>
                                                 </td>
                                                 <td class="text-right">{{ $item->quantity }}</td>
                                                 <td class="text-right">${{ number_format($item->price, 2) }}</td>

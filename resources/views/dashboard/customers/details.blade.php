@@ -96,6 +96,7 @@
                                                     <td>
                                                     <textarea name="card_messages[{{$item_val->pk_order_items}}]"
                                                               cols="2"
+                                                              {{ $orders->pk_order_status == 1 ? '' : 'disabled' }}
                                                               class="form-control">{{ @$item_val->card_message }}</textarea>
                                                     </td>
                                                     <td>{!! $item_val->quantity !!}</td>

@@ -59,17 +59,17 @@ class OrderController extends Controller
 
     public function filter(Request $request)
     {
-        $fields  = $request->validate([
+        $fields = $request->validate([
             'search' => ['required'],
         ]);
-        $orders  = DB::table('kbt_orders')->where('email', 'LIKE', '%' . $fields["search"] . '%')->orWhere('customer_name', 'LIKE', '%' . $fields["search"] . '%')->orWhere('phone', 'LIKE', '%' . $fields["search"] . '%')->orWhere('arrangement_type', 'LIKE', '%' . $fields["search"] . '%')->get();
+        $orders = DB::table('kbt_orders')->where('email', 'LIKE', '%' . $fields["search"] . '%')->orWhere('customer_name', 'LIKE', '%' . $fields["search"] . '%')->orWhere('phone', 'LIKE', '%' . $fields["search"] . '%')->orWhere('arrangement_type', 'LIKE', '%' . $fields["search"] . '%')->get();
         // echo "<pre>"; print_r($orders); die;
         return view('accountadmin.orders.index', ['orders' => $orders, 'search' => $fields["search"]]);
     }
 
     public function orderStatusUpdate(Request $request)
     {
-        $order                  = Order::find($request->pk_prders);
+        $order = Order::find($request->pk_prders);
         if ($order) {
             $order->update([
                 'pk_order_status' => $request->pk_order_status,
@@ -77,7 +77,7 @@ class OrderController extends Controller
             ]);
         }
 
-        if ($request->has('card_messages') && count($request->card_messages)) {
+        if ($request->has('card_messages') && count($request->card_messages) && $order->pk_order_status == 1) {
             foreach ($request->card_messages as $key => $value) {
                 $orderItem = OrderItem::find($key);
                 if ($orderItem) {
@@ -101,21 +101,22 @@ class OrderController extends Controller
         $order_status = DB::table('kbt_order_status')->get();
 
         if (empty($request->pk_order_status)) {
-            $orderStatusData       = Order::latest()->with([
-                                               'orderStatus',
-                                               'customer',
-                                               'location',
-                                               ])->get();
+            $orderStatusData = Order::latest()->with([
+                'orderStatus',
+                'customer',
+                'location',
+            ])->get();
         } else {
-            $orderStatusData        = Order::latest()->with([
-                                                'orderStatus',
-                                                'customer',
-                                                'location',
-                                                ])
-                                               ->where('pk_order_status', $request->pk_order_status)->orderBy('pk_orders', 'DESC')->get();
-       }
+            $orderStatusData = Order::latest()->with([
+                'orderStatus',
+                'customer',
+                'location',
+            ])
+                ->where('pk_order_status', $request->pk_order_status)->orderBy('pk_orders', 'DESC')->get();
+        }
 
-        return view('accountadmin.orders.index', ['orderStatusData' => $orderStatusData, 'order_status' => $order_status]);
+        return view('accountadmin.orders.index', ['orderStatusData' => $orderStatusData,
+                                                  'order_status'    => $order_status]);
     }
 
     public function cancelOrder(Request $request, $id = null)
