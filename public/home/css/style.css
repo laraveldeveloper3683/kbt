@@ -22755,3 +22755,9 @@ span.cardCounter {
 {
 	display:none;
 }
+
+/*custom by abhishek*/
+.td-align-middle td {
+  vertical-align: middle;
+}
+/*ends*/

@@ -83,7 +83,7 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Your Cart</span>
                     <span
-                        class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
+                            class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
                 </h4>
                 @php
                     $total = 0;
@@ -103,7 +103,7 @@
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
                                 <span
-                                    class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
+                                        class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                             </li>
                         @endforeach
                     @endif
@@ -125,7 +125,7 @@
                         $duplicateItemAddresses = [];
 
                         foreach ($itemAddresses as $key => $itemAddress) {
-                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'];
+                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
                             if ($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses)) {
                                 $deliveryCharge += $itemAddress['delivery_charge'];
                             }
@@ -142,7 +142,7 @@
                         @endphp
                         @foreach(@$itemAddresses as $ik => $itemAddress)
                             @php
-                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'];
+                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
                             @endphp
 
                             @if($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
@@ -234,7 +234,7 @@
 
                         <span>Total (USD)</span>
                         <strong
-                            class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
+                                class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
                         <input type="hidden" value="{{ $total }}" class="totalCast">
                     </li>
                 </ul>
@@ -307,7 +307,7 @@
                                 <input type="radio" name="choise_details" class="choise-details"
                                        value="{{ $deliveryOption->pk_delivery_or_pickup }}"
                                        data-text="{{ $deliveryOption->delivery_or_pickup }}"
-                                    {{ $choiseDetailsChecked }}>
+                                        {{ $choiseDetailsChecked }}>
                                 <span class="mr-4">
                                     {{ Str::title($deliveryOption->delivery_or_pickup) }}
                                 </span>
@@ -382,7 +382,7 @@
                                     <label for="checkbox{{ $id }}">
                                         <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
                                                data-id="{{ $id }}"
-                                            {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
+                                                {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
                                         Use same as First Item for this item
                                     </label>
                                 @endif
@@ -437,7 +437,7 @@
 
                                         <div class="col-md-4 mb-3">
                                             <label for="billing_address_1{{ $id }}">Address 2 <span
-                                                    class="text-muted">(Optional)</span></label>
+                                                        class="text-muted">(Optional)</span></label>
                                             <input type="text" class="form-control"
                                                    id="billing_address_1{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_address_1]"
@@ -524,6 +524,27 @@
                                                 <span class="invalid-feedback d-block" role="alert">
                                                               <strong>{{ $message }}</strong>
                                                           </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="form-group mt-4">
+                                                <label for="special-instructions{{ $id }}" class="form-label">
+                                                    Special Instructions
+                                                </label>
+                                                <textarea name="item_address[{{ $id }}][special_instructions]"
+                                                          placeholder="Enter special instructions" class="form-control"
+                                                          id="special-instructions{{ $id }}">{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.special_instructions')) ?
+                                                        old('item_address.'.$id.'.special_instructions') :
+                                                        @$addressItems[$id]['special_instructions'] }}</textarea>
+
+                                                @error('item_address.'.$id.'.special_instructions')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                                 @enderror
                                             </div>
                                         </div>
@@ -865,25 +886,30 @@
                     let id = $(this).data('id');
                     let address = $(`#billing_address${id}`).val();
                     let city = $(`#billing_city${id}`).val();
-                    let newAddress = address + ', ' + city;
+                    let state = $(`#billing_state_name${id}`).val();
+                    let zip = $(`#shipping_zip${id}`).val();
+                    let date = $(`#delivery-date${id}`).val();
+                    let newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
                     duplicateAddresses.push(newAddress);
                 });
             }
 
             initDuplicateAddresses();
 
+            console.log('duplicateAddresses -> ', duplicateAddresses);
+
             function cartItemShipAddrCharges(address, city, id) {
                 $('.couponApply').val('');
                 $('#couponCode').val('');
                 $('.disc1').html('');
                 $('.disc').html('');
-                var totalcast = parseFloat($('.totalCast').val());
-                $('.amountTotal').val(totalcast);
-                var to = totalcast;
-                $('.totalCast1').html('$' + Number(to).toFixed(2));
                 $('.discountCharge').val('');
 
-                $newAddress = address + ', ' + city;
+                let zip = $(`#shipping_zip${id}`).val();
+                let date = $(`#delivery-date${id}`).val();
+                let state = $(`#billing_state_name${id}`).val();
+
+                $newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
 
                 if (!duplicateAddresses.includes($newAddress)) {
                     $.ajax({
@@ -1000,6 +1026,7 @@
                 let firstZip = $(`#shipping_zip${firstItemId}`).val();
                 let firstDelDate = $(`#delivery-date${firstItemId}`).val();
                 let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+                let firstSpecialDesc = $(`#special-instructions${firstItemId}`).val();
 
 
                 let billFullName = $(`#shipping_full_name${id}`);
@@ -1011,6 +1038,8 @@
                 let billingZip = $(`#shipping_zip${id}`);
                 let billingDelDate = $(`#delivery-date${id}`);
                 let billingDelCharge = $(`#delivery_charge${id}`);
+                let billingSpecialDesc = $(`#special-instructions${id}`);
+
 
                 if (!isChecked) {
                     let itemAutocomplete = new google.maps.places.Autocomplete(
@@ -1042,6 +1071,7 @@
                     billingZip.val('');
                     billingDelDate.val('');
                     billingDelCharge.val('');
+                    billingSpecialDesc.val('');
                 } else {
                     $(`#delivery_charge${id}`).val(0);
                     $(`#delivery-charge-item${id}`).remove();
@@ -1049,6 +1079,7 @@
 
                     // Fill all field
                     billFullName.val(firstAddrName);
+                    console.log('billFullName -> ', billFullName.val())
                     billPhone.val(firstAddrPhone);
                     billingAddr.val(firstAddr);
                     billingAddr1.val(firstAddr1);
@@ -1057,6 +1088,7 @@
                     billingZip.val(firstZip);
                     billingDelDate.val(firstDelDate);
                     billingDelCharge.val(firstDelCharge);
+                    billingSpecialDesc.val(firstSpecialDesc);
                 }
                 cartItemAddrIsSame();
             });
@@ -1102,6 +1134,10 @@
                 $(`#delivery_charge${id}`).on('change', function () {
                     fillAllItemAddrFromFirstItem();
                 });
+
+                $(`#special-instructions${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
             }
 
             firstItemAddrInit();
@@ -1118,22 +1154,22 @@
                 let firstZip = $(`#shipping_zip${firstItemId}`).val();
                 let firstDelDate = $(`#delivery-date${firstItemId}`).val();
                 let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+                let firstSpecialDesc = $(`#special-instructions${firstItemId}`).val();
 
                 // select all item-addr without first item
                 $('.item-addr').each(function () {
                     let itemId = $(this).data('id');
                     let isSameChecked = $(`#checkbox${itemId}`).is(':checked');
-                    if (!isSameChecked && itemId != firstItemId) {
-                        $(`#shipping_full_name${itemId}`).val(firstAddrName);
-                        $(`#shipping_phone${itemId}`).val(firstAddrPhone);
-                        $(`#billing_address${itemId}`).val(firstAddr);
-                        $(`#billing_address_1${itemId}`).val(firstAddr1);
-                        $(`#billing_city${itemId}`).val(firstCity);
-                        $(`#billing_state_name${itemId}`).val(firstState);
-                        $(`#shipping_zip${itemId}`).val(firstZip);
-                        $(`#delivery-date${itemId}`).val(firstDelDate);
-                        $(`#delivery_charge${itemId}`).val(firstDelCharge);
-                    }
+                    $(`#shipping_full_name${itemId}`).val(firstAddrName);
+                    $(`#shipping_phone${itemId}`).val(firstAddrPhone);
+                    $(`#billing_address${itemId}`).val(firstAddr);
+                    $(`#billing_address_1${itemId}`).val(firstAddr1);
+                    $(`#billing_city${itemId}`).val(firstCity);
+                    $(`#billing_state_name${itemId}`).val(firstState);
+                    $(`#shipping_zip${itemId}`).val(firstZip);
+                    $(`#delivery-date${itemId}`).val(firstDelDate);
+                    $(`#delivery_charge${itemId}`).val(firstDelCharge);
+                    $(`#special-instructions${itemId}`).val(firstSpecialDesc);
                 });
 
             }

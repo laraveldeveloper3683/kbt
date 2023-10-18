@@ -3,20 +3,7 @@
 @section('content')
 <div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Dashboard</h4>
-            </div>
-            <div class="col-md-7 align-self-center text-end">
-                <div class="d-flex justify-content-end align-items-center">
-                    <ol class="breadcrumb justify-content-end">
-                        <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
-                        <li class="breadcrumb-item active"><a href="/accountadmin/products-categories">Product Category</a></li>
-                    </ol>
-                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" style="margin-top:-34px;"><i class="fa fa-plus-circle"></i>{{ isset($productCategory) && ($productCategory->pk_product_category) ? 'Edit Product Category':'Create New Product Category'}} </button>
-                </div>
-            </div>
-        </div>
+      @include('common.admin-panel-top-area-new')
         <div class="row">
                     <div class="col-md-12">
                         <div class="card">

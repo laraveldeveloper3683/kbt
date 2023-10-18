@@ -33,12 +33,12 @@
                         <ol class="breadcrumb justify-content-end">
                             <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
                             <li class="breadcrumb-item active"><a
-                                    href="{{ route('accountadmin.sales.index') }}">Sales</a></li>
+                                        href="{{ route('accountadmin.sales.index') }}">Sales</a></li>
                         </ol>
                         <a href="{{ route('accountadmin.sales.create') }}">
                             <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"
                                     style="margin-top: -34px;"><i
-                                    class="fa fa-plus-circle"></i> Create New
+                                        class="fa fa-plus-circle"></i> Create New
                             </button>
                         </a>
                     </div>
@@ -82,6 +82,7 @@
                                         <th class="text-right">Discount</th>
                                         <th class="text-right">Amount</th>
                                         <th class="text-center">Is Paid</th>
+                                        <th class="text-center">Payment Method</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -116,6 +117,15 @@
                                                     <span class="badge badge-success">Yes</span>
                                                 @else
                                                     <span class="badge badge-danger">No</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($sale->payment_method == 'cash')
+                                                    Cash
+                                                @elseif($sale->payment_method == 'gift_card')
+                                                    Gift Card
+                                                @else
+                                                    Card
                                                 @endif
                                             </td>
                                         </tr>

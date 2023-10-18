@@ -18,36 +18,7 @@
                 <div class="col-md-1 align-self-center">
                     <h4 class="text-themecolor">Orders</h4>
                 </div>
-                <div class="col-md-2 align-self-center">
-                    <form method="post" action="/accountadmin/order-status">
-                        @csrf
-                        <!-- <label for="role">Order Status</label>-->
-                        <select name="pk_order_status" id="pk_order_status" class="form-control">
-                            <option value="">Filter Order by Status</option>
-                            @foreach ($order_status as $status)
-                                <option
-                                    value="{{ $status->pk_order_status }}">{{ ucfirst($status->order_status) }}</option>
-                            @endforeach
-                        </select>
-                        <button type="submit" class="btn btn-secondary" value="Go"
-                                style="margin-left: 200px;margin-top: -70px;">Go
-                        </button>
-                    </form>
-                </div>
-                <div class="col-md-4 align-self-center p-3" style="margin-top: -18px;margin-left: 80px;">
-                    <form method="POST" action="{{ route('accountadmin.payment.index.filter') }}">
-                        @csrf
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search orders..." name="search"
-                                   value="{{ old('search', $search ?? '') }}" required>
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" type="submit">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                @include('accountadmin.orders.includes.filter_section')
                 <div class="col-md-4 align-self-center text-end">
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb justify-content-end">
@@ -106,10 +77,10 @@
                                                     @if($order->deliveryOption)
                                                         @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
                                                             <span
-                                                                class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @else
                                                             <span
-                                                                class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @endif
                                                     @else
                                                         N/A
@@ -128,7 +99,7 @@
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
                                                 <td style="width:450px;height:40px;">
-                                                    @if ($order->pk_order_status == 3)
+                                                    @if (!in_array($order->pk_order_status, [3, 5, 6]))
                                                         <a style="height: 60px;
     width: 167px;"
                                                            href="/accountadmin/orders/cancel/{{ $order->pk_orders }}"
@@ -151,10 +122,10 @@
                                                     @if($order->deliveryOption)
                                                         @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
                                                             <span
-                                                                class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @else
                                                             <span
-                                                                class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @endif
                                                     @else
                                                         N/A
@@ -173,7 +144,7 @@
                                                 <td>${{ number_format($order->total, 2) }}</td>
                                                 {{--                                                <td>{{ \Carbon\Carbon::parse($order->estimated_del)->isValid() && !is_null($order->estimated_del) ? date('m/d/Y', strtotime($order->estimated_del)) : 'N/A' }}</td>--}}
                                                 <td>
-                                                    @if ($order->pk_order_status == 3)
+                                                    @if (!in_array($order->pk_order_status, [3, 5, 6]))
                                                         <a style="height: 60px;
     width: 167px;"
                                                            href="/accountadmin/orders/cancel/{{ $order->pk_orders }}"

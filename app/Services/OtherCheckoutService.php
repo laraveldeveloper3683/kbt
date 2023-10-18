@@ -245,12 +245,14 @@ class OtherCheckoutService
                             if (isset($request->item_address) && count($request->item_address)) {
                                 $itemAddress = $request->item_address;
                                 $itemAddr    = $itemAddress[$key] ?? null;
-                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_address_1'] . ' ' .
-                                    $itemAddr['shipping_city'] . ' ' . $itemAddr['shipping_state_name'] . ' ' .
-                                    $itemAddr['shipping_zip'];
+                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_city'] . ' ' .
+                                    $itemAddr['shipping_state_name'] . ' ' .
+                                    $itemAddr['shipping_zip'] . ' ' . $itemAddr['delivery_date'];
 
                                 if ($itemAddress[$key]['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
                                     $deliveryCharges += $itemAddress[$key]['delivery_charge'];
+                                } else {
+                                    $itemAddress[$key]['same_as_billing'] = 1;
                                 }
 
                                 // Shipping address create for order items
@@ -267,20 +269,21 @@ class OtherCheckoutService
                                     ?? $request->billing_state_name ?? null)->first();
                                 $delivery_date      = $itemAddress[$key]['delivery_date'] ?? $request->delivery_date ?? null;
                                 $shipping_data      = [
-                                    'pk_customers'       => $pk_customer_id,
-                                    'pk_order_items'     => $orderItem->pk_order_items ?? 1,
-                                    'shipping_full_name' => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
-                                    'shipping_email'     => $itemAddress[$key]['shipping_email'] ?? $user_email,
-                                    'shipping_phone'     => $itemAddress[$key]['shipping_phone'] ?? $user_phone,
-                                    'shipping_address'   => $shipping_address,
-                                    'shipping_address_1' => $shipping_address_1,
-                                    'shipping_city'      => $shipping_city,
-                                    'pk_states'          => $state->pk_states ?? $cusAddr->pk_states ?? 1,
-                                    'pk_country'         => $state->pk_country ?? $cusAddr->pk_country ?? 1,
-                                    'shipping_zip'       => $shipping_zip,
-                                    'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
-                                    'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
-                                    'delivery_date'      => Carbon::parse($delivery_date)->format('Y-m-d'),
+                                    'pk_customers'         => $pk_customer_id,
+                                    'pk_order_items'       => $orderItem->pk_order_items ?? 1,
+                                    'shipping_full_name'   => $itemAddress[$key]['shipping_full_name'] ?? $user_name,
+                                    'shipping_email'       => $itemAddress[$key]['shipping_email'] ?? $user_email,
+                                    'shipping_phone'       => $itemAddress[$key]['shipping_phone'] ?? $user_phone,
+                                    'shipping_address'     => $shipping_address,
+                                    'shipping_address_1'   => $shipping_address_1,
+                                    'shipping_city'        => $shipping_city,
+                                    'pk_states'            => $state->pk_states ?? $cusAddr->pk_states ?? 1,
+                                    'pk_country'           => $state->pk_country ?? $cusAddr->pk_country ?? 1,
+                                    'shipping_zip'         => $shipping_zip,
+                                    'delivery_charge'      => $itemAddress[$key]['delivery_charge'] ?? 0,
+                                    'same_as_billing'      => $itemAddress[$key]['same_as_billing'] ?? 1,
+                                    'delivery_date'        => Carbon::parse($delivery_date)->format('Y-m-d'),
+                                    'special_instructions' => $itemAddress[$key]['special_instructions'] ?? null,
                                 ];
 
                                 // Create shipping address
@@ -805,12 +808,14 @@ class OtherCheckoutService
                             if (isset($request->item_address) && count($request->item_address)) {
                                 $itemAddress = $request->item_address;
                                 $itemAddr    = $itemAddress[$key] ?? null;
-                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_address_1'] . ' ' .
-                                    $itemAddr['shipping_city'] . ' ' . $itemAddr['shipping_state_name'] . ' ' .
-                                    $itemAddr['shipping_zip'];
+                                $address     = $itemAddr['shipping_address'] . ' ' . $itemAddr['shipping_city'] . ' ' .
+                                    $itemAddr['shipping_state_name'] . ' ' .
+                                    $itemAddr['shipping_zip'] . ' ' . $itemAddr['delivery_date'];
 
                                 if ($itemAddress[$key]['same_as_billing'] == 0 && !in_array($address, $duplicateAddresses)) {
                                     $deliveryCharges += $itemAddress[$key]['delivery_charge'];
+                                } else {
+                                    $itemAddress[$key]['same_as_billing'] = 1;
                                 }
 
                                 $cusAddr            = @$user_data->customer->address[0];
@@ -840,6 +845,7 @@ class OtherCheckoutService
                                     'delivery_charge'    => $itemAddress[$key]['delivery_charge'] ?? 0,
                                     'same_as_billing'    => $itemAddress[$key]['same_as_billing'] ?? 1,
                                     'delivery_date'      => Carbon::parse($delivery_date)->format('Y-m-d'),
+                                    'special_instructions' => $itemAddress[$key]['special_instructions'] ?? null,
                                 ];
 
                                 // $sameAsBilling = $itemAddress[$key]['same_as_billing'] ?? 1;

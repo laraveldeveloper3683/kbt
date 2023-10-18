@@ -315,6 +315,11 @@
                                        value="{{ old('item_address') &&
                                                         !empty(old('item_address.'.$id.'.delivery_charge')) ?
                                                         old('item_address.'.$id.'.delivery_charge') : @$item_address['delivery_charge'] }}">
+                                <input type="hidden" class="form-control"
+                                       name="item_address[{{ $id }}][special_instructions]"
+                                       value="{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.special_instructions')) ?
+                                                        old('item_address.'.$id.'.special_instructions') : @$item_address['special_instructions'] }}">
                                 <input type="hidden"
                                        name="item_address[{{ $id }}][delivery_date]"
                                        value="{{ old('item_address') &&

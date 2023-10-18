@@ -3,20 +3,7 @@
 @section('content')
 <div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Dashboard</h4>
-            </div>
-            <div class="col-md-7 align-self-center text-end">
-                <div class="d-flex justify-content-end align-items-center">
-                    <ol class="breadcrumb justify-content-end">
-                        <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
-                        <li class="breadcrumb-item active"><a href="/accountadmin/floral-arrangements">Floral Arrangements</a></li>
-                    </ol>
-                    <button type="button" style="margin-top:-34px;" class="btn btn-info d-none d-lg-block m-l-15 text-white"><i class="fa fa-plus-circle"></i>{{ isset($floralArrangement) && ($floralArrangement->pk_floral_arrangements) ? ' Edit Floral Arrangement':' Create Floral Arrangement'}} </button>
-                </div>
-            </div>
-        </div>
+      @include('common.admin-panel-top-area-new')
         <div class="row">
             <div class="col-md-12">
                 @if(Session::has('message'))
@@ -156,7 +143,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                     
+
                                         <div class="col-md-12">
                                                 @if(!empty($arrangements_images))
                                                     @foreach($arrangements_images as $img)
@@ -183,7 +170,7 @@
                                         </div>
                                         </div>
                                         </div>
-                                        
+
 
                                     </div>
                                 </div>
@@ -223,7 +210,7 @@
                                         @endforeach
                                 </div>
 
-                           
+
                             <div class="row">
                                 <div class="col-md-12 m-l-20">
                                     <input type="hidden" name="pk_account" value="{{isset($pk_account) ? $pk_account : ''}}" >

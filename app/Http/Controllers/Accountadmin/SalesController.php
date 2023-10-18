@@ -139,10 +139,12 @@ class SalesController extends Controller
                 $grandTotal = $grandTotal + $taxAmount;
             }
 
-            $res = $this->handlePaymentByGateway($request, $grandTotal);
-            if ($res['msg_type'] == 'error_msg') {
-                session()->flash('error', $res['message_text']);
-                return back()->withInput();
+            if ($request->pay_by == 'card') {
+                $res = $this->handlePaymentByGateway($request, $grandTotal);
+                if ($res['msg_type'] == 'error_msg') {
+                    session()->flash('error', $res['message_text']);
+                    return back()->withInput();
+                }
             }
 
             $salesData = [
@@ -161,6 +163,7 @@ class SalesController extends Controller
                 'pk_location_times'   => LocationTime::where('pk_locations', $location->pk_locations)
                         ->first()->pk_location_times ?? null,
                 'is_paid'             => true,
+                'payment_method'      => $request->pay_by,
                 'created_by'          => Auth::id(),
                 'updated_by'          => Auth::id(),
             ];

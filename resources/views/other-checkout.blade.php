@@ -79,7 +79,7 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Your Cart</span>
                     <span
-                        class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
+                            class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
                 </h4>
                 @php
                     $total = 0;
@@ -99,7 +99,7 @@
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
                                 <span
-                                    class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
+                                        class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                             </li>
                         @endforeach
                     @endif
@@ -121,7 +121,7 @@
                         $duplicateItemAddresses = [];
 
                         foreach ($itemAddresses as $key => $itemAddress) {
-                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'];
+                            $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
                             if ($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses)) {
                                 $deliveryCharge += $itemAddress['delivery_charge'];
                             }
@@ -138,7 +138,7 @@
                         @endphp
                         @foreach(@$itemAddresses as $ik => $itemAddress)
                             @php
-                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_address_1'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'];
+                                $address = $itemAddress['shipping_address'] . ' ' . $itemAddress['shipping_city'] . ' ' . $itemAddress['shipping_state_name'] . ' ' . $itemAddress['shipping_zip'] . ' ' . $itemAddress['delivery_date'];
                             @endphp
 
                             @if($itemAddress['same_as_billing'] == 0 && !in_array($address, $duplicateItemAddresses))
@@ -230,7 +230,7 @@
 
                         <span>Total (USD)</span>
                         <strong
-                            class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
+                                class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
                         <input type="hidden" value="{{ $total }}" class="totalCast">
                     </li>
                 </ul>
@@ -251,7 +251,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label
-                                for="first_name">
+                                    for="first_name">
                                 {{ $user_data->first_name . ' ' . $user_data->last_name }}
                                 {{ $user_data->email ? '(' . $user_data->email . ')' : '' }}
                             </label>
@@ -295,7 +295,7 @@
                     <div class="row">
                         @if(!$user_data->username)
                             <div
-                                class="mb-3 {{ !$user_data->phone && !$user_data->username ? 'col-md-6' : 'col-md-12' }}">
+                                    class="mb-3 {{ !$user_data->phone && !$user_data->username ? 'col-md-6' : 'col-md-12' }}">
                                 <label for="username">Username</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="username" name="username"
@@ -354,7 +354,7 @@
                                 <input type="radio" name="choise_details" class="choise-details"
                                        value="{{ $deliveryOption->pk_delivery_or_pickup }}"
                                        data-text="{{ $deliveryOption->delivery_or_pickup }}"
-                                    {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
+                                        {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
                             @endforeach
                         </div>
 
@@ -429,7 +429,7 @@
                                     <label for="checkbox{{ $id }}">
                                         <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
                                                data-id="{{ $id }}"
-                                            {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
+                                                {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
                                         Use same as First Item for this item
                                     </label>
                                 @endif
@@ -484,7 +484,7 @@
 
                                         <div class="col-md-4 mb-3">
                                             <label for="billing_address_1{{ $id }}">Address 2 <span
-                                                    class="text-muted">(Optional)</span></label>
+                                                        class="text-muted">(Optional)</span></label>
                                             <input type="text" class="form-control"
                                                    id="billing_address_1{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_address_1]"
@@ -571,6 +571,25 @@
                                                 <span class="invalid-feedback d-block" role="alert">
                                                               <strong>{{ $message }}</strong>
                                                           </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group mt-4">
+                                                <label for="special-instructions{{ $id }}" class="form-label">
+                                                    Special Instructions
+                                                </label>
+                                                <textarea name="item_address[{{ $id }}][special_instructions]"
+                                                          id="item_address[{{ $id }}][special_instructions]"
+                                                          placeholder="Enter special instructions" class="form-control"
+                                                          id="special-instructions{{ $id }}">{{ old('item_address') &&
+                                                        !empty(old('item_address.'.$id.'.special_instructions')) ?
+                                                        old('item_address.'.$id.'.special_instructions') : @$addressItems[$id]['special_instructions'] }}</textarea>
+                                                @error('item_address.'.$id.'.special_instructions')
+                                                <span class="invalid-feedback d-block" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                                 @enderror
                                             </div>
                                         </div>
@@ -905,12 +924,17 @@
                 let id = $(this).data('id');
                 let address = $(`#billing_address${id}`).val();
                 let city = $(`#billing_city${id}`).val();
-                let newAddress = address + ', ' + city;
+                let state = $(`#billing_state_name${id}`).val();
+                let zip = $(`#shipping_zip${id}`).val();
+                let date = $(`#delivery-date${id}`).val();
+                let newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
                 duplicateAddresses.push(newAddress);
             });
         }
 
-        initDuplicateAddresses();
+        // initDuplicateAddresses();
+
+        console.log('duplicateAddresses -> ', duplicateAddresses);
 
         $(document).ready(function () {
             function cartItemShipAddrCharges(address, city, id) {
@@ -924,7 +948,10 @@
                 $('.totalCast1').html('$' + Number(to).toFixed(2));
                 $('.discountCharge').val('');
 
-                $newAddress = address + ', ' + city;
+                let zip = $(`#shipping_zip${id}`).val();
+                let date = $(`#delivery-date${id}`).val();
+                let state = $(`#billing_state_name${id}`).val();
+                $newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
 
                 if (!duplicateAddresses.includes($newAddress)) {
                     $.ajax({
@@ -992,9 +1019,11 @@
                             }
                         }
                     })
+                } else {
+                    duplicateAddresses.push($newAddress);
                 }
 
-                duplicateAddresses.push($newAddress);
+
             }
 
             function cartItemAddrIsSame() {
@@ -1040,6 +1069,7 @@
                 let firstZip = $(`#shipping_zip${firstItemId}`).val();
                 let firstDelDate = $(`#delivery-date${firstItemId}`).val();
                 let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+                let firstSpecialDesc = $(`#special-instructions${firstItemId}`).val();
 
 
                 let billFullName = $(`#shipping_full_name${id}`);
@@ -1051,6 +1081,7 @@
                 let billingZip = $(`#shipping_zip${id}`);
                 let billingDelDate = $(`#delivery-date${id}`);
                 let billingDelCharge = $(`#delivery_charge${id}`);
+                let billingSpecialDesc = $(`#special-instructions${id}`);
 
                 if (!isChecked) {
                     let itemAutocomplete = new google.maps.places.Autocomplete(
@@ -1082,6 +1113,7 @@
                     billingZip.val('');
                     billingDelDate.val('');
                     billingDelCharge.val('');
+                    billingSpecialDesc.val('');
                 } else {
                     $(`#delivery_charge${id}`).val(0);
                     $(`#delivery-charge-item${id}`).remove();
@@ -1097,6 +1129,7 @@
                     billingZip.val(firstZip);
                     billingDelDate.val(firstDelDate);
                     billingDelCharge.val(firstDelCharge);
+                    billingSpecialDesc.val(firstSpecialDesc);
                 }
                 cartItemAddrIsSame();
             });
@@ -1144,6 +1177,10 @@
                 $(`#delivery_charge${id}`).on('change', function () {
                     fillAllItemAddrFromFirstItem();
                 });
+
+                $(`#special-instructions${id}`).on('change', function () {
+                    fillAllItemAddrFromFirstItem();
+                });
             }
 
             firstItemAddrInit();
@@ -1160,22 +1197,22 @@
                 let firstZip = $(`#shipping_zip${firstItemId}`).val();
                 let firstDelDate = $(`#delivery-date${firstItemId}`).val();
                 let firstDelCharge = $(`#delivery_charge${firstItemId}`).val();
+                let firstSpecialDesc = $(`#special-instructions${firstItemId}`).val();
 
                 // select all item-addr without first item
                 $('.item-addr').each(function () {
                     let itemId = $(this).data('id');
                     let isSameChecked = $(`#checkbox${itemId}`).is(':checked');
-                    if (!isSameChecked && itemId != firstItemId) {
-                        $(`#shipping_full_name${itemId}`).val(firstAddrName);
-                        $(`#shipping_phone${itemId}`).val(firstAddrPhone);
-                        $(`#billing_address${itemId}`).val(firstAddr);
-                        $(`#billing_address_1${itemId}`).val(firstAddr1);
-                        $(`#billing_city${itemId}`).val(firstCity);
-                        $(`#billing_state_name${itemId}`).val(firstState);
-                        $(`#shipping_zip${itemId}`).val(firstZip);
-                        $(`#delivery-date${itemId}`).val(firstDelDate);
-                        $(`#delivery_charge${itemId}`).val(firstDelCharge);
-                    }
+                    $(`#shipping_full_name${itemId}`).val(firstAddrName);
+                    $(`#shipping_phone${itemId}`).val(firstAddrPhone);
+                    $(`#billing_address${itemId}`).val(firstAddr);
+                    $(`#billing_address_1${itemId}`).val(firstAddr1);
+                    $(`#billing_city${itemId}`).val(firstCity);
+                    $(`#billing_state_name${itemId}`).val(firstState);
+                    $(`#shipping_zip${itemId}`).val(firstZip);
+                    $(`#delivery-date${itemId}`).val(firstDelDate);
+                    $(`#delivery_charge${itemId}`).val(firstDelCharge);
+                    $(`#special-instructions${itemId}`).val(firstSpecialDesc);
                 });
 
             }
@@ -1229,45 +1266,49 @@
                     $('.totalCast1').html('$' + Number(to).toFixed(2));
                     $('.discountCharge').val('');
 
-                    $newAddress = address + ', ' + city;
+                    let zip = $(`#shipping_zip${id}`).val();
+                    let date = $(`#delivery-date${id}`).val();
+                    let state = $(`#billing_state_name${id}`).val();
+                    $newAddress = address + ' ' + city + ' ' + state + ' ' + zip + ' ' + date;
 
-                    $.ajax({
-                        url     : "{{ url('other-checkout-ship-info') }}",
-                        type    : 'POST',
-                        dataType: 'json',
-                        data    : {
-                            '_token': '{{ csrf_token() }}',
-                            city    : city,
-                            address : address
-                        },
-                        success : function (response) {
-                            console.log('cartItemShipAddrCharges response -> ', response)
-                            var totalcast = parseFloat($('.totalCast').val());
-                            var taxRate = $('#tax_rate').val() || response.taxRate;
+                    if (!duplicateAddresses.includes($newAddress)) {
+                        $.ajax({
+                            url     : "{{ url('other-checkout-ship-info') }}",
+                            type    : 'POST',
+                            dataType: 'json',
+                            data    : {
+                                '_token': '{{ csrf_token() }}',
+                                city    : city,
+                                address : address
+                            },
+                            success : function (response) {
+                                console.log('cartItemShipAddrCharges response -> ', response)
+                                var totalcast = parseFloat($('.totalCast').val());
+                                var taxRate = $('#tax_rate').val() || response.taxRate;
 
-                            var deliveryCharge = response.delivery_charge;
+                                var deliveryCharge = response.delivery_charge;
 
-                            $(`#delivery_charge${id}`).val(deliveryCharge);
-                            $(`#store_city${id}`).val(response.storeCity);
-                            $(`#store_name${id}`).val(response.storeName);
-                            $(`#estimated_del${id}`).val(response.estimated_delivery_time);
+                                $(`#delivery_charge${id}`).val(deliveryCharge);
+                                $(`#store_city${id}`).val(response.storeCity);
+                                $(`#store_name${id}`).val(response.storeName);
+                                $(`#estimated_del${id}`).val(response.estimated_delivery_time);
 
-                            const firstItemAddr = $('.item-addr').first();
-                            let firstItemId = firstItemAddr.data('id');
+                                const firstItemAddr = $('.item-addr').first();
+                                let firstItemId = firstItemAddr.data('id');
 
-                            if (id == firstItemId) {
-                                fillAllItemAddrFromFirstItem();
-                            }
+                                if (id == firstItemId) {
+                                    fillAllItemAddrFromFirstItem();
+                                }
 
-                            if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
-                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
-                                var to = totalcast + taxTotal;
-                            } else {
-                                var taxTotal = Number(taxRate) * Number(totalcast) / 100;
-                                var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxTotal);
-                            }
-                            let cartItemName = $(`#cart-item-name${id}`).text();
-                            let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
+                                if ($('input[name="choise_details"]:checked').data('text') == 'Store Pickup') {
+                                    var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                    var to = totalcast + taxTotal;
+                                } else {
+                                    var taxTotal = Number(taxRate) * Number(totalcast) / 100;
+                                    var to = totalcast + parseFloat(deliveryCharge) + parseFloat(taxTotal);
+                                }
+                                let cartItemName = $(`#cart-item-name${id}`).text();
+                                let chargeHtml = `<li class="list-group-item d-flex justify-content-between lh-condensed delivery-charge-item"
                                             id="delivery-charge-item${id}">
                             <h6 class="my-0">
                                 Delivery Charge For <strong>${cartItemName}</strong>
@@ -1281,23 +1322,25 @@
 
                             <span class="text-muted"><span>$</span>${deliveryCharge}</span>
                     </li>`;
-                            $('.totalCast1').text('$' + Number(to).toFixed(2));
-                            $('.amountTotal').val(to);
-                            $(`#delivery-charge-item${id}`).remove();
+                                $('.totalCast1').text('$' + Number(to).toFixed(2));
+                                $('.amountTotal').val(to);
+                                $(`#delivery-charge-item${id}`).remove();
 
-                            $(chargeHtml).insertBefore('#tax-rate-section');
+                                $(chargeHtml).insertBefore('#tax-rate-section');
 
-                            cartItemAddrIsSame();
-                            if (!$('#tax_rate').val()) {
-                                $('.taxR').html(`<h6 class="my-0">Tax
+                                cartItemAddrIsSame();
+                                if (!$('#tax_rate').val()) {
+                                    $('.taxR').html(`<h6 class="my-0">Tax
                                     </h6>`);
-                                $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
-                                $('#tax_rate').val(response.taxRate);
+                                    $('.taxRa').html('$' + Number(taxTotal).toFixed(2));
+                                    $('#tax_rate').val(response.taxRate);
+                                }
                             }
-                        }
-                    })
+                        })
+                    } else {
+                        duplicateAddresses.push($newAddress);
+                    }
 
-                    duplicateAddresses.push($newAddress);
                 }
 
                 function firstItemAddrInit2() {

@@ -31,7 +31,7 @@
             <!-- ============================================================== -->
             <!-- Start Page Content -->
             <!-- ============================================================== -->
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
@@ -41,10 +41,12 @@
                                     <td>{{ $sale->pk_sales }}</td>
                                 </tr>
 
-                                <tr>
-                                    <th>Order No.</th>
-                                    <td>{{ $sale->pk_order }}</td>
-                                </tr>
+                                @if($sale->pk_order)
+                                    <tr>
+                                        <th>Order No.</th>
+                                        <td>{{ $sale->pk_order }}</td>
+                                    </tr>
+                                @endif
 
                                 <tr>
                                     <th>User</th>
@@ -62,37 +64,81 @@
                                     </td>
                                 </tr>
 
+                                @if($sale->arrangementType)
+                                    <tr>
+                                        <th>Arrangement Type</th>
+                                        <td>
+                                            @if($sale->arrangementType)
+                                                {{ $sale->arrangementType->arrangement_type }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
+
                                 <tr>
-                                    <th>Arrangement Type</th>
+                                    <th>Payment Method</th>
                                     <td>
-                                        @if($sale->arrangementType)
-                                            {{ $sale->arrangementType->arrangement_type }}
+                                        @if($sale->payment_method == 'cash')
+                                            Cash
+                                        @elseif($sale->payment_method == 'gift_card')
+                                            Gift Card
+                                        @else
+                                            Card
                                         @endif
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <th>Billing Address</th>
-                                    @if($sale->order)
-                                        <td style="width: 365px;">
-                                            {{ $sale->order->address }} {{ isset($sale->order->address_1) ?  '#'.$sale->order->address_1 : ''}} </br> {{ $sale->order->city }} {{ $sale->order->state_name }} {{ $sale->order->zip }}</td>
-                                    @endif
+                                    <th>Is Paid</th>
+                                    <td>
+                                        @if($sale->is_paid)
+                                            <span class="badge badge-success">Yes</span>
+                                        @else
+                                            <span class="badge badge-danger">No</span>
+                                        @endif
+                                    </td>
                                 </tr>
 
-                                @if( isset($sale->order) && ($sale->order->billaddress ==  $sale->order->address))
+                                @if($sale->order)
                                     <tr>
-                                        <th>Shipping Address same as Billing</th>
-                                        <td><input type="checkbox" checked value="Same as Billing Address"></td>
-                                    <tr>
-                                @else
-                                    <tr>
-                                        <th>Shipping Address</th>
+                                        <th>Billing Address</th>
                                         @if($sale->order)
                                             <td style="width: 365px;">
-                                                {{ $sale->order->billaddress }} {{ isset($sale->order->billaddress_1) ?  '#'.$sale->order->billaddress_1 : ''}} </br> {{ $sale->order->billcity }} {{ $sale->order->billstate_name }} {{ $sale->order->billzip }}
-                                            </td>
+                                                {{ $sale->order->address }} {{ isset($sale->order->address_1) ?  '#'.$sale->order->address_1 : ''}} </br> {{ $sale->order->city }} {{ $sale->order->state_name }} {{ $sale->order->zip }}</td>
                                         @endif
                                     </tr>
+                                    @if($sale->order->billaddress ==  $sale->order->address)
+                                        <tr>
+                                            <th>Shipping Address same as Billing</th>
+                                            <td><input type="checkbox" checked value="Same as Billing Address"></td>
+                                        <tr>
+                                    @else
+                                        <tr>
+                                            <th>Shipping Address</th>
+                                            @if($sale->order)
+                                                <td style="width: 365px;">
+                                                    {{ $sale->order->billaddress }} {{ isset($sale->order->billaddress_1) ?  '#'.$sale->order->billaddress_1 : ''}} </br> {{ $sale->order->billcity }} {{ $sale->order->billstate_name }} {{ $sale->order->billzip }}
+                                                </td>
+                                            @endif
+                                        </tr>
+                                    @endif
+                                @else
+                                    @if($sale->customer && $sale->customer->billingAddress)
+                                        @php
+                                            $billingAddress = $sale->customer->billingAddress;
+                                        @endphp
+                                        <tr>
+                                            <th>Billing Address</th>
+                                            <td style="width: 365px;">
+                                                {{ $billingAddress->address }}
+                                                {{ isset($billingAddress->address_1) ?
+                                                    '#'.$billingAddress->address_1 : ''}}
+                                                </br> {{ $billingAddress->city}}
+                                                {{ $billingAddress->state->state_code }}
+                                                {{ $billingAddress->zip }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @endif
                             </table>
                         </div>
@@ -147,34 +193,36 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table table-hover table-bordered">
-                                <tr>
-                                    <th>Name on Card</th>
-                                    @if($sale->transaction)
-                                        <td class="text-center">{{ $sale->transaction->name_on_card }}</td>
-                                    @endif
-                                </tr>
+                @if($sale->transaction)
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-hover table-bordered">
+                                    <tr>
+                                        <th>Name on Card</th>
+                                        @if($sale->transaction)
+                                            <td class="text-center">{{ $sale->transaction->name_on_card }}</td>
+                                        @endif
+                                    </tr>
 
-                                <tr>
-                                    <th>Card Type</th>
-                                    @if($sale->transaction)
-                                        <td class="text-center">{{ $sale->transaction->account_type }}</td>
-                                    @endif
-                                </tr>
+                                    <tr>
+                                        <th>Card Type</th>
+                                        @if($sale->transaction)
+                                            <td class="text-center">{{ $sale->transaction->account_type }}</td>
+                                        @endif
+                                    </tr>
 
-                                <tr>
-                                    <th>Currency</th>
-                                    @if($sale->transaction)
-                                        <td class="text-center">{{ $sale->transaction->currency }}</td>
-                                    @endif
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <th>Currency</th>
+                                        @if($sale->transaction)
+                                            <td class="text-center">{{ $sale->transaction->currency }}</td>
+                                        @endif
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
             </br>
             <div class="row">

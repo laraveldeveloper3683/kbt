@@ -16,10 +16,12 @@
                 <h1 class="display-3 text-{{ @$thankYou['messageType'] }}">{{ @$thankYou['message'] }}</h1>
                 <p class="lead"><strong>{{ @$createOrder['message'] }}</strong></p>
 
+                <p class="lead"><strong>Order ID: {{ $order->pk_orders }}</strong></p>
+
                 <div class="col-md-6 offset-md-3 mb-4 text-left">
                     @if($order->deliveryOption->delivery_or_pickup == 'Store Pickup')
                         <div
-                            style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
+                                style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px;padding-top: 15px; padding-bottom: 15px;">
                             <h6><strong>Pickup Address</strong></h6>
                             <p class="lead">{{$store->address}} , {{$store->city}}, {{$store->zip}}</p>
                             @if($locationTime)
@@ -36,35 +38,53 @@
                             @endif
                         </div>
                     @else
+                        @php
+                            $duplicateItemAddresses = [];
+                        @endphp
                         @foreach($order_items as $order_item)
                             <div
-                                style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
+                                    style="background-color: #FFF; text-align: center; margin: 0 0 20px 40px; padding-top: 10px; padding-bottom: 1px;">
                                 @php
                                     $itemAddr = $order_item->shippingAddress;
+                                    $address = $itemAddr->shipping_address . ' ' . $itemAddr->shipping_city . ' ' . $itemAddr->state->state_code . ' ' . $itemAddr->shipping_zip . ' ' . $itemAddr->delivery_date;
                                 @endphp
                                 <p class="text-wrap">
                                     For {{ $order_item->name }} :
                                     {{ $itemAddr->shipping_address }} , {{ $itemAddr->shipping_city }}
                                     , {{ $itemAddr->shipping_zip }}
                                 </p>
-                                @if($itemAddr->delivery_charge)
+                                @if($itemAddr->special_instructions)
+                                    <p class="text-center font-weight-bold">
+                                        Special Instructions:
+                                        {{ $itemAddr->special_instructions }}
+                                    </p>
+                                @endif
+                                @if(!$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                     <p class="text-center font-weight-bold">
                                         Delivery Charge:
                                         ${{ number_format($itemAddr->delivery_charge, 2) }}
                                     </p>
                                 @else
                                     <p class="text-center font-weight-bold">
-                                        Delivery Charge:
-                                        ${{ number_format($order->delivery_charge, 2) }}
+                                        Delivery Charge: Same as first item
                                     </p>
                                 @endif
-                                @if($itemAddr->delivery_date)
+
+                                @if(!$itemAddr->same_as_billing && !in_array($address, $duplicateItemAddresses))
                                     <p class="text-center font-weight-bold">
                                         Estimated Delivery:
                                         {{ date('m/d/Y', strtotime($itemAddr->delivery_date))  }}
                                     </p>
+                                @else
+                                    <p class="text-center font-weight-bold">
+                                        Estimated Delivery: Same as first item
+                                    </p>
                                 @endif
                             </div>
+
+                            @php
+                                $duplicateItemAddresses[] = $address;
+                            @endphp
                         @endforeach
                     @endif
                     <?php $total = 0; $total_qty = 0; ?>
@@ -82,7 +102,7 @@
                                         <small class="text-muted">{{ $item_val->description }}</small>
                                     </div>
                                     <span
-                                        class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
+                                            class="text-muted">${{ number_format($item_val->price * $item_val->quantity, 2) }}</span>
                                 </li>
 
                             @endforeach
@@ -188,7 +208,7 @@
 
                 <hr>
                 <p class="lead">
-                    <a class="btn btn-success btn-sm" href="{!! route('dashboard.myorderdetails',$pk_orders) !!}"
+                    <a class="btn btn-success btn-sm" href="{!! route('dashboard.myorderdetails', $pk_orders) !!}"
                        role="button">Track Order</a>
                 </p>
 

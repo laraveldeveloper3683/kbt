@@ -11,21 +11,7 @@
         <!-- ============================================================== -->
         <!-- Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Email Template</h4>
-            </div>
-            <div class="col-md-7 align-self-center text-end">
-                <div class="d-flex justify-content-end align-items-center">
-                    <ol class="breadcrumb justify-content-end">
-                        <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
-                        <li class="breadcrumb-item active"><a href="/accountadmin/text-template">Text Template</a></li>
-                    </ol>
-                    <a href="/accountadmin/text-template/add"> <button type="button" style="margin-top:-34px;" class="btn btn-info d-none d-lg-block m-l-15 text-white"><i
-                            class="fa fa-plus-circle"></i> Add Text Template</button></a>
-                </div>
-            </div>
-        </div>
+        @include('common.admin-panel-top-area-new-button')
         <!-- ============================================================== -->
         <!-- End Bread crumb and right sidebar toggle -->
         <!-- ============================================================== -->

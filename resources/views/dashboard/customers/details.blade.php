@@ -49,7 +49,7 @@
                                             <span class="me-3">{!! Helper::formatDate($orders->created_at) !!}</span>
                                             <span class="me-3">#{!! $orders->pk_orders !!}</span>
                                             <span
-                                                class="badge rounded-pill bg-info">{!! ucfirst($orders->orderStatus->order_status) !!}</span>
+                                                    class="badge rounded-pill bg-info">{!! ucfirst($orders->orderStatus->order_status) !!}</span>
                                         </div>
                                     </div>
                                     <table class="table table-borderless">
@@ -96,6 +96,7 @@
                                                     <td>
                                                     <textarea name="card_messages[{{$item_val->pk_order_items}}]"
                                                               cols="2"
+                                                              {{ $orders->pk_order_status == 1 ? '' : 'disabled' }}
                                                               class="form-control">{{ @$item_val->card_message }}</textarea>
                                                     </td>
                                                     <td>{!! $item_val->quantity !!}</td>
@@ -190,7 +191,7 @@
                                             <h3 class="h6">Payment Method</h3>
                                             <p>Visa -1234 <br>
                                                 Total: ${!! number_format($orders->total,2) !!} <span
-                                                    class="badge bg-success rounded-pill">PAID</span></p>
+                                                        class="badge bg-success rounded-pill">PAID</span></p>
                                         </div>
                                         <div class="col-lg-6">
                                             <h3 class="h6">Billing address</h3>
@@ -221,7 +222,7 @@
                                         <strong>Order Id</strong>
                                         <span><a href="javascript:void(0)"
                                                  class="text-decoration-underline">#{!! $orders->pk_orders !!}</a> <i
-                                                class="bi bi-box-arrow-up-right"></i> </span>
+                                                    class="bi bi-box-arrow-up-right"></i> </span>
                                         <hr>
                                         <h3 class="h6">Address</h3>
                                         @foreach($order_items as $order_item)
@@ -238,6 +239,11 @@
                                                 <abbr title="Phone">P:</abbr> {!! $itemAddr->shipping_phone !!}
                                                 <br>
                                             </address>
+                                            @if(@$itemAddr->special_instructions)
+                                                <p class="text-wrap font-weight-bold">
+                                                    Estimated Delivery: {{ @$itemAddr->special_instructions }}
+                                                </p>
+                                            @endif
                                             @if($itemAddr->delivery_date)
                                                 <p class="text-wrap font-weight-bold">
                                                     Estimated

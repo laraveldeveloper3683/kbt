@@ -24,11 +24,12 @@ class SaleRequest extends FormRequest
     public function rules()
     {
         return [
-            'cc_name'      => 'required',
-            'cc_number'    => 'required',
-            'expiry_month' => 'required',
-            'expiry_year'  => 'required',
-            'cvv'          => 'required',
+            'pay_by'       => 'bail|required|string|in:cash,card,gift_card',
+            'cc_name'      => 'required_if:pay_by,==,card',
+            'cc_number'    => 'required_if:pay_by,==,card',
+            'expiry_month' => 'required_if:pay_by,==,card',
+            'expiry_year'  => 'required_if:pay_by,==,card',
+            'cvv'          => 'required_if:pay_by,==,card',
         ];
     }
 
