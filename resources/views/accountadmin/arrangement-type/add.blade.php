@@ -3,7 +3,20 @@
 @section('content')
 <div class="page-wrapper">
     <div class="container-fluid">
-    @include('common.admin-panel-top-area-new')
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h4 class="text-themecolor">Dashboard</h4>
+            </div>
+            <div class="col-md-7 align-self-center text-end">
+                <div class="d-flex justify-content-end align-items-center">
+                    <ol class="breadcrumb justify-content-end">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li class="breadcrumb-item active">Arrangement Type</li>
+                    </ol>
+                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" style="margin-top: -34px;"><i class="fa fa-plus-circle"></i>{{ isset($ArrangementType) && ($ArrangementType->pk_arrangement_type) ? 'Edit Arrangement Type':'Create New Arrangement Type'}} </button>
+                </div>
+            </div>
+        </div>
         <div class="row">
                     <div class="col-md-12">
                         <div class="card">

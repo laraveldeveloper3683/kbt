@@ -22756,8 +22756,16 @@ span.cardCounter {
 	display:none;
 }
 
-/*custom by abhishek*/
-.td-align-middle td {
-  vertical-align: middle;
+/*custom css*/
+.row.page-titles {
+    align-items: center;
+    margin: 15px 0;
+}
+.row.page-titles ol.breadcrumb {
+    margin: 0;
+    margin-right: 15px;
+}
+.row.page-titles .btn-info {
+    display: block !important;
 }
 /*ends*/
