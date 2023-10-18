@@ -79,7 +79,7 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Your Cart</span>
                     <span
-                        class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
+                            class="badge badge-secondary badge-pill">{{ session('oth_total_quantity') ? session('oth_total_quantity') : 0 }}</span>
                 </h4>
                 @php
                     $total = 0;
@@ -99,7 +99,7 @@
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
                                 <span
-                                    class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
+                                        class="text-muted">${{ number_format($details['price'] * $details['quantity'], 2) }}</span>
                             </li>
                         @endforeach
                     @endif
@@ -230,7 +230,7 @@
 
                         <span>Total (USD)</span>
                         <strong
-                            class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
+                                class="totalCast1 loade">${{ $grandTotal > 0 ? number_format($grandTotal, 2) : number_format($total, 2) }}</strong>
                         <input type="hidden" value="{{ $total }}" class="totalCast">
                     </li>
                 </ul>
@@ -251,7 +251,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label
-                                for="first_name">
+                                    for="first_name">
                                 {{ $user_data->first_name . ' ' . $user_data->last_name }}
                                 {{ $user_data->email ? '(' . $user_data->email . ')' : '' }}
                             </label>
@@ -295,7 +295,7 @@
                     <div class="row">
                         @if(!$user_data->username)
                             <div
-                                class="mb-3 {{ !$user_data->phone && !$user_data->username ? 'col-md-6' : 'col-md-12' }}">
+                                    class="mb-3 {{ !$user_data->phone && !$user_data->username ? 'col-md-6' : 'col-md-12' }}">
                                 <label for="username">Username</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="username" name="username"
@@ -354,7 +354,7 @@
                                 <input type="radio" name="choise_details" class="choise-details"
                                        value="{{ $deliveryOption->pk_delivery_or_pickup }}"
                                        data-text="{{ $deliveryOption->delivery_or_pickup }}"
-                                    {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
+                                        {{ $choiseDetailsChecked }}> {{ Str::title($deliveryOption->delivery_or_pickup) }}
                             @endforeach
                         </div>
 
@@ -429,7 +429,7 @@
                                     <label for="checkbox{{ $id }}">
                                         <input type="checkbox" id="checkbox{{ $id }}" class="item-address-checkbox"
                                                data-id="{{ $id }}"
-                                            {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
+                                                {{ old('item_address.'.$id.'.same_as_billing', @$addressItems[$id]['same_as_billing'] ?? 1) ? 'checked' : '' }}>
                                         Use same as First Item for this item
                                     </label>
                                 @endif
@@ -484,7 +484,7 @@
 
                                         <div class="col-md-4 mb-3">
                                             <label for="billing_address_1{{ $id }}">Address 2 <span
-                                                    class="text-muted">(Optional)</span></label>
+                                                        class="text-muted">(Optional)</span></label>
                                             <input type="text" class="form-control"
                                                    id="billing_address_1{{ $id }}"
                                                    name="item_address[{{ $id }}][shipping_address_1]"

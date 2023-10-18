@@ -15,11 +15,11 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-1 align-self-center">
+                <div class="col-md-2 align-self-center">
                     <h4 class="text-themecolor">Orders</h4>
                 </div>
                 @include('accountadmin.orders.includes.filter_section')
-                <div class="col-md-4 align-self-center text-end">
+                <div class="col-md-3 align-self-center text-end">
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb justify-content-end">
                             <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
@@ -77,10 +77,10 @@
                                                     @if($order->deliveryOption)
                                                         @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
                                                             <span
-                                                                class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @else
                                                             <span
-                                                                class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @endif
                                                     @else
                                                         N/A
@@ -122,10 +122,10 @@
                                                     @if($order->deliveryOption)
                                                         @if($order->deliveryOption->delivery_or_pickup == 'Delivery')
                                                             <span
-                                                                class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-success">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @else
                                                             <span
-                                                                class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
+                                                                    class="badge badge-warning">{{ $order->deliveryOption->delivery_or_pickup }}</span>
                                                         @endif
                                                     @else
                                                         N/A

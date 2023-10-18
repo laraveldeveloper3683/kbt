@@ -12,27 +12,31 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
+                <div class="col-lg-4 col-md-6 align-self-center">
                     <h4 class="text-themecolor">Customers</h4>
                 </div>
-                <div class="col-md-7 align-self-center text-end">
-                    <div class="d-flex justify-content-end align-items-center">
-                        <ol class="breadcrumb justify-content-end">
-                            <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="/accountadmin/customers">Customers</a></li>
-                        </ol>
-                        <a href="/accountadmin/customers/add" style="margin-left: -640px;">
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex justify-content-between">
+                        <a href="/accountadmin/customers/add" style="margin-lef: -640px;" class="mr-3">
                             <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"
-                                    style="margin-right: 62px;margin-bottom: 30px;"><i
+                                    style="margin-righ: 62px;margin-botto: 30px;"><i
                                     class="fa fa-plus-circle"></i> Add Customer
                             </button>
                         </a>
                         <a href="/accountadmin/customer-business/add">
                             <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"
-                                    style="margin-right: 218px;margin-bottom: 34px;"><i
+                                    style="margin-righ: 218px;margin-botto: 34px;"><i
                                     class="fa fa-plus-circle"></i> Add Business
                             </button>
                         </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12 align-self-center text-end pr-lg-3 pr-md-0 mt-lg-0 mt-md-3">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <ol class="breadcrumb justify-content-end mr-0">
+                            <li class="breadcrumb-item"><a href="/accountadmin">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="/accountadmin/customers">Customers</a></li>
+                        </ol>
                     </div>
                 </div>
             </div>

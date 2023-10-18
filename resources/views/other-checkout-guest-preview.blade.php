@@ -297,7 +297,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div
-                                        style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px; padding-top: 10px;">
+                                            style="background-color: #FFF;text-align: center; margin: 0 0 20px 40px; padding-top: 10px;">
                                         <h5>
                                             {{ $location->location_name }}
                                         </h5>

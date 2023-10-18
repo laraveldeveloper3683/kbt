@@ -14,7 +14,7 @@
                       <li class="breadcrumb-item active"><a href="/superadmin/account">Account</a></li>
                     </ol>
                     @php if(session()->has('account')) { $account = session()->get('account'); }  @endphp
-                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" style="margin-top:-34px;"><i class="fa fa-plus-circle"></i> {{isset($user) && ($user->id) ? 'Edit User' : 'Create New'}}</button>
+                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"><i class="fa fa-plus-circle"></i> {{isset($user) && ($user->id) ? 'Edit User' : 'Create New'}}</button>
                 </div>
             </div>
         </div>

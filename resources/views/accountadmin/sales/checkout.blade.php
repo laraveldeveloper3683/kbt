@@ -117,7 +117,7 @@
                                     <small class="text-muted">{{ $details['description'] }}</small>
                                 </div>
                                 <span
-                                    class="text-muted">
+                                        class="text-muted">
                                     {{ $details['quantity'] }} x ${{ number_format($details['price'], 2) }} =
                                     ${{ number_format($details['price'] * $details['quantity'], 2) }}
                                 </span>
