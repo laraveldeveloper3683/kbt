@@ -31,4 +31,12 @@ class FloralArrangement extends Model
             ->withPivot('price', 'active', 'pk_account')
             ->withTimestamps();
     }
+
+    public function scopeWithImages($query)
+    {
+        return $query->select('kbt_floral_arrangements.*')
+            ->with('images:path')
+            ->groupBy('kbt_floral_arrangements.pk_floral_arrangements');
+    }
+
 }

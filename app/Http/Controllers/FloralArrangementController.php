@@ -29,7 +29,6 @@ class FloralArrangementController extends Controller
             ->select("kbt_floral_arrangements.*", "kbt_floral_arrangements_images.path")
             ->groupBy('kbt_floral_arrangements.pk_floral_arrangements')
             ->get();
-        //dd($flowers);
         /* $colorFlowers = ColorFlower::all();
          $vaseTypes    = VaseType::all();
          $vaseColors   = VaseColor::all();

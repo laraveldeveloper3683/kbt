@@ -655,7 +655,7 @@ class OtherCheckoutService
         try {
             $user_data = auth()->user();
 
-            $customer_data = Customer::find($pk_customer_id);
+            $customer_data = Customer::find($pk_cussalestomer_id);
 
             $cartItems = session('oth_cart');
 

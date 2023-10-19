@@ -26,8 +26,8 @@
                             <li class="breadcrumb-item active"><a href="/accountadmin/orders">Orders</a></li>
                         </ol>
 
-                        <!-- <a href="/accountadmin/locations/add"> <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"><i
-                                        class="fa fa-plus-circle"></i> Create New</button></a> -->
+                         <a href="{{ route('accountadmin.orders.create') }}"> <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white"><i
+                                        class="fa fa-plus-circle"></i> Create New</button></a>
                     </div>
                 </div>
             </div>
@@ -41,6 +41,17 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            @if(session('success'))
+                                <div class="alert alert-success" role="alert">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            @if(session('error'))
+                                <div class="alert alert-danger" role="alert">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
                             <!-- <h4 class="card-title">Locations Export</h4>
                                     <h6 class="card-subtitle">Export locations to Copy, CSV, Excel, PDF & Print</h6> -->
                             <div class="table-responsive m-t-40">
